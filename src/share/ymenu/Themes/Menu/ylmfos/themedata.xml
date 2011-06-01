@@ -1,0 +1,36 @@
+<?xml version="1.0" ?>
+<content type="Menu">
+	
+<ContentData Name="ylmfos" Author="hechao" Version="0.1" Copyright="GPL"/>
+
+<theme color="All" color_lang="All" colorvalue="#0b0f12">
+	<Background Image="startmenu.png"/>
+	
+	<WindowDimensions Width="350" Height="550"/>
+	
+	<IconSettings X="6" Y="4" Width="68" Height="68" InsetX="6" InsetY="6" InsetWidth="62" InsetHeight="62"/>
+	
+	<TabBackground Image="m_tab.png" TabIconX="6" TabIconY="4" TextX="36" TextY="7"/>
+	
+	<VLine Image="v_line.png" X="143" Y="64"/>
+	
+	<ButtonBackground Image="m_button.png" ButtonIconX="6" ButtonIconY="4" TextX="36" TextY="7"/>
+	
+	<SearchBarSettings  X="150" Y="495" Width="166" Height="19" Widget="Gtk" Background="searchframe.png"/>
+	
+	<ProgramTabSettings X="4" Y="70" Width="140" Height="396"/>	
+	
+	<ProgramListSettings X="148" Y="70" Width="199" Height="419"/>
+	
+	<Capabilities HasSearch="1" HasIcon="1" HasFadeTransition="1" HasTab="1"/>
+	
+	<Button Name="Control Panel" Markup="&lt;span foreground='#FFFFFF' &gt;Control Panel&lt;/span&gt;" TextX="36" TextY="8" Image="m_tab.png" ButtonIcon="gnome-control-center.png" ButtonIconSel="" ButtonIconX="6" ButtonIconY="2" ButtonX="4" ButtonY="465" SubMenu="0" Command="Control Panel" CloseMenu="1" Icon=""/>
+
+	<Button Name="Software Center" Markup="&lt;span foreground='#FFFFFF' &gt;Software Center&lt;/span&gt;" TextX="36" TextY="8" Image="m_tab.png" ButtonIcon="ycenter.png" ButtonIconSel="" ButtonIconX="6" ButtonIconY="2" ButtonX="4" ButtonY="495" SubMenu="0" Command="Y Center" CloseMenu="1" Icon=""/>
+	
+	<Button Name="Logout" Markup="&lt;span foreground='#C0C0C0' &gt;Logout&lt;/span&gt;" TextX="32" TextY="6" Image="m_logout.png" ImageBack="m_logout_sel.png" ButtonIcon="" ButtonIconSel="" ButtonX="170" ButtonY="536" SubMenu="0" Command="Logout" CloseMenu="1" Icon=""/>
+
+	<Button Name="Power" Markup="&lt;span foreground='#C0C0C0' &gt;Power&lt;/span&gt;" TextX="34" TextY="6" Image="m_power.png" ImageBack="m_power_sel.png" ButtonIcon="" ButtonIconSel="" ButtonX="260" ButtonY="536" SubMenu="0" Command="Power" CloseMenu="1" Icon=""/>
+
+</theme>
+</content>

@@ -1,0 +1,8 @@
+<?xml version="1.0" ?>
+<content type="Button">
+<ContentData Name="ylmfos" Author="hechao" Copyright="GPL"/>
+<theme Top="1" id="HasTop">
+	<Background Image="start-here.png" ImageHover="start-here-depressed.png" ImagePressed="start-here-glow.png"/>
+	<Top Image="start-here-top.png" ImageHover="start-here-top-depressed.png" ImagePressed="start-here-top-glow.png"/>
+</theme>
+</content>

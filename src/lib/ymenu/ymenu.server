@@ -1,0 +1,31 @@
+<oaf_info>
+	<oaf_server iid="OAFIID:GNOME_YMenu_Factory" type="exe" location="/usr/lib/ymenu/YMenu.py">
+		<oaf_attribute name="repo_ids" type="stringv">
+			<item value="IDL:Bonobo/GenericFactory:1.0"/>
+			<item value="IDL:Bonobo/Unknown:1.0"/>
+		</oaf_attribute>
+		<oaf_attribute name="name" type="string" value="YMenu Factory"/>
+		<oaf_attribute name="name-zh_CN" type="string" value="Ylmf OS高级菜单"/>
+		<oaf_attribute name="description" type="string" value="Customizable Start Menu for the GNOME Desktop"/>
+		<oaf_attribute name="description-zh_CN" type="string" value="Ylmf OS 桌面开始菜单"/>
+	</oaf_server>
+
+	<oaf_server iid="OAFIID:GNOME_YMenu" type="factory" location="OAFIID:GNOME_YMenu_Factory">
+		<oaf_attribute name="repo_ids" type="stringv">
+			<item value="IDL:GNOME/Vertigo/PanelAppletShell:1.0"/>
+			<item value="IDL:Bonobo/Control:1.0"/>
+			<item value="IDL:Bonobo/Unknown:1.0"/>
+		</oaf_attribute>
+		<oaf_attribute name="name" type="string" value="YMenu"/>
+		<oaf_attribute name="name-zh_CN" type="string" value="YMenu高级菜单"/>
+		<oaf_attribute name="description" type="string" value="Customizable Start Menu for the GNOME Desktop"/>
+		<oaf_attribute name="description-zh_CN" type="string" value="Ylmf OS 桌面开始菜单"/>
+		<oaf_attribute name="panel:category" type="string" value="Utilities"/>
+		<oaf_attribute name="panel:icon" type="string" value="/usr/lib/ymenu/graphics/logo.png"/>
+		<oaf_attribute name="bugzilla:bugzilla" type="string" value="GNOME"/>
+	        <oaf_attribute name="bugzilla:product" type="string" value="gnome-panel"/>
+	        <oaf_attribute name="bugzilla:component" type="string" value="menu"/>
+		<oaf_attribute name="bugzilla:version" type="string" value="2.32.0.1"/>
+	        <oaf_attribute name="bugzilla:other_binaries" type="string" value="YMenu"/>
+	</oaf_server>
+</oaf_info>

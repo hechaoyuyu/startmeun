@@ -1,0 +1,781 @@
+
+#: ymenu/src/lib/ymenu/Globals.py:565
+msgid "All Applications"
+msgstr "全部程序"
+
+msgid "Show all applications"
+msgstr "显示所有的应用程序"
+
+#: ymenu/src/lib/ymenu/Globals.py:565
+msgid "All Programs"
+msgstr "所有程序"
+
+#: ymenu/src/lib/ymenu/Globals.py:565
+msgid "Applications"
+msgstr "应用程序"
+
+#: ymenu/src/lib/ymenu/Globals.py:565
+msgid "Connect"
+msgstr "连接"
+
+#: ymenu/src/lib/ymenu/Globals.py:565
+msgid "Connect To"
+msgstr "连接到"
+
+#: ymenu/src/lib/ymenu/Globals.py:565
+msgid "Connect To Server"
+msgstr "连接到服务器"
+
+#: ymenu/src/lib/ymenu/Globals.py:565
+msgid "Connect to Server"
+msgstr "连接到服务器..."
+
+#: ymenu/src/lib/ymenu/Globals.py:565
+msgid "Control Center"
+msgstr "控制中心"
+
+#: ymenu/src/lib/ymenu/Globals.py:565
+msgid "Distro"
+msgstr "发行版"
+
+#: ymenu/src/lib/ymenu/Globals.py:565
+msgid "Documents"
+msgstr "文档"
+
+#: ymenu/src/lib/ymenu/Globals.py:565
+msgid "Execute Application"
+msgstr "执行程序"
+
+#: ymenu/src/lib/ymenu/Globals.py:565
+msgid "Favorites"
+msgstr "收藏夹"
+
+#: ymenu/src/lib/ymenu/Globals.py:565
+msgid "Show all Favorites"
+msgstr "经常使用的程序"
+
+#: ymenu/src/lib/ymenu/Globals.py:565
+msgid "Games"
+msgstr "游戏"
+
+#: ymenu/src/lib/ymenu/Globals.py:565
+msgid "Hdd"
+msgstr "Hdd"
+
+#: ymenu/src/lib/ymenu/Globals.py:565
+msgid "Help And Support"
+msgstr "帮助和支持"
+
+#: ymenu/src/lib/ymenu/Globals.py:565
+msgid "Help Center"
+msgstr ""
+
+#: ymenu/src/lib/ymenu/Globals.py:565
+msgid "History"
+msgstr "历史"
+
+#: ymenu/src/lib/ymenu/Globals.py:565
+msgid "Home"
+msgstr "主目录"
+
+#: ymenu/src/lib/ymenu/Globals.py:565
+msgid "Install Software"
+msgstr "安装软件"
+
+msgid "Software Center"
+msgstr "软件中心"
+
+#: ymenu/src/lib/ymenu/Globals.py:565
+msgid "Leave"
+msgstr "离开"
+
+#: ymenu/src/lib/ymenu/Globals.py:565
+msgid "Lock"
+msgstr "锁定"
+
+#: ymenu/src/lib/ymenu/Globals.py:565
+msgid "Lock Computer"
+msgstr "锁定计算机"
+
+#: ymenu/src/lib/ymenu/Globals.py:565
+msgid "Log Out"
+msgstr "注销"
+
+#: ymenu/src/lib/ymenu/Globals.py:565
+msgid "Menu"
+msgstr "菜单"
+
+#: ymenu/src/lib/ymenu/Globals.py:565
+msgid "Music"
+msgstr "音乐"
+
+#: ymenu/src/lib/ymenu/Globals.py:565
+msgid "My Computer"
+msgstr "我的电脑"
+
+#: ymenu/src/lib/ymenu/Globals.py:565
+msgid "Personal Folder"
+msgstr "私人文件夹"
+
+#: ymenu/src/lib/ymenu/Globals.py:565
+msgid "Pictures"
+msgstr "图片"
+
+#: ymenu/src/lib/ymenu/Globals.py:565
+msgid "Power"
+msgstr "关机"
+
+#: ymenu/src/lib/ymenu/Globals.py:565
+msgid "Programs"
+msgstr "程序"
+
+#: ymenu/src/lib/ymenu/Globals.py:565
+msgid "Recent"
+msgstr "最近使用"
+
+msgid "Recent All"
+msgstr "最近使用的程序和文档"
+
+#: ymenu/src/lib/ymenu/Globals.py:565
+msgid "Recent Applications"
+msgstr "最近使用的程序"
+
+#: ymenu/src/lib/ymenu/Globals.py:565
+msgid "Recent Documents"
+msgstr "最近使用的文档"
+
+#: ymenu/src/lib/ymenu/Globals.py:565
+msgid "Recent Items"
+msgstr "最近使用的文件"
+
+#: ymenu/src/lib/ymenu/Globals.py:565
+msgid "Run Application"
+msgstr "运行应用程序"
+
+#: ymenu/src/lib/ymenu/Globals.py:565
+msgid "Search for Files..."
+msgstr "搜索程序或文件..."
+
+#: ymenu/src/lib/ymenu/Globals.py:565
+msgid "Show History"
+msgstr "显示历史"
+
+#: ymenu/src/lib/ymenu/Globals.py:565
+msgid "Shut Down"
+msgstr "关闭"
+
+#: ymenu/src/lib/ymenu/Globals.py:565
+msgid "Shut Down..."
+msgstr "关机..."
+
+#: ymenu/src/lib/ymenu/Globals.py:565
+msgid "Shutdown Computer"
+msgstr "关闭计算机"
+
+#: ymenu/src/lib/ymenu/Globals.py:565
+msgid "Start"
+msgstr "开始"
+
+#: ymenu/src/lib/ymenu/Globals.py:565
+msgid "Status"
+msgstr "状态"
+
+#: ymenu/src/lib/ymenu/Globals.py:565
+msgid "Used"
+msgstr "已用"
+
+#: ymenu/src/lib/ymenu/Globals.py:565
+msgid "User"
+msgstr "用户"
+
+#: ymenu/src/lib/ymenu/Globals.py:565
+msgid "Videos"
+msgstr "视频"
+
+#: ymenu/src/lib/ymenu/Globals.py:565
+msgid "Web Bookmarks"
+msgstr "Web 书签"
+
+#: ymenu/src/lib/ymenu/Globals.py:565
+msgid "Web Sites"
+msgstr ""
+
+#: ymenu/src/lib/ymenu/Globals.py:565
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:342
+#: ymenu/src/lib/ymenu/Menu_Widgets.py:1078
+#: ymenu/src/lib/ymenu/Menu_Widgets.py:1089
+#: ymenu/src/lib/ymenu/Menu_Widgets.py:1118
+#: ymenu/src/lib/ymenu/Menu_Widgets.py:1149
+#: ymenu/src/lib/ymenu/Menu_Widgets.py:1334
+#: ymenu/src/lib/ymenu/Menu_Widgets.py:1338
+msgid "Search"
+msgstr "搜索程序或文件..."
+
+msgid "Search Google"
+msgstr "用 Google 搜索"
+
+msgid "Search Wikipedia"
+msgstr "搜索维基百科"
+
+#: ymenu/src/lib/ymenu/Globals.py:565
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:362
+msgid "Control Panel"
+msgstr "控制中心"
+
+#: ymenu/src/lib/ymenu/Globals.py:565
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:372
+msgid "Package Manager"
+msgstr "软件包管理器"
+
+#: ymenu/src/lib/ymenu/Globals.py:565
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:382
+msgid "Help"
+msgstr "帮助"
+
+#: ymenu/src/lib/ymenu/Globals.py:565
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:402
+#: ymenu/src/lib/ymenu/Menu_Items.py:303
+msgid "Lock Screen"
+msgstr "锁定屏幕"
+
+#: ymenu/src/lib/ymenu/Globals.py:565
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:412
+#: ymenu/src/lib/ymenu/Menu_Items.py:302
+msgid "Logout"
+msgstr "注销"
+
+#: ymenu/src/lib/ymenu/Globals.py:565
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:443
+#: ymenu/src/lib/ymenu/Menu_Items.py:300
+msgid "Suspend"
+msgstr "挂起"
+
+#: ymenu/src/lib/ymenu/Globals.py:565
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:453
+#: ymenu/src/lib/ymenu/Menu_Items.py:301
+msgid "Hibernate"
+msgstr "休眠"
+
+#: ymenu/src/lib/ymenu/Globals.py:565
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:464
+msgid "Run"
+msgstr "运行"
+
+#: ymenu/src/lib/ymenu/Globals.py:565
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:474
+#: ymenu/src/lib/ymenu/Menu_Items.py:298
+msgid "Shutdown"
+msgstr "关机"
+
+#: ymenu/src/lib/ymenu/Globals.py:565
+#: ymenu/src/lib/ymenu/Menu_Items.py:256
+#: ymenu/src/lib/ymenu/Menu_Widgets.py:549
+#: ymenu/src/lib/ymenu/Menu_Widgets.py:721
+#: ymenu/src/lib/ymenu/Menu_Widgets.py:893
+msgid "About Me"
+msgstr "关于我"
+
+#: ymenu/src/lib/ymenu/Globals.py:565
+#: ymenu/src/lib/ymenu/Menu_Items.py:383
+msgid "Home Folder"
+msgstr "主文件夹"
+
+#: ymenu/src/lib/ymenu/Globals.py:565
+#: ymenu/src/lib/ymenu/Menu_Items.py:384
+msgid "Computer"
+msgstr "计算机"
+
+#: ymenu/src/lib/ymenu/Globals.py:565
+#: ymenu/src/lib/ymenu/Menu_Items.py:385
+msgid "Network"
+msgstr "网上邻居"
+
+#: ymenu/src/lib/ymenu/Globals.py:565
+#: ymenu/src/lib/ymenu/Menu_Items.py:489
+#: ymenu/src/lib/ymenu/Menu_Items.py:524
+msgid "System"
+msgstr "系统"
+
+#: ymenu/src/lib/ymenu/Globals.py:565
+#: ymenu/src/lib/ymenu/Menu_Items.py:556
+msgid "Most Used"
+msgstr "更多使用的"
+
+#: ymenu/src/lib/ymenu/Globals.py:565
+#: ymenu/src/lib/ymenu/Menu_Items.py:556
+msgid "Recently Used"
+msgstr "最近使用的"
+
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:61
+msgid "YMenu Settings"
+msgstr "YMenu 设置"
+
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:83
+msgid "Ok"
+msgstr "确认"
+
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:85
+msgid "Apply"
+msgstr "应用"
+
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:87
+msgid "Cancel"
+msgstr "取消"
+
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:92
+msgid "Themes"
+msgstr "主题"
+
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:93
+#: ymenu/src/lib/ymenu/YMenuTray.py:42
+msgid "Preferences"
+msgstr "首选项"
+
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:94
+#: ymenu/src/lib/ymenu/YMenuTray.py:43
+msgid "About"
+msgstr "关于"
+
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:95
+msgid "Commands"
+msgstr "命令"
+
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:114
+msgid "Menu Selection"
+msgstr "菜单选择"
+
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:137
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:165
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:195
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:216
+msgid "Install"
+msgstr "安装"
+
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:139
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:167
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:197
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:218
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:771
+msgid "Uninstall"
+msgstr "卸载"
+
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:151
+msgid "Button Selection"
+msgstr "按钮选择"
+
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:181
+msgid "Icon Selection"
+msgstr "选择图标"
+
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:213
+msgid "Sound theme"
+msgstr "声音主题"
+
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:235
+msgid "Bind keyboad key"
+msgstr "以Win键启动菜单"
+
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:242
+msgid "Show Internet and Email Buttons"
+msgstr "显示互联网和电子邮件按钮"
+
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:244
+msgid "Use Gtk Theme Colors in Program List"
+msgstr "在程序列表中使用GTK主题颜色"
+
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:246
+msgid "Tab Selection on Mouse Hover"
+msgstr "鼠标略过时自动选择"
+
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:253
+msgid "Icon Size in Program List"
+msgstr "程序列表中的图标大小"
+
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:255
+msgid "Number of Items in Recent Items List"
+msgstr "最近项目列表中项目的个数"
+
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:269
+msgid "Listview"
+msgstr "列表视图"
+
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:270
+msgid "Buttons (expanded)"
+msgstr "按钮试图（扩展的）"
+
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:271
+msgid "Buttons (fixed)"
+msgstr "按钮视图（固定的）"
+
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:272
+msgid "Iconview (fastest)"
+msgstr "图标视图（快速的）"
+
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:273
+msgid "Cairo (experimental)"
+msgstr "cairo视图（实验中）"
+
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:276
+msgid "Tab hover effect"
+msgstr "鼠标滑过效果"
+
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:278
+msgid "None"
+msgstr "空"
+
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:279
+msgid "Grow"
+msgstr "增大"
+
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:280
+msgid "Black and White"
+msgstr "黑白的"
+
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:281
+msgid "Blur"
+msgstr "模糊的"
+
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:282
+msgid "Glow"
+msgstr "醒目的"
+
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:283
+msgid "Saturate"
+msgstr "加深的"
+
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:286
+msgid "Program list type"
+msgstr "程序列表类型"
+
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:287
+msgid "Use system icons instead of theme icons"
+msgstr "用系统图标替代主题图标"
+
+msgid "Ylmf OS advanced menu."
+msgstr "Ylmf OS 高级 gnome 菜单"
+
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:289
+msgid "Use distributor logo instead of button theme"
+msgstr ""
+
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:291
+msgid "Show thumbnails in recent items when available"
+msgstr "在最近的项目中显示缩略图"
+
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:293
+msgid "Show tooltips in program list"
+msgstr "在程序列表中显示提示语"
+
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:296
+msgid "Activate Compiz blur effect on YMenu window"
+msgstr ""
+
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:303
+msgid "Disable Places and System in program list"
+msgstr ""
+
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:352
+msgid "Network Config"
+msgstr "网络配置"
+
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:392
+msgid "Shutdown Dialog"
+msgstr "关机对话框"
+
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:422
+msgid "Logout Dialog"
+msgstr "注销对话框"
+
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:432
+msgid "Restart"
+msgstr "重启"
+
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:484
+msgid "User about"
+msgstr "关于用户"
+
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:494
+#: ymenu/src/lib/ymenu/Gnome_Me.py:127
+#: ymenu/src/lib/ymenu/Menu_Items.py:575
+msgid "Open as Administrator"
+msgstr "以管理员身份打开"
+
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:504
+msgid "Menu Editor"
+msgstr ""
+
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:544
+msgid "Donate"
+msgstr "捐赠"
+
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:547
+msgid "Download More Themes"
+msgstr "下载更多的主题"
+
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:550
+msgid "YMenu Themes Specifications"
+msgstr ""
+
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:553
+msgid "Report Bug"
+msgstr "报告错误"
+
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:556
+msgid "Help Translate"
+msgstr "帮助翻译"
+
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:559
+msgid "Visit Homepage"
+msgstr "浏览主页"
+
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:562
+msgid "Credits"
+msgstr "致谢"
+
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:580
+#: ymenu/src/lib/ymenu/YMenu.py:149
+#: ymenu/src/lib/ymenu/YMenu.py:228
+#: ymenu/src/lib/ymenu/YMenu_rewrite.py:238
+#: ymenu/src/lib/ymenu/YMenu_rewrite.py:313
+msgid "Menu needs to restart , restart now?"
+msgstr "菜单需要重启，现在重启吗？"
+
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:771
+msgid "theme"
+msgstr "主题"
+
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:788
+msgid "Install a new theme"
+msgstr "安装新主题"
+
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:812
+msgid "Error - Theme package is corrupt!"
+msgstr ""
+
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:833
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:842
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:849
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:865
+msgid ""
+"Error - theme not installed\n"
+"Maybe the Theme was packaged incorrectly\n"
+"Try to install the Theme manually"
+msgstr ""
+"错误-主题没有被安装\n"
+"也许主题没有被正确地打包\n"
+"请尝试手工安装这个主题"
+
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:855
+msgid "Theme exists. Continue?"
+msgstr "主题存在，继续吗？"
+
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:863
+msgid "Theme installed"
+msgstr "主题已经安装"
+
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:874
+#: ymenu/src/lib/ymenu/YMenu-Settings.py:893
+msgid ""
+"This theme was created for a previous version of YMenu.\n"
+"The theme was automaticly updated in order to work properly."
+msgstr ""
+
+#: ymenu/src/lib/ymenu/YMenuTray.py:44
+msgid "Edit Menus"
+msgstr ""
+
+#: ymenu/src/lib/ymenu/YMenuTray.py:45
+msgid "Quit"
+msgstr ""
+
+#: ymenu/src/lib/ymenu/Gnome_Me.py:87
+#: ymenu/src/lib/ymenu/Menu_Items.py:667
+msgid "added to favorites list"
+msgstr "添加到收藏列表"
+
+msgid "added from desktop"
+msgstr "添加到桌面"
+
+#: ymenu/src/lib/ymenu/Gnome_Me.py:97
+#: ymenu/src/lib/ymenu/Menu_Items.py:678
+msgid "removed from favorites list"
+msgstr "移出收藏列表"
+
+#: ymenu/src/lib/ymenu/Gnome_Me.py:105
+#: ymenu/src/lib/ymenu/Menu_Items.py:686
+msgid "added to system startup"
+msgstr "添加到开机启动列表"
+
+msgid "added to panel"
+msgstr "添加到面板中"
+
+msgid "removed from panel"
+msgstr "移岀面板"
+
+#: ymenu/src/lib/ymenu/Gnome_Me.py:113
+#: ymenu/src/lib/ymenu/Menu_Items.py:694
+msgid "removed from system startup"
+msgstr "从开机启动列表中删除"
+
+#: ymenu/src/lib/ymenu/Gnome_Me.py:131
+#: ymenu/src/lib/ymenu/Menu_Items.py:618
+msgid "Add to Favorites"
+msgstr "添加到收藏夹"
+
+#: ymenu/src/lib/ymenu/Gnome_Me.py:135
+#: ymenu/src/lib/ymenu/Menu_Items.py:621
+msgid "Remove from Favorites"
+msgstr "从收藏夹中删除"
+
+#: ymenu/src/lib/ymenu/Gnome_Me.py:138
+#: ymenu/src/lib/ymenu/Menu_Items.py:623
+msgid "Create Desktop Shortcut"
+msgstr "创建桌面快捷方式"
+
+#: ymenu/src/lib/ymenu/Gnome_Me.py:142
+#: ymenu/src/lib/ymenu/Menu_Items.py:626
+msgid "Remove from System Startup"
+msgstr "从开机启动项中删除"
+
+#: ymenu/src/lib/ymenu/Gnome_Me.py:144
+#: ymenu/src/lib/ymenu/Menu_Items.py:628
+msgid "Add to System Startup"
+msgstr "添加到开机启动"
+
+msgid "Add to Panel"
+msgstr "添加到面板"
+
+msgid "Remove from Panel"
+msgstr "从面板中删除"
+
+#: ymenu/src/lib/ymenu/Menu_Items.py:257
+msgid "Appearance"
+msgstr "外观"
+
+#: ymenu/src/lib/ymenu/Menu_Items.py:258
+msgid "Menu editor"
+msgstr "菜单编辑器"
+
+#: ymenu/src/lib/ymenu/Menu_Items.py:259
+msgid "Screensaver"
+msgstr "屏幕保护程序"
+
+#: ymenu/src/lib/ymenu/Menu_Items.py:260
+msgid "System Monitor"
+msgstr "系统监视器"
+
+#: ymenu/src/lib/ymenu/Menu_Items.py:261
+msgid "YMenu settings utility"
+msgstr "YMenu 设置工具"
+
+#: ymenu/src/lib/ymenu/Menu_Items.py:281
+msgid ""
+"No favorites\n"
+"Use the mouse right button\n"
+"to add or remove favorites"
+msgstr ""
+"没有收藏项\n"
+"请使用右键来添加或者删除收藏项"
+
+#: ymenu/src/lib/ymenu/Menu_Items.py:299
+msgid "Reboot"
+msgstr "重启"
+
+#: ymenu/src/lib/ymenu/Menu_Items.py:326
+msgid "Clear recent documents"
+msgstr "清除最近使用的文档"
+
+#: ymenu/src/lib/ymenu/Menu_Items.py:364
+msgid "File System"
+msgstr "文件系统"
+
+#: ymenu/src/lib/ymenu/Menu_Items.py:386
+#: ymenu/src/lib/ymenu/Menu_Items.py:613
+msgid "Trash"
+msgstr "回收站"
+
+#: ymenu/src/lib/ymenu/Menu_Items.py:434
+msgid "No items matched your search criteria"
+msgstr "没有项目符合你的搜索标准"
+
+#: ymenu/src/lib/ymenu/Menu_Items.py:438
+msgid "Found %s results to your search"
+msgstr "发现 %s 个符合搜索的结果"
+
+#: ymenu/src/lib/ymenu/Menu_Items.py:475
+msgid "Browse Internet"
+msgstr "浏览互联网"
+
+#: ymenu/src/lib/ymenu/Menu_Items.py:476
+msgid "E-mail"
+msgstr "电子邮件"
+
+#: ymenu/src/lib/ymenu/Menu_Items.py:481
+#: ymenu/src/lib/ymenu/Menu_Items.py:516
+#: ymenu/src/lib/ymenu/Menu_Items.py:572
+#: ymenu/src/lib/ymenu/Menu_Widgets.py:1588
+#: ymenu/src/lib/ymenu/Menu_Widgets.py:1962
+#: ymenu/src/lib/ymenu/Menu_Widgets.py:2241
+msgid "Back"
+msgstr "后退"
+
+#: ymenu/src/lib/ymenu/Menu_Items.py:485
+#: ymenu/src/lib/ymenu/Menu_Items.py:527
+msgid "Places"
+msgstr "位置"
+
+msgid "Show all Places"
+msgstr "显示所有位置"
+
+#: ymenu/src/lib/ymenu/Menu_Items.py:602
+msgid "Open with"
+msgstr "打开方式 ..."
+
+#: ymenu/src/lib/ymenu/Menu_Items.py:615
+msgid "Empty Trash"
+msgstr "清空回收站"
+
+#: ymenu/src/lib/ymenu/Menu_Widgets.py:1598
+#: ymenu/src/lib/ymenu/Menu_Widgets.py:1972
+#: ymenu/src/lib/ymenu/Menu_Widgets.py:2242
+msgid "Return to last menu"
+msgstr "返回到最后的菜单"
+
+#: ymenu/src/lib/ymenu/Popup_Menu.py:72
+msgid "XML-Error: %s"
+msgstr "XML 错误：%s"
+
+#: ymenu/src/lib/ymenu/Popup_Menu.py:201
+msgid "Error while creating image from file: %s"
+msgstr "从文件中创建图像时出错: %s"
+
+#: ymenu/src/lib/ymenu/Popup_Menu.py:217
+msgid "Error: file %s not found."
+msgstr "错误：文件 %s 未找到"
+
+#: ymenu/src/lib/ymenu/Popup_Menu.py:271
+msgid "Exception: %s"
+msgstr "异常：%s"
+
+#: ymenu/src/lib/ymenu/Popup_Menu.py:272
+msgid "An error occured with desktop-file: %s"
+msgstr "桌面文件出错：%s"
+
+#: ymenu/src/lib/ymenu/Launcher.py:53/74
+msgid "Error"
+msgstr "错误"
+
+msgid ":The path is invalid"
+msgstr ":路径无效"
+
+#: ymenu/src/lib/ymenu/Launcher.py:70
+msgid "Could not launch '%s'"
+msgstr "<span foreground=\"black\" size=\"larger\">无法启动 \"%s\"</span>"
+
+#: ymenu/src/lib/ymenu/Launcher.py:74
+msgid "Execute child process '%s' failed(could not be found)"
+msgstr "执行子进程 \"%s\" 失败(没有那个文件或目录)"
+
+#: ymenu/src/lib/ymenu/Launcher.py:92
+msgid "'%s' could not be found"
+msgstr "<span foreground=\"black\" size=\"larger\">打开 \"%s\" 出错(没有那个文件或目录)</span>"
