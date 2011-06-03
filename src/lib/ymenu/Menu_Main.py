@@ -15,6 +15,7 @@ import utils
 import Launcher
 import gconf
 import gio
+import backend
 
 try:
 	has_gst = True
@@ -165,6 +166,7 @@ class Main_Menu(gobject.GObject):
                     bind_key( "<Alt>E", self.open_computer )
                     bind_key( "<Alt>Pause", self.open_monitor )
                     bind_key( "<Alt>R", self.open_run )
+                    bind_key( "Num_Lock", self.numlock)
                 except Exception, cause:
                     print "** WARNING ** - Menu Hotkey Binding Error"
                     print "Error Report :\n", str(cause)
@@ -179,6 +181,12 @@ class Main_Menu(gobject.GObject):
         def open_run(self):
                 run = "%sGnome_run_dialog.py" % Globals.ProgramDirectory
                 os.system("python -u %s" % run)
+
+        def numlock(self):
+                numlock = backend.load_setting("Num_lock")
+                if numlock == "on":
+                        backend.save_setting("Num_lock","off")
+                else:backend.save_setting("Num_lock","on")
 
 #=================================================================
 #WINDOW SETUP

@@ -54,7 +54,7 @@ TransitionS = 	25 #step update speed in miliseconds
 TransitionQ = 0.05 #step update transparency 0 to 1
 FirstUse = False
 
-DefaultSettings = { "Tab_Efect":1 , "Bind_Key":"Super_L" , "Sound_Theme":"None" , "Show_Tips":1 , "Distributor_Logo":0, "Menu_Name":"ylmfos" , "IconSize":24 , "ListSize":12 , "SuperL":1 , "Icon_Name":"ylmfos" , "Button_Name":"ylmfos" , "GtkColors":0 , "TabHover":1 , "Control_Panel":"gnome-control-center"  ,"Y_Center":"ycenter" , "Power":"gnome-session-save --shutdown-dialog" , "Logout":"gnome-session-save --logout-dialog" , "User":"gnome-about-me" , "AdminRun":"gksu", "MenuEditor":"gmenu-simple-editor"}
+DefaultSettings = { "Tab_Efect":1 , "Bind_Key":"Super_L" , "Sound_Theme":"None" , "Num_lock":"on", "Show_Tips":1 , "Distributor_Logo":0, "Menu_Name":"ylmfos" , "IconSize":24 , "ListSize":12 , "SuperL":1 , "Icon_Name":"ylmfos" , "Button_Name":"ylmfos" , "GtkColors":0 , "TabHover":1 , "Control_Panel":"gnome-control-center"  ,"Y_Center":"ycenter" , "Power":"gnome-session-save --shutdown-dialog" , "Logout":"gnome-session-save --logout-dialog" , "User":"gnome-about-me" , "AdminRun":"gksu", "MenuEditor":"gmenu-simple-editor"}
 
 Settings = DefaultSettings.copy()
 
