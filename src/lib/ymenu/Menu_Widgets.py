@@ -1651,7 +1651,7 @@ class ProgramClass(gobject.GObject):
                 i += 1
         
         	if self.menuChangedTimer:
-            	gobject.source_remove( self.menuChangedTimer )
+                    gobject.source_remove( self.menuChangedTimer )
 
         	self.menuChangedTimer = gobject.timeout_add( timer, self.updateBoxes, True )
         
