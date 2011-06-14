@@ -21,7 +21,6 @@ import gio
 import urllib
 import xdg.DesktopEntry
 import xdg.Menu
-from filemonitor import monitor as filemonitor
 from execute import *
 from user import home
 
@@ -1007,15 +1006,9 @@ class ApplicationLauncher( AppButton ):
             self.appDirs = [ os.path.dirname( desktopFile ) ]
 
         self.desktopFile = desktopFile
-        self.startupMonitorId = 0
         self.loadDesktopEntry( desktopItem )
 
-        self.desktopEntryMonitors = []
         self.drag = True
-
-        base = os.path.basename( self.desktopFile )
-        for dir in self.appDirs:
-            self.desktopEntryMonitors.append( filemonitor.addMonitor( os.path.join(dir, base) , self.onDesktopEntryFileChanged ) )
 
         AppButton.__init__( self, self.appIconName, iconSize)
         self.setupLabels()
@@ -1042,11 +1035,6 @@ class ApplicationLauncher( AppButton ):
             self.appGenericName     = self.appGenericName.strip()
             self.appComment         = self.appComment.strip()
 
-            basename = os.path.basename( self.desktopFile )
-            self.startupFilePath = os.path.join( os.path.expanduser("~"), ".config", "autostart", basename )
-            if self.startupMonitorId:
-                filemonitor.removeMonitor( self.startupMonitorId  )
-
         except Exception, e:
             #print e
             self.appName            = ""
@@ -1056,7 +1044,6 @@ class ApplicationLauncher( AppButton ):
             self.appIconName        = ""
             self.appCategories      = ""
             self.appDocPath         = ""
-            self.startupMonitorId   = 0
 
     def setupLabels( self ):
         self.addLabel( self.appName )
@@ -1117,70 +1104,8 @@ class ApplicationLauncher( AppButton ):
             self.drag_source_set_icon_pixbuf( icon )
             del icon
 
-    def startupFileChanged( self, *args ):
-        self.inStartup = os.path.exists( self.startupFilePath )
-
-    def addToStartup( self ):
-        startupDir = os.path.join( os.path.expanduser("~"), ".config", "autostart" );
-        if not os.path.exists( startupDir ):
-            os.makedirs( startupDir )
-
-        shutil.copyfile( self.desktopFile, self.startupFilePath )
-
-        # Remove %u, etc. from Exec entry, because gnome will not replace them when it starts the app
-        item = gnomedesktop.item_new_from_uri( self.startupFilePath, gnomedesktop.LOAD_ONLY_IF_EXISTS )
-        if item:
-            r = re.compile("%[A-Za-z]");
-            tmp = r.sub("", item.get_string( gnomedesktop.KEY_EXEC ) ).strip()
-            item.set_string( gnomedesktop.KEY_EXEC, tmp )
-            item.save( self.startupFilePath, 0 )
-
-    def removeFromStartup( self ):
-        if os.path.exists( self.startupFilePath ):
-            os.remove( self.startupFilePath )
-
-    def addToFavourites( self ):
-        favouritesDir = os.path.join( os.path.expanduser("~"), ".linuxmint", "mintMenu", "applications" );
-        if not os.path.exists( favouritesDir ):
-            os.makedirs( favouritesDir )
-
-        shutil.copyfile( self.desktopFile, self.favouritesFilePath )
-
-    def removeFromFavourites( self ):
-        if os.path.exists( self.favouritesFilePath ):
-            os.remove( self.favouritesFilePath )
-
-    def isInStartup( self ):
-        #return self.inStartup
-        return os.path.exists( self.startupFilePath )
-
     def onDestroy( self, widget ):
         AppButton.onDestroy( self, widget )
-        if self.startupMonitorId:
-            filemonitor.removeMonitor( self.startupMonitorId )
-        for id in self.desktopEntryMonitors:
-            filemonitor.removeMonitor( id )
-
-    def onDesktopEntryFileChanged( self ):
-        exists = False
-        base = os.path.basename( self.desktopFile )
-        print "base ---> ",base,self.appDirs,self.appName,type(self)
-        for dir in self.appDirs:
-            if os.path.exists( os.path.join( dir, base ) ):
-                self.loadDesktopEntry( xdg.DesktopEntry.DesktopEntry( os.path.join( dir, base ) ) )
-               
-                self.Label.destroy()
-
-                self.iconName = self.appIconName
-
-                self.setupLabels()
-                self.iconChanged()
-                exists = True
-                break
-                
-        if not exists:
-            # FIXME: What to do in this case?
-            self.destroy()
 
 class MenuApplicationLauncher(ApplicationLauncher):
 
@@ -1483,7 +1408,6 @@ class ProgramClass(gobject.GObject):
 
         self.categoryList = []
         self.applicationList = []
-        self.menuFileMonitors = []
         self.suggestions = []
         self.favorites =  []
         self.FileList = []
@@ -1516,9 +1440,6 @@ class ProgramClass(gobject.GObject):
     def destroy( self ):
         self.App_VBox.destroy()
         self.Category_VBox.destroy()
-
-        for mId in self.menuFileMonitors:
-            filemonitor.removeMonitor( mId )
     
     def Restart(self,data=None):
         pass
@@ -1707,8 +1628,8 @@ class ProgramClass(gobject.GObject):
         except Exception, e:
             print u"File in favorites not found: '", e
     
-    def buildButtonList( self,Destroyer ): 
-        self.Destroyer = Destroyer
+    def buildButtonList( self,hide_method ): 
+        self.hide_method = hide_method
         if self.buildingButtonList:
             self.stopBuildingButtonList = True
             gobject.timeout_add( 100, self.buildButtonList )
@@ -1729,10 +1650,10 @@ class ProgramClass(gobject.GObject):
                 print i
                 i += 1
         
-        if self.menuChangedTimer:
-            gobject.source_remove( self.menuChangedTimer )
+        	if self.menuChangedTimer:
+            	gobject.source_remove( self.menuChangedTimer )
 
-        self.menuChangedTimer = gobject.timeout_add( timer, self.updateBoxes, True )
+        	self.menuChangedTimer = gobject.timeout_add( timer, self.updateBoxes, True )
         
     def updateBoxes( self, menu_has_changed ):        
         # FIXME: This is really bad!
@@ -1843,7 +1764,7 @@ class ProgramClass(gobject.GObject):
                 found = False
                 for item2 in self.applicationList:
                     
-                    if item["entry"].DesktopEntry.getFileName() == item2["entry"].DesktopEntry.getFileName():
+                    if item["entry"].DesktopEntry.getFileName() == item2["entry"].DesktopEntry.getFileName() and item["category"] == item2["category"] :
                         found = True
                         break
                 if not found:
@@ -1854,7 +1775,7 @@ class ProgramClass(gobject.GObject):
             for item in self.applicationList:
                 found = False
                 for item2 in newApplicationList:
-                    if item["entry"].DesktopEntry.getFileName() == item2["entry"].DesktopEntry.getFileName():
+                    if item["entry"].DesktopEntry.getFileName() == item2["entry"].DesktopEntry.getFileName() and item["category"] == item2["category"]:
                         found = True
                         break
                 if not found:
@@ -1916,7 +1837,7 @@ class ProgramClass(gobject.GObject):
 	elif event.type ==  gtk.gdk.BUTTON_RELEASE:event_button = event.button
 
         if event_button == 1 and widget.drag and date == True:
-            self.Destroyer()
+            self.hide_method()
             widget.execute()
         widget.drag = True
  
@@ -2020,11 +1941,11 @@ class ProgramClass(gobject.GObject):
 
     def custom_launch(self,widget,event, uri,app):
         os.system('%s %s &' % (app,uri))
-        self.Destroyer()
+        self.hide_method()
         
     def launch_item(self, button, event, uri):
         os.system('xdg-open %s &' %uri)
-        self.Destroyer()		
+        self.hide_method()		
 	
     def del_to_fav(self,widget,event,desktopEntry):  
         os.system("rm %s%s" %(Globals.Favorites,os.path.basename(desktopEntry.desktopFile)))
