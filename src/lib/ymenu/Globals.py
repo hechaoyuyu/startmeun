@@ -11,13 +11,6 @@ try:
 	INSTALL_PREFIX = open("/etc/ymenu/prefix").read()[:-1]
 except:
 	INSTALL_PREFIX = '/usr'
-
-try:
-	import numpy
-	Has_Numpy = True
-except:
-	Has_Numpy = False
-	print 'python numpy not installed , some effects and gtk native colors wont be available'
         
 import gettext
 gettext.textdomain('ymenu')

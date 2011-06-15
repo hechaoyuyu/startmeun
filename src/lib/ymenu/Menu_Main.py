@@ -218,7 +218,7 @@ class Main_Menu(gobject.GObject):
 		self.pixmap = gtk.gdk.Pixmap (None, w, h, 1)
 		ctx = self.pixmap.cairo_create()
 		self.bgpb = gtk.gdk.pixbuf_new_from_file(Globals.ImageDirectory + Globals.StartMenuTemplate)
-		if Globals.Settings['GtkColors'] == 1 and Globals.Has_Numpy:
+		if Globals.Settings['GtkColors'] == 1:
 			if not self.colorpb:
 				bgcolor = Globals.GtkColorCode
 				r = (bgcolor.red*255)/65535.0

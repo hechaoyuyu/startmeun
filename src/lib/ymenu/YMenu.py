@@ -21,8 +21,18 @@ except:
 import Globals
 import backend
 from Menu_Main import Main_Menu
-import utils
 import gettext
+import commands
+
+architecture = commands.getoutput("uname -a")
+if (architecture.find("x86_64") >= 0):
+    import ctypes
+    libc = ctypes.CDLL('libc.so.6')
+    libc.prctl(15, 'ymenu', 0, 0, 0)
+else:
+    import dl
+    libc = dl.open('/lib/libc.so.6')
+    libc.call('prctl', 15, 'ymenu', 0, 0, 0)
 
 gettext.textdomain('ymenu')
 gettext.install('ymenu', INSTALL_PREFIX +  '/share/locale')
@@ -138,6 +148,7 @@ class YMenu(gnomeapplet.Applet):
 				backend.save_setting('orientation', 'bottom')
 				backend.save_setting('size', self.size)
 			else:
+			    	import utils
 				utils.show_message(_('Menu needs to restart , restart now?'))
 				backend.save_setting('orientation', self.orientation)
 				backend.save_setting('size', self.size)
