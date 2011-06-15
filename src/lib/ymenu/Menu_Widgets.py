@@ -1755,8 +1755,10 @@ class ProgramClass(gobject.GObject):
             for item in newApplicationList:
                 found = False
                 for item2 in self.applicationList:
-                    
-                    if item["entry"].DesktopEntry.getFileName() == item2["entry"].DesktopEntry.getFileName() and item["category"] == item2["category"]:
+                    if item["entry"].DesktopEntry.getFileName() == item2["entry"].DesktopEntry.getFileName() and item["category"] == item2["category"] \
+                    and item["entry"].DesktopEntry.getName() == item2["entry"].DesktopEntry.getName() \
+                    and item["entry"].DesktopEntry.getIcon() == item2["entry"].DesktopEntry.getIcon() \
+                    and item["entry"].DesktopEntry.getComment() == item2["entry"].DesktopEntry.getComment():
                         found = True
                         break
                 if not found:
@@ -1767,7 +1769,10 @@ class ProgramClass(gobject.GObject):
             for item in self.applicationList:
                 found = False
                 for item2 in newApplicationList:
-                    if item["entry"].DesktopEntry.getFileName() == item2["entry"].DesktopEntry.getFileName() and item["category"] == item2["category"]:
+                    if item["entry"].DesktopEntry.getFileName() == item2["entry"].DesktopEntry.getFileName() and item["category"] == item2["category"] \
+                    and item["entry"].DesktopEntry.getName() == item2["entry"].DesktopEntry.getName() \
+                    and item["entry"].DesktopEntry.getIcon() == item2["entry"].DesktopEntry.getIcon() \
+                    and item["entry"].DesktopEntry.getComment() == item2["entry"].DesktopEntry.getComment():
                         found = True
                         break
                 if not found:
