@@ -1642,10 +1642,10 @@ class ProgramClass(gobject.GObject):
                 print i
                 i += 1
 
-            if self.menuChangedTimer:
-                gobject.source_remove(self.menuChangedTimer)
+        if self.menuChangedTimer:
+            gobject.source_remove(self.menuChangedTimer)
 
-            self.menuChangedTimer = gobject.timeout_add(timer, self.updateBoxes, True)    
+        self.menuChangedTimer = gobject.timeout_add(timer, self.updateBoxes, True)		
         
     def updateBoxes(self, menu_has_changed):        
         # FIXME: This is really bad!
