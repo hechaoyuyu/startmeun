@@ -1664,8 +1664,7 @@ class ProgramClass(gobject.GObject):
         removedCategories = []
         
         if not self.categoryList:
-            addedCategories = newCategoryList
-            
+            addedCategories = newCategoryList          
         else:
             for item in newCategoryList:
                 found = False
@@ -1688,6 +1687,7 @@ class ProgramClass(gobject.GObject):
                     removedCategories.append(key)
                 else:
                     key += 1
+        del newCategoryList		   
 
         for key in removedCategories:
             print self.activeFilter[1], self.categoryList[key]["name"]
@@ -1728,7 +1728,8 @@ class ProgramClass(gobject.GObject):
                     
                 self.categoryList.append(item)
                 sortedCategoryList.append((item["name"], item["button"]))
-
+            del addedCategories
+	    
             if has_gst:
 		self.StartEngine()
    
@@ -1741,7 +1742,7 @@ class ProgramClass(gobject.GObject):
                     self.Category_VBox.pack_start(item[1], False)
                 for item in sortedCategoryList[-3:]:
                     self.Category_VBox.pack_end(item[1], False)
-            
+            del sortedCategoryList            
             
         # Find added and removed applications add update the application list
         newApplicationList = self.buildApplicationList()
@@ -1749,8 +1750,7 @@ class ProgramClass(gobject.GObject):
         removedApplications = []
         
         if not self.applicationList:
-            addedApplications = newApplicationList
-            
+            addedApplications = newApplicationList         
         else:
             for item in newApplicationList:
                 found = False
@@ -1779,11 +1779,9 @@ class ProgramClass(gobject.GObject):
                     print key
                     removedApplications.append(key)
                 else:
-                    # don't increment the key if this item is going to be removed
-                    # because when it is removed the index of all later items is
-                    # going to be decreased
                     key += 1
-        
+        del newApplicationList
+	
         for key in removedApplications:
             self.applicationList[key]["button"].destroy()
             del self.applicationList[key] 
@@ -1814,10 +1812,12 @@ class ProgramClass(gobject.GObject):
                     self.applicationList.append(item)
                 else:
                     item["button"].destroy()
-                     
+            del addedApplications     
+	    
             sortedApplicationList.sort() 
             for item in sortedApplicationList:     
                 self.App_VBox.pack_start(item[1], False)
+            del sortedApplicationList
             if menu_has_changed:
                 for id in self.categoryList:
                     if id["filter"] == self.categoryid: 
