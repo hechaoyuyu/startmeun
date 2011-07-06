@@ -116,7 +116,9 @@ class YMenu(gnomeapplet.Applet):
 	        self.applet.connect("change-orient",self.change_orientation)
       		self.applet.connect("size-allocate", self.size_allocate_event)
       		self.applet.connect("map-event", self.map_event)
-      		
+                self.gconf_client.add_dir("/apps/ymenu", gconf.CLIENT_PRELOAD_NONE)
+                self.gconf_client.notify_add("/apps/ymenu/flag", self.panel_hide)
+		
       		self.screen = gtk.gdk.screen_get_default()               
                 geom = gtk.gdk.Screen.get_monitor_geometry(self.screen, 0)
                 self.screenwidth = geom.width
@@ -267,6 +269,14 @@ class YMenu(gnomeapplet.Applet):
 			Globals.SavedOriginState = self.x,self.y
 			self.oldx= self.x
 
+        def panel_hide(self, *args):
+                if self.aux != None:
+                        flag = backend.load_setting("flag")
+                        if flag == 0:
+                            self.aux.show_window()
+                        elif flag == 1:
+                            self.aux.hide_window()
+			    
 	def update_panel_size(self,client, connection_id, entry, args):
 		if entry.get_key() == "/apps/panel/toplevels/%s/size" % self.panel_id:
 			try:

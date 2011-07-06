@@ -47,7 +47,7 @@ class PanelTopWindow():
 		if not self.aux_window.is_composited () :
 			self.aux_window.hide()
 
-	def show_window():
+	def show_window(self):
 		self.aux_window.show_all()
 		
 
@@ -57,8 +57,7 @@ class PanelTopWindow():
 		if self.opacity == 1: return False
 		return True
 
-	def hide_window():
-		
+	def hide_window(self):
 		self.aux_window.hide()
 
 	def screen_changed(self,widget):
