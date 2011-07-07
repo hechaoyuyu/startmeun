@@ -273,9 +273,10 @@ class YMenu(gnomeapplet.Applet):
                 if self.aux != None:
                         flag = backend.load_setting("flag")
                         if flag == 0:
-                            self.aux.show_window()
+                            self.Update_Panel_Top()
+                            gobject.timeout_add(180, self.aux.show_window)
                         elif flag == 1:
-                            self.aux.hide_window()
+                            gobject.timeout_add(180, self.aux.hide_window)
 			    
 	def update_panel_size(self,client, connection_id, entry, args):
 		if entry.get_key() == "/apps/panel/toplevels/%s/size" % self.panel_id:
