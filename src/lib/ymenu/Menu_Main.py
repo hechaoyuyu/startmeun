@@ -165,7 +165,7 @@ class Main_Menu(gobject.GObject):
                     bind_key( Globals.Settings['Bind_Key'], self.ToggleMenu )
                     bind_key( "<Alt>E", self.open_computer )
                     bind_key( "<Alt>Pause", self.open_monitor )
-                    bind_key( "<Alt>R", self.open_run )
+                    #bind_key( "<Alt>R", self.open_run )
                     bind_key( "Num_Lock", self.numlock)
                 except Exception, cause:
                     print "** WARNING ** - Menu Hotkey Binding Error"
