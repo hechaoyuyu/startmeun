@@ -392,9 +392,10 @@ class YMenu(gnomeapplet.Applet):
 		origin = self.applet.window.get_origin()
 		try:
 			if origin != Globals.SavedOriginState:
-				self.hwg.Adjust_Window_Dimensions(origin[0],origin[1]-571)
+				self.hwg.Adjust_Window_Dimensions(origin[0],origin[1]-Globals.MenuHeight)
 		except:pass
 		if self.hwg:
+		    	self.hwg.Adjust_Window_Dimensions(origin[0],origin[1]-Globals.MenuHeight)
 			self.hwg.show_window()
 		try:
 			self.aux.aux_window.window.set_transient_for(self.hwg.window)
