@@ -87,7 +87,7 @@ class Main_Menu(gobject.GObject):
 		self.setup()
 		self.window.connect("composited-changed", self.composite_changed)
 		self.window.connect("expose_event", self.expose)
-		self.window.connect("destroy", gtk.main_quit)	#Fixme?
+		self.window.connect("delete_event", self.delete)
 		self.window.connect("focus-out-event", self.lose_focus)
 		self.window.connect("key-press-event", self.key_down)
 		self.gtk_screen = self.window.get_screen()
@@ -109,6 +109,9 @@ class Main_Menu(gobject.GObject):
 		if Globals.Settings['SuperL'] == 1:
 			self.bind_with_keybinder()
 
+	def delete(self,widget,event=None):
+	    	return True
+			
 	def special_command(self,event):
 		if not self.GnomeMenu:
 			import Gnome_Me
