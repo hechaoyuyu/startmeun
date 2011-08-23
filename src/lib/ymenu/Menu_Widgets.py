@@ -67,8 +67,11 @@ class MenuButton:
         self.Image = gtk.Image()
 
         self.Setimage(Globals.ImageDirectory + Globals.MenuButtonImage[i])
-        self.w = self.pic.get_width()
-        self.h = self.pic.get_height()
+        #self.w = self.pic.get_width()
+        #self.h = self.pic.get_height()
+        self.w = Globals.MenuButtonSize[i][0]
+        self.h = Globals.MenuButtonSize[i][1]
+
         if self.backimagearea is None:
             if Globals.flip == False:
                 self.backimagearea = backimage.subpixbuf(Globals.MenuButtonX[i], Globals.MenuHeight - Globals.MenuButtonY[i] - self.h, self.w, self.h)
@@ -78,7 +81,9 @@ class MenuButton:
         # Set the background which is always present
         self.BackgroundImage = gtk.Image()
         if Globals.MenuButtonImageBack[i] != '':
-            self.BackgroundImage.set_from_pixbuf(gtk.gdk.pixbuf_new_from_file(Globals.ImageDirectory + Globals.MenuButtonImageBack[i]))
+            tmppic = gtk.gdk.pixbuf_new_from_file_at_size(Globals.ImageDirectory + Globals.MenuButtonImageBack[i], self.w, self.h )
+            self.BackgroundImage.set_from_pixbuf( tmppic )
+            del tmppic
         else:
             self.BackgroundImage.set_from_pixbuf(None)
         self.Image.set_size_request(self.w, self.h)
@@ -93,6 +98,7 @@ class MenuButton:
         self.txt = Globals.MenuButtonMarkup[i]
         try:
             self.txt = self.txt.replace(Globals.MenuButtonNames[i], _(Globals.MenuButtonNames[i]))
+            self.txt = self.txt.replace('<span','<span size=\"' + Globals.MFontSize + '\"') # 增加字号 
         except:pass
         self.Label.set_markup(self.txt)
 
@@ -123,12 +129,12 @@ class MenuButton:
     def SetIcon(self, filename):
         # If the menu has an icon on top, then add that
         try:
-            if Globals.MenuButtonIconSize[self.i] != 0:
+            if Globals.MenuButtonIconSize[self.i] != 0 and os.path.isfile(filename):
                 self.ww = Globals.MenuButtonIconSize[self.i]
                 self.hh = self.ww
                 self.Pic = gtk.gdk.pixbuf_new_from_file_at_size(filename, self.ww, self.hh)
             else:
-                self.ww = self.hh = 24
+                self.ww = self.hh =Globals.MenuButtonIconSize[self.i] #24
 			
             if Globals.MenuButtonIcon[self.i]:
                 self.ico = IconFactory.GetSystemIcon(Globals.MenuButtonIcon[self.i])
@@ -209,7 +215,8 @@ class MenuButton:
                 
     def Setimage(self, imagefile):
         # The image is background when it's not displaying the overlay
-        self.pic = gtk.gdk.pixbuf_new_from_file(imagefile)
+        self.pic = gtk.gdk.pixbuf_new_from_file(imagefile).scale_simple(Globals.MenuButtonSize[self.i][0], Globals.MenuButtonSize[self.i][1], gtk.gdk.INTERP_NEAREST)
+        #self.pic = gtk.gdk.pixbuf_new_from_file(imagefile)
         self.Image.set_from_pixbuf(self.pic)
 
     def SetBackground(self):
@@ -430,7 +437,7 @@ class ImageFrame:
 
         elif index == 0:
 
-            self.temp = gtk.gdk.pixbuf_new_from_file(imagefile)
+            self.temp = gtk.gdk.pixbuf_new_from_file(imagefile).scale_simple(self.w, self.h, gtk.gdk.INTERP_BILINEAR)
             self.w = self.temp.get_width()
             self.h = self.temp.get_height()
         else:
@@ -466,6 +473,7 @@ class GtkSearchBar(gtk.EventBox, gobject.GObject):
         gtk.EventBox.__init__(self)
         gobject.GObject.__init__(self)
 
+        self.r_clk = False
         self.Frame = gtk.Fixed()
         self.set_visible_window(0)
         self.add(self.Frame)
@@ -477,11 +485,10 @@ class GtkSearchBar(gtk.EventBox, gobject.GObject):
 
         self.entry.set_size_request(W, H)
 
-        sel = gtk.gdk.pixbuf_new_from_file(BackImageFile)
+        sel = gtk.gdk.pixbuf_new_from_file_at_size(BackImageFile, Globals.SearchBgSize[0], Globals.SearchBgSize[1])
         self.back.set_from_pixbuf(sel)
 
-        if Globals.Settings['GtkColors'] == 0:
-            self.entry.modify_base(gtk.STATE_NORMAL, Globals.ThemeColorCode)
+        self.entry.modify_base(gtk.STATE_NORMAL, Globals.ThemeColorCode)
                         
         self.entry.set_text(_('Search'))
         self.entry.set_has_frame(False)
@@ -490,11 +497,13 @@ class GtkSearchBar(gtk.EventBox, gobject.GObject):
         self.entry.connect("button-press-event", self.enter)
         self.entry.connect("leave_notify_event", self.leave)
                 
-        if Globals.Settings['GtkColors'] == 0:
-            self.entry.modify_text(gtk.STATE_NORMAL, Globals.NegativeThemeColorCode)
+        self.entry.modify_text(gtk.STATE_NORMAL, Globals.NegativeThemeColorCode)
+        if Globals.MFontSize == 'small':
+            pfd = pango.FontDescription("8")
+            self.entry.modify_font(pfd)
 
         self.Frame.put(self.back, 0, 0)
-        self.Frame.put(self.entry, 6, 3)
+        self.Frame.put(self.entry, int(6 * Globals.width_ratio), int( 3 * Globals.height_ratio) )
 
     def enter(self, widget, event):
         print event.type
@@ -505,14 +514,15 @@ class GtkSearchBar(gtk.EventBox, gobject.GObject):
             if widget.get_text() == _('Search'):
                 widget.set_text("")
     
-        if event_button == 3:
+        if event_button == 3 or event_button == 2: # 中键也当右键使
+            self.r_clk = True
             self.emit('right-clicked')
                 
         if widget.get_text() == _('Search'):
             widget.set_text("")
                         
     def leave(self, widget, event):
-        if widget.get_text() == '':
+        if widget.get_text() == '' and not self.r_clk:
             self.win.set_focus(None)
             widget.set_text(_('Search'))
 				
@@ -625,13 +635,13 @@ class CategoryTab(gtk.EventBox):
         
         #Tab背景
         self.Image = gtk.Image()
-        sel = gtk.gdk.pixbuf_get_file_info(Globals.ImageDirectory + Globals.TabBackImage)
-	self.w = sel[1]
-	self.h = sel[2]
-	sel = None
+        #sel = gtk.gdk.pixbuf_get_file_info(Globals.ImageDirectory + Globals.TabBackImage)
+	self.w = Globals.tab_back_size[0] #sel[1]
+	self.h = Globals.tab_back_size[1] #sel[2]
+	#sel = None'''
         self.Image.set_from_pixbuf(None)
-        self.Image.set_size_request(self.w, self.h)
-        self.Frame.set_size_request(self.w, self.h)
+        self.Image.set_size_request(self.w, self.h )
+        self.Frame.set_size_request(self.w, self.h )
         self.Frame.put(self.Image, 0, 0)
         
         #Tab上的图标
@@ -648,7 +658,7 @@ class CategoryTab(gtk.EventBox):
 
         #Tab上的文字
         self.Label = gtk.Label()
-        self.txt = "<span foreground=\"#FFFFFF\">%s</span>" % name
+        self.txt = "<span size=\"%s\" foreground=\"#FFFFFF\">%s</span>" % ( Globals.MFontSize, name )
         self.Label.set_alignment(0, 0)
         self.Label.set_markup(self.txt)
 	self.Frame.put(self.Label, Globals.TabBackNameX, Globals.TabBackNameY)
@@ -784,7 +794,8 @@ class CategoryTab(gtk.EventBox):
 	if tab == False:
             self.Image.set_from_pixbuf(None)
         else:
-            self.pic = gtk.gdk.pixbuf_new_from_file(Globals.ImageDirectory + Globals.TabBackImage)
+            self.pic = gtk.gdk.pixbuf_new_from_file_at_size(Globals.ImageDirectory + Globals.TabBackImage, Globals.m_tabsize[0], Globals.m_tabsize[1])
+            #self.pic = gtk.gdk.pixbuf_new_from_file(Globals.ImageDirectory + Globals.TabBackImage)
             self.Image.set_from_pixbuf(self.pic)
 	    del self.pic
             
@@ -803,9 +814,9 @@ class AppButton(gtk.EventBox):
         
         #Button背景
         self.Image = gtk.Image()
-        sel = gtk.gdk.pixbuf_get_file_info(Globals.ImageDirectory + Globals.ButtonBackImage)
-	self.w = sel[1]
-	self.h = sel[2]
+        #sel = gtk.gdk.pixbuf_get_file_info(Globals.ImageDirectory + Globals.ButtonBackImage)
+	self.w = Globals.button_back_size[0] #sel[1]
+	self.h = Globals.button_back_size[1] #sel[2]
 	sel = None
         self.Image.set_from_pixbuf(sel)
         self.set_size_request(self.w, self.h)
@@ -956,11 +967,11 @@ class AppButton(gtk.EventBox):
     def addLabel(self, text, styles=None):
         self.Label = gtk.Label()
         if "<b>" in text:
-            text = "<span foreground=\"#FFFF00\">%s</span>" % text
+            text = "<span size=\"%s\" foreground=\"#FFFF00\">%s</span>" % ( Globals.MFontSize, text )
             text = "<b>%s</b>" % text
             self.Label.set_markup(text) # don't remove our pango
         else:
-            text = "<span foreground=\"#FFFFFF\">%s</span>" % text
+            text = "<span size=\"%s\" foreground=\"#FFFFFF\">%s</span>" % ( Globals.MFontSize, text )
             self.Label.set_markup(text)
 
         self.Label.set_alignment(0.0, 0.0)
@@ -1169,9 +1180,9 @@ class PlaApplicationLauncher(gtk.EventBox):
         self.add(self.Frame)
 
         self.Image = gtk.Image()
-        sel = gtk.gdk.pixbuf_get_file_info(Globals.ImageDirectory + Globals.ButtonBackImage)
-	self.w = sel[1]
-	self.h = sel[2]
+        #sel = gtk.gdk.pixbuf_get_file_info(Globals.ImageDirectory + Globals.ButtonBackImage)
+	self.w = Globals.button_back_size[0] #sel[1]
+	self.h = Globals.button_back_size[1] #sel[2]
 	sel = None
         self.Image.set_from_pixbuf(sel)
         self.set_size_request(self.w, self.h)
@@ -1211,7 +1222,7 @@ class PlaApplicationLauncher(gtk.EventBox):
     def addLabel(self, text):
         self.Label = gtk.Label()
         
-        text = "<span foreground=\"#FFFFFF\">%s</span>" % text
+        text = "<span size=\"%s\" foreground=\"#FFFFFF\">%s</span>" % (Globals.MFontSize, text)
         self.Label.set_markup(text)
 
         self.Label.set_alignment(0.0, 0.0)
@@ -1267,9 +1278,9 @@ class RecApplicationLauncher(gtk.EventBox):
         self.add(self.Frame)
 
         self.Image = gtk.Image()
-        sel = gtk.gdk.pixbuf_get_file_info(Globals.ImageDirectory + Globals.ButtonBackImage)
-	self.w = sel[1]
-	self.h = sel[2]
+        #sel = gtk.gdk.pixbuf_get_file_info(Globals.ImageDirectory + Globals.ButtonBackImage)
+	self.w = Globals.button_back_size[0] #sel[1]
+	self.h = Globals.button_back_size[1] #sel[2]
 	sel = None
         self.Image.set_from_pixbuf(sel)
         self.set_size_request(self.w, self.h)
@@ -1304,8 +1315,8 @@ class RecApplicationLauncher(gtk.EventBox):
     def addLabel(self, text):
         self.Label = gtk.Label()        
         if self.flag:
-            text = "<span foreground=\"#FFFFFF\">%s</span>" % text
-        else:text = "<span foreground=\"#A52A2A\">%s</span>" % text
+            text = "<span size=\"%s\" foreground=\"#FFFFFF\">%s</span>" % (Globals.MFontSize, text )
+        else:text = "<span size=\"%s\" foreground=\"#A52A2A\">%s</span>" % (Globals.MFontSize, text )
         self.Label.set_markup(text)
 
         self.Label.set_alignment(0.0, 0.0)
@@ -1368,12 +1379,12 @@ class ProgramClass(gobject.GObject):
         
         self.Category_Scr.add_with_viewport(self.Category_VBox)
         self.Category_Scr.get_children()[0].set_shadow_type(gtk.SHADOW_NONE)
-        if Globals.Settings['GtkColors'] == 0:
-            self.Category_Scr.get_children()[0].modify_bg(gtk.STATE_NORMAL, Globals.ThemeColorCode)
+        self.Category_Scr.get_children()[0].modify_bg(gtk.STATE_NORMAL, Globals.ThemeColorCode)
         self.MenuWin.put(self.Category_Scr, Globals.PG_tabframe[0], Globals.PG_tabframe[1])
 
         # middle vline
         self.seperator = gtk.Image()
+        self.seperator.set_size_request(2, Globals.VLineH)
         self.seperatorImage = gtk.gdk.pixbuf_new_from_file(Globals.ImageDirectory + Globals.VLineImage)  
         self.seperator.set_from_pixbuf(self.seperatorImage)
         self.MenuWin.put(self.seperator, Globals.VLineX, Globals.VLineY)
@@ -1388,8 +1399,7 @@ class ProgramClass(gobject.GObject):
         
         self.App_Scr.add_with_viewport(self.App_VBox)
         self.App_Scr.get_children()[0].set_shadow_type(gtk.SHADOW_NONE)
-        if Globals.Settings['GtkColors'] == 0:
-            self.App_Scr.get_children()[0].modify_bg(gtk.STATE_NORMAL, Globals.ThemeColorCode)
+        self.App_Scr.get_children()[0].modify_bg(gtk.STATE_NORMAL, Globals.ThemeColorCode)
         self.MenuWin.put(self.App_Scr, Globals.PG_buttonframe[0], Globals.PG_buttonframe[1])
                 
         self.filterTimer = None
@@ -2047,13 +2057,18 @@ class ProgramClass(gobject.GObject):
     def Button_leave(self, widget, event, flag):
         widget.setSelectedTab(flag)
       
-    def CallSpecialMenu(self, command, data=None):
+    def CallSpecialMenu(self, command, data=None, searchbar_widget=None):
     	if self.cate_button != None:
             self.cate_button.setSelectedTab(False)
         self.all_app.setSelectedTab(True)
     	
         if command == 6:
-            fulltext = "gnome-search-tool --named=%s &" % Globals.searchitem
+            if Globals.searchitem == '' and searchbar_widget and searchbar_widget.r_clk:
+                searchbar_widget.r_clk = False
+                Globals.searchitem = searchbar_widget.entry.get_text()
+            fulltext = "gnome-search-tool --named=\"%s\" &" % Globals.searchitem
+            fulltext.replace('\n','')
+            fulltext.replace('\r','')
             os.system(fulltext)
         else:
             for i in self.App_VBox.get_children():

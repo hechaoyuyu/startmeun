@@ -183,8 +183,8 @@ class YMenuSettings:
 		self.hbox_check1.pack_start(self.check1,1,1)
 		self.hbox_check1.pack_end(self.entry_check1,1,1)
 		self.check1.set_active(int(Globals.Settings['SuperL']))
-		self.check3 = gtk.CheckButton(_('Use Gtk Theme Colors in Program List'))
-		self.check3.set_active(int(Globals.Settings['GtkColors']))
+		#self.check3 = gtk.CheckButton(_('Use Gtk Theme Colors in Program List'))
+		#self.check3.set_active(int(Globals.Settings['GtkColors']))
 		self.check4 = gtk.CheckButton(_('Tab Selection on Mouse Hover'))
 		self.check4.set_active(int(Globals.Settings['TabHover']))
 		self.hbox12 = gtk.HBox()
@@ -228,7 +228,7 @@ class YMenuSettings:
 
 		#self.vbox_prefs.pack_start(self.hbox_check1, False, False,3)
 		
-		self.vbox_prefs.pack_start(self.check3, False, False,3)
+		#self.vbox_prefs.pack_start(self.check3, False, False,3)
 		self.vbox_prefs.pack_start(self.check4, False, False,3)
 		self.vbox_prefs.pack_start(self.check7, False, False,3)
 		self.vbox_prefs.pack_start(self.hbox12, False, False,3)
@@ -398,7 +398,7 @@ class YMenuSettings:
 		backend.save_setting("SuperL",int(self.check1.get_active()))
 		backend.save_setting("Icon_Name",self.combo_icon.get_active_text())
 		backend.save_setting("Button_Name",self.combo_button.get_active_text())
-		backend.save_setting("GtkColors",int(self.check3.get_active()))
+		#backend.save_setting("GtkColors",int(self.check3.get_active()))
 
 def main():
 	gtk.main()

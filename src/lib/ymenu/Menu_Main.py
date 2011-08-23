@@ -74,13 +74,13 @@ class Main_Menu(gobject.GObject):
 		self.window.set_app_paintable(1)
 		self.window.set_skip_taskbar_hint(1)
 		self.window.set_skip_pager_hint(1)
-		self.window.set_decorated(0) 
+		self.window.set_decorated(0)
 		#self.window.set_keep_above(0) #Make this always above other windows
 		self.window.stick() #Make this appear on all desktops
-		self.window.set_default_size(Globals.MenuWidth,Globals.MenuHeight)
+		#self.window.set_default_size(Globals.MenuWidth,Globals.MenuHeight)
                 #在ubuntu11.04中需要下面两句
-		#self.window.set_size_request(Globals.MenuWidth,Globals.MenuHeight)
-		#self.window.set_resizable(False)
+		self.window.set_resizable(False)
+		self.window.set_size_request(Globals.MenuWidth, Globals.MenuHeight)
 		self.window.set_events(gtk.gdk.ALL_EVENTS_MASK)
 		#if not self.window.window:
 		self.colorpb = None
@@ -203,10 +203,7 @@ class Main_Menu(gobject.GObject):
 			self.ctx.set_source_rgba(1, 1, 1,0)
 		self.ctx.set_operator (cairo.OPERATOR_SOURCE)
 		self.ctx.paint()
-		if Globals.Settings['GtkColors'] == 1:
-			cairo_drawing.draw_image_gtk(self.ctx,0,0,Globals.ImageDirectory + Globals.StartMenuTemplate,self.w,self.h,Globals.GtkColorCode,self.colorpb)
-		else:	
-			cairo_drawing.draw_image(self.ctx,0,0,Globals.ImageDirectory + Globals.StartMenuTemplate)
+		cairo_drawing.draw_image(self.ctx,0,0,Globals.ImageDirectory + Globals.StartMenuTemplate)
 
 
 
@@ -220,38 +217,22 @@ class Main_Menu(gobject.GObject):
 		self.h = h
 		self.pixmap = gtk.gdk.Pixmap (None, w, h, 1)
 		ctx = self.pixmap.cairo_create()
-		self.bgpb = gtk.gdk.pixbuf_new_from_file(Globals.ImageDirectory + Globals.StartMenuTemplate)
-		if Globals.Settings['GtkColors'] == 1:
-			if not self.colorpb:
-				bgcolor = Globals.GtkColorCode
-				r = (bgcolor.red*255)/65535.0
-				g = (bgcolor.green*255)/65535.0
-				b = (bgcolor.blue*255)/65535.0
-				self.colorpb= self.bgpb.copy()
-				for row in self.colorpb.get_pixels_array():
-					for pix in row:
-						pix[0] = r
-						pix[1] = g
-				  		pix[2] = b
-				self.bgpb.composite(self.colorpb, 0, 0, self.w, self.h, 0, 0, 1, 1, gtk.gdk.INTERP_BILINEAR, 70)
-			self.bgpb = self.colorpb
-
 		ctx.save()
 		ctx.set_source_rgba(1, 1, 1,0)
 		ctx.set_operator (cairo.OPERATOR_SOURCE)
 		ctx.paint()
 		ctx.restore()
-                
-		if Globals.MenuHasIcon==1:
+           	self.bgpb = gtk.gdk.pixbuf_new_from_file_at_size(Globals.ImageDirectory + Globals.StartMenuTemplate, Globals.MenuWidth, Globals.MenuHeight)
+		#self.bgpb = gtk.gdk.pixbuf_new_from_file(Globals.ImageDirectory + Globals.StartMenuTemplate)
+                if Globals.MenuHasIcon==1:
 			cairo_drawing.draw_image(ctx,Globals.UserIconFrameOffsetX,Globals.UserIconFrameOffsetY,Globals.UserImageFrame)
 			w,h = utils.get_image_size(Globals.UserImageFrame)
-			cairo_drawing.draw_scaled_image(ctx,Globals.IconInX +Globals.UserIconFrameOffsetX,Globals.UserIconFrameOffsetY+Globals.IconInY,Globals.UserImage,Globals.IconInW ,Globals.IconInH)
-		cairo_drawing.draw_enhanced_image(ctx,0,0,Globals.ImageDirectory + Globals.StartMenuTemplate)
-                
-		if self.window.is_composited():
+			cairo_drawing.draw_scaled_image(ctx,Globals.IconInX +Globals.UserIconFrameOffsetX, Globals.UserIconFrameOffsetY+Globals.IconInY,Globals.UserImage,Globals.IconInW ,Globals.IconInH)
+		cairo_drawing.draw_enhanced_image(ctx, 0, 0,Globals.ImageDirectory + Globals.StartMenuTemplate)
+                '''if self.window.is_composited():
 			self.window.input_shape_combine_mask(self.pixmap,0,0)
 		else:
-			self.window.shape_combine_mask(self.pixmap, 0, 0)
+			self.window.shape_combine_mask(self.pixmap, 0, 0)'''
         
 	def setup(self):
 		self.menuframe = gtk.Fixed()
@@ -323,8 +304,7 @@ class Main_Menu(gobject.GObject):
 		self.PlaySound(2)
 
 
-	def menu_right_clicked(self,event):
-
+	def menu_right_clicked(self, event):
 		self.leave_focus = False
 		self.callback = gobject.timeout_add(500,self.timeout_callback)
 
@@ -391,12 +371,13 @@ class Main_Menu(gobject.GObject):
 		if Globals.MenuHasSearch:
 			if Globals.searchitem != '':
 				self.SearchBar.entry.set_text(_('Search'))
+                                self.SearchBar.r_clk = False
+                                Globals.searchitem = ''
                                 self.window.set_focus(None)
                                 self.PGL.Restart('previous')
 		self.PlaySound(1)
 		
 	def key_down (self,widget,event):
-		
 		key = event.hardware_keycode
                 print "key = %s" %key
 		if key == 9:	#Escape Key, hides window
@@ -406,8 +387,8 @@ class Main_Menu(gobject.GObject):
 			if Globals.MenuHasSearch:
                                 if self.SearchBar.entry.is_focus() is True:
 
-                                        if key==36: #and self.PGL.XDG.searchresults!=0: # Enter on searchbar launches first item in search list
-                                                self.PGL.CallSpecialMenu(6)
+                                        if key==36 or key == 104: #and self.PGL.XDG.searchresults!=0: # Enter on searchbar launches first item in search list
+                                                self.PGL.CallSpecialMenu(6, None, self.SearchBar)
                                                 self.hide_method()
                                         self.PGL.BanFocusSteal = False
                                         self.PGL.SetInputFocus()
@@ -439,11 +420,16 @@ class Main_Menu(gobject.GObject):
 
 				self.PlaySound(3)
 
-			if key == 36:
+			if key == 36 or key == 104:
 
 				self.PlaySound(2)
 
-		else:	#Any other key passes through to search bar
+                elif key == 22 or key == 119:
+                    if self.SearchBar.r_clk:
+                        if self.SearchBar.entry.get_text() == '':
+                            self.SearchBar.r_clk = False
+
+                else:	#Any other key passes through to search bar
 			if Globals.MenuHasSearch:
                                 if self.SearchBar.entry.is_focus() == False:
                                         self.SearchBar.entry.grab_focus()
@@ -567,7 +553,6 @@ class Main_Menu(gobject.GObject):
 #=================================================================
 	def SearchBarActivate(self,widget=None,event=None):
 		Globals.searchitem = self.SearchBar.entry.get_text()
-              
 		if self.prevsearchitem != Globals.searchitem:
 			self.PGL.BanFocusSteal = True
 			self.prevsearchitem = Globals.searchitem

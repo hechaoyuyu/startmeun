@@ -1,11 +1,11 @@
-__author__="hechao"
-__date__ ="$2011-3-31 17:46:46$"
+__author__="cqx"
+__date__ ="$2011-8-23 13:07:40$"
 
 from setuptools import setup,find_packages
 
 setup (
   name = 'ymenu',
-  version = '2.9',
+  version = '0.1',
   packages = find_packages(),
 
   # Declare your packages' dependencies here, for eg:
@@ -13,10 +13,15 @@ setup (
 
   # Fill in these to make your Egg ready for upload to
   # PyPI
-  author = 'hechao',
-  author_email = 'hechao@115.com',
+  author = 'cqx',
+  author_email = '',
 
-  url = 'www.ylmf.org',
-  license = 'GPL v3',
-  long_description= 'Ylmf OS Menu',
+  summary = 'Just another Python package for the cheese shop',
+  url = '',
+  license = '',
+  long_description= 'Long description of the package',
+
+  # could also include long_description, download_url, classifiers, etc.
+
+  
 )

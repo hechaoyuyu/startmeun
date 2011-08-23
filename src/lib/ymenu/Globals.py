@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-
+from __future__ import division
 import gtk
 import gc
 import os
@@ -72,6 +72,14 @@ def ReloadSettings():
 
         # Loads the main configuration and settings file to their respective values
 	global orientation, panel_size, flip, MenuActions, MenuCommands, ImageDirectory, Actions, IconDirectory, MenuButtonDirectory, ThemeColor, ShowTop, FirstUse, StartMenuTemplate, ThemeColorCode,ThemeColorHtml, NegativeThemeColorCode, MenuWidth, MenuHeight, IconW, IconH, IconInX, IconInY, IconInW, IconInH, SearchX, SearchY, SearchW, SearchH, SearchIX, SearchIY, SearchInitialText,SearchTextColor, SearchBackground, SearchWidget, SearchWidgetPath, UserIconFrameOffsetX, UserIconFrameOffsetY, UserIconFrameOffsetH, UserIconFrameOffsetW, PG_tabframe, PG_tabframedimensions, PG_buttonframe, PG_buttonframedimensions, MenuHasSearch, MenuHasIcon, MenuHasFade, MenuHasTab, CairoSearchTextColor, CairoSearchBackColor, CairoSearchBorderColor, CairoSearchRoundAngle, PG_iconsize,RI_numberofitems, MenuButtonCount, MenuButtonNames, MenuButtonMarkup, MenuButtonNameOffsetX, MenuButtonNameOffsetY, MenuButtonCommands, MenuButtonX,MenuButtonY, MenuButtonImage, MenuButtonImageBack, ButtonBackImage, ButtonBackIconX, ButtonBackIconY, ButtonBackNameX, ButtonBackNameY, TabBackImage, TabBackIconX, TabBackIconY, TabBackNameX, TabBackNameY, VLineImage, VLineX, VLineY, MenuButtonIcon, MenuButtonIconSel, MenuButtonIconX,MenuButtonIconY,MenuButtonIconSize, MenuButtonSub,MenuButtonClose, MenuCairoIconButton, ButtonHasTop, ButtonBackground, ButtonTop, StartButton, StartButtonTop, ButtonHasBottom, MenuButtonNameAlignment, GtkColorCode
+        global lowresolution, MenuButtonSize, VLineH, SearchBgSize, width_ratio, height_ratio, m_tabsize, tab_back_size, MFontSize, button_back_size
+        MenuButtonSize = []
+        MenuButtonSize.append((137, 30))
+        MenuButtonSize.append((137, 30))
+        MenuButtonSize.append((83, 28))
+        MenuButtonSize.append((83, 28))
+        
+        lowresolution = False
 
 	menubar = gtk.MenuBar()
 	try:
@@ -368,7 +376,192 @@ def ReloadSettings():
 		StartButtonTop = (MenuButtonDirectory+"start-here-top.png",
                      MenuButtonDirectory+"start-here-top-glow.png",
                      MenuButtonDirectory+"start-here-top-depressed.png")
-                     
+
+        # ----------------------------------------------------------------
+        MenuButtonIconSize[0] = 24
+        MenuButtonIconSize[1] = 24
+        #VLine
+
+        try:
+            vlinepic = gtk.gdk.pixbuf_new_from_file(ImageDirectory + VLineImage)
+            VLineH = vlinepic.get_height()
+            del vlinepic
+        except: VLineH = 457
+
+        # Category tab's background m_tab.png
+        m_tabsize = []
+        try:
+            tmppic = gtk.gdk.pixbuf_new_from_file( ImageDirectory + TabBackImage )
+            m_tabsize.append(tmppic.get_width())
+            m_tabsize.append(tmppic.get_height())
+            del tmppic
+        except:
+            del m_tabsize
+            m_tabsize = []
+            m_tabsize.append(137)
+            m_tabsize.append(30)
+            pass
+        tab_back_size = []
+        try:
+            sel = gtk.gdk.pixbuf_get_file_info(ImageDirectory + TabBackImage)
+            tab_back_size.append(sel[1])
+            tab_back_size.append(sel[2])
+            sel = None
+        except:
+            del tab_back_size
+            tab_back_size = []
+            tab_back_size.append(137)
+            tab_back_size.append(30)
+
+        # App list button background size
+        button_back_size = []
+        try:
+            sel = gtk.gdk.pixbuf_get_file_info(ImageDirectory + ButtonBackImage)
+            button_back_size.append(sel[1])
+            button_back_size.append(sel[2])
+            sel = None
+        except:
+            del button_back_size
+            button_back_size = []
+            button_back_size.append(191)
+            button_back_size.append(30)
+
+        # SearchBar background
+        SearchBgSize = []
+        try:
+            SearchBg = gtk.gdk.pixbuf_new_from_file(ImageDirectory + SearchBackground)
+            SearchBgSize.append(SearchBg.get_width())
+            SearchBgSize.append(SearchBg.get_height())
+            del SearchBg
+        except:
+            del SearchBgSize
+            SearchBgSize = [] # 防止上个Try有添加过数据
+            SearchBgSize.append(191)
+            SearchBgSize.append(25)
+
+
+        # if encounter the low resolution monitor, scaled low the menu size --------------------
+        width_ratio = 1
+        height_ratio = 1
+        MFontSize = 'medium'
+        
+        myscreensize = gtk.gdk.Screen.get_monitor_geometry(gtk.gdk.screen_get_default(), 0)
+
+        if myscreensize.height < 768:
+            orig_menu_width = MenuWidth
+            orig_menu_height = MenuHeight
+            MenuHeight = int( myscreensize.height / 2 ) # 高度为屏幕 1 / 2
+
+            if MenuHeight < 350:
+                    MenuHeight = 350
+            
+            #-------------------
+            MFontSize = 'small'
+            MenuWidth  = int( MenuHeight * orig_menu_width / orig_menu_height) # 保持选单宽高比例
+            width_ratio  = MenuWidth / orig_menu_width
+            height_ratio = MenuHeight / orig_menu_height # 参照菜单，控件缩小比率
+
+            # Icon of Main Menu's size and position
+            IconW = int( IconW * width_ratio )
+            IconH = int( IconH * height_ratio )
+            IconInW = int( IconInW * width_ratio )
+            IconInH = int( IconInH * height_ratio )
+
+            IconInX = int( IconInX * width_ratio )
+            IconInY = int( IconInY * height_ratio )
+            UserIconFrameOffsetX = int( UserIconFrameOffsetX * width_ratio )
+            UserIconFrameOffsetY = int( UserIconFrameOffsetY * height_ratio )
+
+            # category_scr size and  position
+            PG_tabframe = int(PG_tabframe[0] * width_ratio), int(PG_tabframe[1] * height_ratio)
+            PG_tabframedimensions = int(PG_tabframedimensions[0] * width_ratio), int(PG_tabframedimensions[1] * height_ratio)
+            PG_iconsize = int( PG_iconsize * width_ratio )
+
+            # Tab Back Icon, Label position
+            TabBackNameX = int( TabBackNameX * width_ratio )
+            TabBackNameY = int( TabBackNameY * height_ratio )
+            TabBackIconX = int( TabBackIconX * width_ratio )
+            TabBackIconY = int( TabBackIconY * height_ratio )
+
+            tab_back_size.append(int( tab_back_size[0] * width_ratio ))
+            tab_back_size.append(int( tab_back_size[1] * height_ratio ))
+            del tab_back_size[0]
+            del tab_back_size[0]
+
+            # middle vline position = Category_Src's X + it's Width + 2 , do not change y
+            VLineX = int(VLineX * width_ratio)
+            VLineY = int(VLineY * height_ratio)
+            VLineH = int(VLineH * height_ratio)
+
+            # app_scr size and position
+            PG_buttonframedimensions = int(PG_buttonframedimensions[0] * width_ratio), int(PG_buttonframedimensions[1] * height_ratio)
+            PG_buttonframe = int(PG_buttonframe[0] * width_ratio), int(PG_buttonframe[1] * height_ratio)
+            # the position of button name(label)
+            ButtonBackNameX = int( ButtonBackNameX * width_ratio )
+            ButtonBackNameY = int( ButtonBackNameY * height_ratio )
+            # button size
+            button_back_size.append(int(button_back_size[0] * width_ratio))
+            button_back_size.append(int(button_back_size[1] * height_ratio))
+            del button_back_size[0]
+            del button_back_size[0]
+            # button pozition
+            ButtonBackIconX = int(ButtonBackIconX * width_ratio )
+            ButtonBackIconY = int(ButtonBackIconX * height_ratio)
+
+            # four button's size and position
+            iconsize = int( MenuWidth * 24 / orig_menu_width )
+            MenuButtonIconSize[0] = iconsize
+            MenuButtonIconSize[1] = iconsize
+            MenuButtonIconX[0] = int( MenuButtonIconX[0] * width_ratio )
+            MenuButtonIconX[1] = int( MenuButtonIconX[1] * height_ratio )
+            
+            MenuButtonNameOffsetX[0] = int( MenuButtonNameOffsetX[0] * width_ratio ) # 四大按钮标签相对坐标偏移
+            MenuButtonNameOffsetX[1] = int( MenuButtonNameOffsetX[1] * width_ratio )
+            MenuButtonNameOffsetX[2] = int( MenuButtonNameOffsetX[2] * width_ratio )
+            MenuButtonNameOffsetX[3] = int( MenuButtonNameOffsetX[3] * width_ratio )
+
+            MenuButtonNameOffsetY[0] = int( MenuButtonNameOffsetY[0] * height_ratio )
+            MenuButtonNameOffsetY[1] = int( MenuButtonNameOffsetY[1] * height_ratio )
+            MenuButtonNameOffsetY[2] = int( MenuButtonNameOffsetY[2] * height_ratio )
+            MenuButtonNameOffsetY[3] = int( MenuButtonNameOffsetY[3] * height_ratio )
+
+            # control panel's position, x= x , y = Category_src's y + its height + 4
+            NewMenuButtonSize = []
+            NewMenuButtonSize.append((int( MenuButtonSize[0][0] * width_ratio ), int( MenuButtonSize[0][1] * height_ratio )))
+            NewMenuButtonSize.append((int( MenuButtonSize[1][0] * width_ratio ), int( MenuButtonSize[1][1] * height_ratio )))
+            NewMenuButtonSize.append((int( MenuButtonSize[2][0] * width_ratio ), int( MenuButtonSize[2][1] * height_ratio )))
+            NewMenuButtonSize.append((int( MenuButtonSize[3][0] * width_ratio ), int( MenuButtonSize[3][1] * height_ratio )))
+            del MenuButtonSize
+            MenuButtonSize = NewMenuButtonSize
+
+            MenuButtonX[0] = PG_tabframe[0]
+            MenuButtonY[0] = int( MenuButtonY[0] * height_ratio )
+
+            MenuButtonX[1] = MenuButtonX[0]
+            MenuButtonY[1] = int( MenuButtonY[1] * height_ratio )
+
+            MenuButtonX[2] = int( MenuButtonX[2] * width_ratio )
+            MenuButtonY[2] = int( MenuButtonY[2] * height_ratio )
+
+            MenuButtonX[3] = int( MenuButtonX[3] * width_ratio )
+            MenuButtonY[3] = int( MenuButtonY[3] * height_ratio )
+
+            # search bar position
+
+            SearchW = int( SearchW * width_ratio )
+            SearchH = int( SearchH * height_ratio )
+            SearchBgSize.append(int(SearchBgSize[0] * width_ratio))
+            SearchBgSize.append(int(SearchBgSize[1] * height_ratio))
+            del SearchBgSize[0]
+            del SearchBgSize[0]
+            SearchX = PG_buttonframe[0] # 与App_Scr X坐标相同
+            SearchY = int( SearchY * height_ratio )
+
+            lowresolution = True
+
+
+        # ---------------------------------------------------------------------------------------
+        
 searchitem = ''
 
 try:
