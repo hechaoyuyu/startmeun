@@ -179,7 +179,7 @@ class Main_Menu(gobject.GObject):
                 os.system("xdg-open computer:///")
 
         def open_monitor(self):
-                os.system("gnome-system-monitor  -s &")
+                os.system("gnome-system-monitor -s &")
 
         def open_run(self):
                 run = "%sGnome_run_dialog.py" % Globals.ProgramDirectory
@@ -360,6 +360,8 @@ class Main_Menu(gobject.GObject):
 
 	def lose_focus(self,widget,event):
 		print 'focus lost'
+		self.SearchBar.entry.set_text(_('Search'))
+                self.SearchBar.r_clk = False
 		if self.leave_focus is True:
 			self.hide_method()
 
@@ -370,8 +372,6 @@ class Main_Menu(gobject.GObject):
 		
 		if Globals.MenuHasSearch:
 			if Globals.searchitem != '':
-				self.SearchBar.entry.set_text(_('Search'))
-                                self.SearchBar.r_clk = False
                                 Globals.searchitem = ''
                                 self.window.set_focus(None)
                                 self.PGL.Restart('previous')
@@ -497,8 +497,8 @@ class Main_Menu(gobject.GObject):
         def search_google(self, widget):
         	import urllib
                 text = self.SearchBar.get_text()
-                url = "http://www.google.com.hk/search?q=%s" %urllib.unquote(str(text))
-                os.system("xdg-open %s &" %url)  
+                url = "http://www.google.com.hk/search?q=\"%s\"" %urllib.unquote(str(text))
+                os.system("xdg-open %s &" % url)
                 self.hide_method()   
         
         def search_wikipedia(self, widget):

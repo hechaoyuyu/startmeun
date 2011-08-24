@@ -498,7 +498,7 @@ class GtkSearchBar(gtk.EventBox, gobject.GObject):
         self.entry.connect("leave_notify_event", self.leave)
                 
         self.entry.modify_text(gtk.STATE_NORMAL, Globals.NegativeThemeColorCode)
-        if Globals.MFontSize == 'small':
+        if Globals.MFontSize == 'small': # or large the change the font size
             pfd = pango.FontDescription("8")
             self.entry.modify_font(pfd)
 
@@ -525,7 +525,7 @@ class GtkSearchBar(gtk.EventBox, gobject.GObject):
         if widget.get_text() == '' and not self.r_clk:
             self.win.set_focus(None)
             widget.set_text(_('Search'))
-				
+
 class IconManager(gobject.GObject):
 
     __gsignals__ = {
@@ -846,7 +846,7 @@ class AppButton(gtk.EventBox):
     
     def setSelectedTab(self, flag):
         if flag == True:
-            self.pic = gtk.gdk.pixbuf_new_from_file(Globals.ImageDirectory + Globals.ButtonBackImage)
+            self.pic = gtk.gdk.pixbuf_new_from_file_at_size(Globals.ImageDirectory + Globals.ButtonBackImage, Globals.button_back_size[0], Globals.button_back_size[1])
             self.Image.set_from_pixbuf(self.pic)  
 	    del self.pic
         else:
@@ -2056,7 +2056,6 @@ class ProgramClass(gobject.GObject):
         
     def Button_leave(self, widget, event, flag):
         widget.setSelectedTab(flag)
-      
     def CallSpecialMenu(self, command, data=None, searchbar_widget=None):
     	if self.cate_button != None:
             self.cate_button.setSelectedTab(False)
