@@ -431,7 +431,6 @@ def ReloadSettings():
         orig_menu_width  = MenuWidth
         orig_menu_height = MenuHeight
 
-
         myscreensize = gtk.gdk.Screen.get_monitor_geometry(gtk.gdk.screen_get_default(), 0)
         
         if myscreensize.height < 768:
@@ -443,23 +442,24 @@ def ReloadSettings():
                 if MenuHeight < 350:
                     MenuHeight = 350
                     
-        elif myscreensize.height > 900:
-            MenuHeight = MenuHeight + 150
-
+        elif myscreensize.height > 800:
+            MenuHeight = MenuHeight + 35
+      
         else:
-            pass
-
+            return
 
         # ------------------scale processing  -----------------------------------------
-        MenuWidth    = int(MenuHeight * orig_menu_width / orig_menu_height) # 保持选单宽高比例
-        width_ratio  = MenuWidth / orig_menu_width
+        if lowresolution:
+            MenuWidth    = int(MenuHeight * orig_menu_width / orig_menu_height) # 保持选单宽高比例
+            width_ratio  = MenuWidth / orig_menu_width
         height_ratio = MenuHeight / orig_menu_height # 参照菜单，控件缩小比率
 
         # Icon of Main Menu's size and position
-        IconW = int(IconW * width_ratio)
-        IconH = int(IconH * height_ratio)
-        IconInW = int(IconInW * width_ratio)
-        IconInH = int(IconInH * height_ratio)
+        if lowresolution:
+            IconW = int(IconW * width_ratio)
+            IconH = int(IconH * height_ratio)
+            IconInW = int(IconInW * width_ratio)
+            IconInH = int(IconInH * height_ratio)
         IconInX = int(IconInX * width_ratio)
         IconInY = int(IconInY * height_ratio)
         UserIconFrameOffsetX = int(UserIconFrameOffsetX * width_ratio)
@@ -468,18 +468,20 @@ def ReloadSettings():
         # category_scr size and  position
         PG_tabframe = int(PG_tabframe[0] * width_ratio), int(PG_tabframe[1] * height_ratio)
         PG_tabframedimensions = int(PG_tabframedimensions[0] * width_ratio), int(PG_tabframedimensions[1] * height_ratio)
-        PG_iconsize = int( PG_iconsize * width_ratio )
+        if lowresolution:
+            PG_iconsize = int( PG_iconsize * width_ratio )
 
-        # Tab Back Icon, Label position
+        # Category Tab Back Icon, Label position
         TabBackNameX = int( TabBackNameX * width_ratio )
         TabBackNameY = int( TabBackNameY * height_ratio )
         TabBackIconX = int( TabBackIconX * width_ratio )
         TabBackIconY = int( TabBackIconY * height_ratio )
-
-        tab_back_size.append(int( tab_back_size[0] * width_ratio ))
-        tab_back_size.append(int( tab_back_size[1] * height_ratio ))
-        del tab_back_size[0]
-        del tab_back_size[0]
+        #  Category Tab Background size
+        if lowresolution:
+            tab_back_size.append(int( tab_back_size[0] * width_ratio ))
+            tab_back_size.append(int( tab_back_size[1] * height_ratio ))
+            del tab_back_size[0]
+            del tab_back_size[0]
 
         # middle vline's position
         VLineX = int(VLineX * width_ratio)
@@ -493,18 +495,20 @@ def ReloadSettings():
         ButtonBackNameX = int( ButtonBackNameX * width_ratio )
         ButtonBackNameY = int( ButtonBackNameY * height_ratio )
         # button size
-        button_back_size.append(int(button_back_size[0] * width_ratio))
-        button_back_size.append(int(button_back_size[1] * height_ratio))
-        del button_back_size[0]
-        del button_back_size[0]
+        if lowresolution:
+            button_back_size.append(int(button_back_size[0] * width_ratio))
+            button_back_size.append(int(button_back_size[1] * height_ratio))
+            del button_back_size[0]
+            del button_back_size[0]
         # button pozition
         ButtonBackIconX = int(ButtonBackIconX * width_ratio )
         ButtonBackIconY = int(ButtonBackIconX * height_ratio)
 
         # four button's size and position
-        iconsize = int( MenuWidth * 24 / orig_menu_width )
-        MenuButtonIconSize[0] = iconsize
-        MenuButtonIconSize[1] = iconsize
+        if lowresolution:
+            iconsize = int( MenuWidth * 24 / orig_menu_width )
+            MenuButtonIconSize[0] = iconsize
+            MenuButtonIconSize[1] = iconsize
         MenuButtonIconX[0] = int( MenuButtonIconX[0] * width_ratio )
         MenuButtonIconX[1] = int( MenuButtonIconX[1] * height_ratio )
 
@@ -519,18 +523,19 @@ def ReloadSettings():
         MenuButtonNameOffsetY[3] = int( MenuButtonNameOffsetY[3] * height_ratio )
 
                     # control panel's position, x= x , y = Category_src's y + its height + 4
-        NewMenuButtonSize = []
-        NewMenuButtonSize.append((int( MenuButtonSize[0][0] * width_ratio ), int( MenuButtonSize[0][1] * height_ratio )))
-        NewMenuButtonSize.append((int( MenuButtonSize[1][0] * width_ratio ), int( MenuButtonSize[1][1] * height_ratio )))
-        NewMenuButtonSize.append((int( MenuButtonSize[2][0] * width_ratio ), int( MenuButtonSize[2][1] * height_ratio )))
-        NewMenuButtonSize.append((int( MenuButtonSize[3][0] * width_ratio ), int( MenuButtonSize[3][1] * height_ratio )))
-        del MenuButtonSize
-        MenuButtonSize = NewMenuButtonSize
+        if lowresolution:
+            NewMenuButtonSize = []
+            NewMenuButtonSize.append((int( MenuButtonSize[0][0] * width_ratio ), int( MenuButtonSize[0][1] * height_ratio )))
+            NewMenuButtonSize.append((int( MenuButtonSize[1][0] * width_ratio ), int( MenuButtonSize[1][1] * height_ratio )))
+            NewMenuButtonSize.append((int( MenuButtonSize[2][0] * width_ratio ), int( MenuButtonSize[2][1] * height_ratio )))
+            NewMenuButtonSize.append((int( MenuButtonSize[3][0] * width_ratio ), int( MenuButtonSize[3][1] * height_ratio )))
+            del MenuButtonSize
+            MenuButtonSize = NewMenuButtonSize
 
-        MenuButtonX[0] = PG_tabframe[0]
+        MenuButtonX[0] = int( MenuButtonX[0] * width_ratio )
         MenuButtonY[0] = int( MenuButtonY[0] * height_ratio )
 
-        MenuButtonX[1] = MenuButtonX[0]
+        MenuButtonX[1] = int( MenuButtonX[1] * width_ratio )
         MenuButtonY[1] = int( MenuButtonY[1] * height_ratio )
 
         MenuButtonX[2] = int( MenuButtonX[2] * width_ratio )
@@ -540,12 +545,13 @@ def ReloadSettings():
         MenuButtonY[3] = int( MenuButtonY[3] * height_ratio )
 
                     # search bar position
-        SearchW = int( SearchW * width_ratio )
-        SearchH = int( SearchH * height_ratio )
-        SearchBgSize.append(int(SearchBgSize[0] * width_ratio))
-        SearchBgSize.append(int(SearchBgSize[1] * height_ratio))
-        del SearchBgSize[0]
-        del SearchBgSize[0]
+        if lowresolution:
+            SearchW = int( SearchW * width_ratio )
+            SearchH = int( SearchH * height_ratio )
+            SearchBgSize.append(int(SearchBgSize[0] * width_ratio))
+            SearchBgSize.append(int(SearchBgSize[1] * height_ratio))
+            del SearchBgSize[0]
+            del SearchBgSize[0]
         SearchX = PG_buttonframe[0] # 与App_Scr X坐标相同
         SearchY = int( SearchY * height_ratio )
 

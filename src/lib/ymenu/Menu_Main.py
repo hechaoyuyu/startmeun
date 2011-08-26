@@ -8,7 +8,7 @@ import gtk
 import gobject
 import cairo
 import os
-from Menu_Widgets import MenuButton , ImageFrame, ProgramClass
+from Menu_Widgets import MenuButton , ImageFrame, ProgramClass, SearchLauncher
 import Globals
 import cairo_drawing
 import utils
@@ -195,6 +195,7 @@ class Main_Menu(gobject.GObject):
 #WINDOW SETUP
 #=================================================================
 	def expose (self, widget, event):
+
 		self.ctx = widget.window.cairo_create()
 		# set a clip region for the expose event
 		if self.supports_alpha == False:
@@ -203,9 +204,7 @@ class Main_Menu(gobject.GObject):
 			self.ctx.set_source_rgba(1, 1, 1,0)
 		self.ctx.set_operator (cairo.OPERATOR_SOURCE)
 		self.ctx.paint()
-		cairo_drawing.draw_image(self.ctx,0,0,Globals.ImageDirectory + Globals.StartMenuTemplate)
-
-
+		cairo_drawing.draw_image(self.ctx, 0, 0, Globals.ImageDirectory + Globals.StartMenuTemplate, Globals.MenuWidth, Globals.MenuHeight )
 
 	def shape(self):
 		#Standard shape setup of window
@@ -222,11 +221,11 @@ class Main_Menu(gobject.GObject):
 		ctx.set_operator (cairo.OPERATOR_SOURCE)
 		ctx.paint()
 		ctx.restore()
-           	self.bgpb = gtk.gdk.pixbuf_new_from_file_at_size(Globals.ImageDirectory + Globals.StartMenuTemplate, Globals.MenuWidth, Globals.MenuHeight)
-		#self.bgpb = gtk.gdk.pixbuf_new_from_file(Globals.ImageDirectory + Globals.StartMenuTemplate)
+		self.bgpb = gtk.gdk.pixbuf_new_from_file(Globals.ImageDirectory + Globals.StartMenuTemplate)
+                self.bgpb = self.bgpb.scale_simple(Globals.MenuWidth, Globals.MenuHeight, gtk.gdk.INTERP_BILINEAR)
                 if Globals.MenuHasIcon==1:
-			cairo_drawing.draw_image(ctx,Globals.UserIconFrameOffsetX,Globals.UserIconFrameOffsetY,Globals.UserImageFrame)
 			w,h = utils.get_image_size(Globals.UserImageFrame)
+			cairo_drawing.draw_image(ctx,Globals.UserIconFrameOffsetX,Globals.UserIconFrameOffsetY,Globals.UserImageFrame, w, h)
 			cairo_drawing.draw_scaled_image(ctx,Globals.IconInX +Globals.UserIconFrameOffsetX, Globals.UserIconFrameOffsetY+Globals.IconInY,Globals.UserImage,Globals.IconInW ,Globals.IconInH)
 		cairo_drawing.draw_enhanced_image(ctx, 0, 0,Globals.ImageDirectory + Globals.StartMenuTemplate)
                 '''if self.window.is_composited():
@@ -255,6 +254,8 @@ class Main_Menu(gobject.GObject):
                         self.PGL = ProgramClass(self.menuframe,self.usericon,self.usericonstate,self.LastUserPicName)
                         self.PGL.connect ('menu', self.menu_callback)
 			self.PGL.connect ('right-clicked', self.menu_right_clicked)
+                        self.search_env_id = self.PGL.connect ('NeedSearch', self.net_Search)
+                        self.notsearch_env_id = self.PGL.connect('NotNeedSearch', self.rm_Search)
                         self.PGL.buildButtonList(self.hide_method)
                         self.PGL.buildFavorites()
                         self.PGL.buildRecent()
@@ -268,10 +269,10 @@ class Main_Menu(gobject.GObject):
      
 		self.MenuButtons = []
 		for i in range(0,Globals.MenuButtonCount):
-			self.MenuButtons.append(MenuButton(i,self.menuframe,self.bgpb))
-			self.MenuButtons[i].Button.connect("enter-notify-event", self.Button_enter,i)
-			self.MenuButtons[i].Button.connect("leave-notify-event", self.Button_leave,i)
-			self.MenuButtons[i].Button.connect("button-release-event", self.Button_click,i)
+			self.MenuButtons.append(MenuButton(i,self.menuframe, self.bgpb))
+			self.MenuButtons[i].Button.connect("enter-notify-event", self.Button_enter, i)
+			self.MenuButtons[i].Button.connect("leave-notify-event", self.Button_leave, i)
+			self.MenuButtons[i].Button.connect("button-release-event", self.Button_click, i)
                 
 		if Globals.MenuHasSearch:
 
@@ -362,6 +363,11 @@ class Main_Menu(gobject.GObject):
 		print 'focus lost'
 		self.SearchBar.entry.set_text(_('Search'))
                 self.SearchBar.r_clk = False
+                try:
+                    self.PGL.handler_unblock(self.notsearch_env_id)
+                    self.PGL.emit('NotNeedSearch')
+                except:
+                    pass
 		if self.leave_focus is True:
 			self.hide_method()
 
@@ -470,7 +476,33 @@ class Main_Menu(gobject.GObject):
 
                         self.PlaySound(2)
 	
-	def searchPopup( self ): 
+	def net_Search(self, event):
+            self.PGL.handler_block(self.search_env_id)
+            try:
+                self.PGL.handler_unblock(self.notsearch_env_id)
+            except:
+                pass
+            self.google_search = SearchLauncher('google', Globals.PG_iconsize, self.PGL.App_VBox, _("Search Google") + ' ' + Globals.searchitem)
+            self.google_search.connect('button_release_event', self.search_google)
+
+            self.ylmf116_search = SearchLauncher('116', Globals.PG_iconsize, self.PGL.App_VBox, _("Search 116") + ' ' + Globals.searchitem)
+            self.ylmf116_search.connect('button_release_event', self.search_116)
+
+            self.wiki_search = SearchLauncher('wikipedia', Globals.PG_iconsize, self.PGL.App_VBox, _("Search Wikipedia") + ' ' + Globals.searchitem)
+            self.wiki_search.connect('button_release_event', self.search_wikipedia)
+
+
+        def rm_Search(self, event):
+            self.PGL.handler_block(self.notsearch_env_id)
+            try:
+                self.PGL.handler_unblock(self.search_env_id)
+                self.google_search.destroy()
+                self.wiki_search.destroy()
+                self.ylmf116_search.destroy()
+            except:
+                pass
+
+        def searchPopup( self ):
 
                 menu = gtk.Menu()   
              
@@ -494,19 +526,26 @@ class Main_Menu(gobject.GObject):
                 menu.show_all()
                 menu.popup( None, None, None, 3, 0)
                 
-        def search_google(self, widget):
+        def search_google(self, widget, event):
         	import urllib
-                text = self.SearchBar.get_text()
+                text = self.SearchBar.entry.get_text()
                 url = "http://www.google.com.hk/search?q=\"%s\"" %urllib.unquote(str(text))
                 os.system("xdg-open %s &" % url)
                 self.hide_method()   
         
-        def search_wikipedia(self, widget):
-                text = self.SearchBar.get_text()
+        def search_wikipedia(self, widget, event):
+                text = self.SearchBar.entry.get_text()
                 text = text.replace(" ", "+")
                 os.system("xdg-open \"http://zh.wikipedia.org/wiki/Special:Search?search=" + text + "\" &")    	
 		self.hide_method()
-		
+
+        def search_116(self, widget, event):
+                text = self.SearchBar.entry.get_text()
+                text = text.replace(" ", "+")
+                os.system("xdg-open \"http://www.116.com/?q=" + text + "\" &")
+		self.hide_method()
+
+
 #=================================================================
 #PLAY SOUND
 #=================================================================			
@@ -561,8 +600,8 @@ class Main_Menu(gobject.GObject):
 			self.callback_search = gobject.timeout_add(500,self.timeout_callback_search)
                         
 	def timeout_callback_search(self):
-		self.PGL.CallSpecialMenu(5,Globals.searchitem)
-		return False
+            self.PGL.CallSpecialMenu(5,Globals.searchitem)
+            return False
 
 # Code to launch menu standalone of base classes
 

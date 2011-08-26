@@ -18,12 +18,12 @@ def draw_scaled_image(ctx, x, y, pix, w, h):
     image = None
     ctx.restore()
 
-def draw_image(ctx, x, y, pix, flip=True):
+def draw_image(ctx, x, y, pix, w, h, flip=True):
     """Draws a picture from specified path with a certain width and height"""
 
     ctx.save()
     ctx.translate(x, y)
-    pixbuf = gtk.gdk.pixbuf_new_from_file_at_size(pix, Globals.MenuWidth, Globals.MenuHeight )
+    pixbuf = gtk.gdk.pixbuf_new_from_file(pix).scale_simple(w, h, gtk.gdk.INTERP_BILINEAR)
     if Globals.flip != None and flip is True:
         pixbuf = pixbuf.flip(Globals.flip)
     image = ctx.set_source_pixbuf(pixbuf, 0, 0)

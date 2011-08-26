@@ -7,8 +7,8 @@
 	<Background Image="startmenu.png"/>
 	
 	<WindowDimensions Width="350" Height="550"/>
-	
-	<IconSettings X="6" Y="4" Width="68" Height="68" InsetX="6" InsetY="6" InsetWidth="62" InsetHeight="62"/>
+
+        <IconSettings X="6" Y="4" Width="68" Height="68" InsetX="6" InsetY="6" InsetWidth="62" InsetHeight="62"/>
 	
 	<TabBackground Image="m_tab.png" TabIconX="6" TabIconY="4" TextX="36" TextY="7"/>
 	

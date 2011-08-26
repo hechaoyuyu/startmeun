@@ -22,6 +22,8 @@ import xdg.DesktopEntry
 import xdg.Menu
 from execute import *
 from user import home
+import re
+
 
 try:
     has_gst = True
@@ -77,11 +79,12 @@ class MenuButton:
                 self.backimagearea = backimage.subpixbuf(Globals.MenuButtonX[i], Globals.MenuHeight - Globals.MenuButtonY[i] - self.h, self.w, self.h)
                 self.backimagearea = self.backimagearea.flip(Globals.flip)
             else:
-                self.backimagearea = backimage.subpixbuf(Globals.MenuButtonX[i], Globals.MenuButtonY[i], self.w, self.h)
+                self.backimagearea = backimage.subpixbuf(Globals.MenuButtonX[i], Globals.MenuButtonY[i], self.w, self.h )
         # Set the background which is always present
         self.BackgroundImage = gtk.Image()
         if Globals.MenuButtonImageBack[i] != '':
-            tmppic = gtk.gdk.pixbuf_new_from_file_at_size(Globals.ImageDirectory + Globals.MenuButtonImageBack[i], self.w, self.h )
+            tmppic = gtk.gdk.pixbuf_new_from_file(Globals.ImageDirectory + Globals.MenuButtonImageBack[i] )
+            tmppic = tmppic.scale_simple(self.w, self.h, gtk.gdk.INTERP_BILINEAR)
             self.BackgroundImage.set_from_pixbuf( tmppic )
             del tmppic
         else:
@@ -132,7 +135,8 @@ class MenuButton:
             if Globals.MenuButtonIconSize[self.i] != 0 and os.path.isfile(filename):
                 self.ww = Globals.MenuButtonIconSize[self.i]
                 self.hh = self.ww
-                self.Pic = gtk.gdk.pixbuf_new_from_file_at_size(filename, self.ww, self.hh)
+                self.Pic = gtk.gdk.pixbuf_new_from_file(filename)
+                self.Pic = self.Pic.scal_simple(self.ww, self.hh, gtk.gdk.INTERP_BILINEAR)
             else:
                 self.ww = self.hh =Globals.MenuButtonIconSize[self.i] #24
 			
@@ -485,7 +489,7 @@ class GtkSearchBar(gtk.EventBox, gobject.GObject):
 
         self.entry.set_size_request(W, H)
 
-        sel = gtk.gdk.pixbuf_new_from_file_at_size(BackImageFile, Globals.SearchBgSize[0], Globals.SearchBgSize[1])
+        sel = gtk.gdk.pixbuf_new_from_file(BackImageFile).scale_simple(Globals.SearchBgSize[0], Globals.SearchBgSize[1], gtk.gdk.INTERP_BILINEAR )
         self.back.set_from_pixbuf(sel)
 
         self.entry.modify_base(gtk.STATE_NORMAL, Globals.ThemeColorCode)
@@ -564,7 +568,6 @@ class IconManager(gobject.GObject):
     def getIcon(self, iconName, iconSize):
         if not iconName:
             return None
-
         try:
             #[ iconWidth, iconHeight ] = self.getIconSize( iconSize )
             if iconSize <= 0:
@@ -575,7 +578,7 @@ class IconManager(gobject.GObject):
             elif os.path.isabs(iconName):
                 iconFileName = iconName
             else:
-                if iconName[-4:] in [".png", ".xpm", ".svg", ".gif"]:
+                if iconName[-4:] in [".png", ".xpm", ".svg", ".gif", ".ico"]:
                     realIconName = iconName[:-4]
                 else:
                     realIconName = iconName
@@ -804,7 +807,7 @@ class AppButton(gtk.EventBox):
     
     def __init__(self, iconName, iconSize):
         gtk.EventBox.__init__(self)
-        
+       
         self.connections = []
         self.Frame = gtk.Fixed()
         self.set_visible_window(0)
@@ -859,7 +862,7 @@ class AppButton(gtk.EventBox):
         icon = iconManager.getIcon(self.iconName, iconSize)
         if not icon:
             icon = iconManager.getIcon("application-default-icon", iconSize)
-
+       
         return icon
     
     def enter (self, widget, event):
@@ -986,7 +989,44 @@ class AppButton(gtk.EventBox):
         for connection in self.connections:
             self.disconnect(connection)
         del self.connections
-        
+
+
+# Search Button
+class SearchLauncher(AppButton):
+    def __init__(self, iconName, iconSize, container, text = None):
+         #self.app_bt = AppButton(iconName, iconSize)
+         AppButton.__init__(self, iconName, iconSize)
+         self.addLabel(text)
+         self.connect("enter_notify_event", self.mouse_glide, True)
+         self.connect("leave_notify_event", self.mouse_glide)
+         container.pack_start(self, False)
+         self.show_all()
+
+    def mouse_glide(self, widget, event, Flag = False):
+        self.setSelectedTab(Flag)
+
+    def filterText(self, text):
+
+        tmpstr = self.Label.get_label()
+        tmpstr = tmpstr.replace(_("Search Google"), '')
+        tmpstr = tmpstr.replace(_("Search Wikipedia"), '')
+        tmpstr = tmpstr.replace(_("Search 116"), '')
+        newstr = re.search('>.*<', tmpstr)
+        newstr = str(newstr.group(0)).replace('>', '')
+        newstr = newstr.replace('<', '')
+        tmpstr = self.Label.get_label()
+        tmpstr = tmpstr.replace(newstr, ' ' + text)
+        self.Label.set_markup(tmpstr)
+        print tmpstr
+        tmpstr = None
+        newstr = None
+
+        return False
+
+    def filterCategory(self, category):
+        #self.destroy()
+        pass
+
 #ApplicationLauncher.__init__( self, desktopFile, iconSize )
 class ApplicationLauncher(AppButton):
 
@@ -1358,7 +1398,9 @@ class ProgramClass(gobject.GObject):
         'activate': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, ()),
         'menu': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, ()),
         'clicked': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, ()),
-        'right-clicked': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, ())
+        'right-clicked': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, ()),
+        'NeedSearch': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, ()),
+        'NotNeedSearch':(gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, ())
         }
     
     def __init__(self, Frame, usericon, usericonstate, LastUserPicName):
@@ -2070,9 +2112,14 @@ class ProgramClass(gobject.GObject):
             fulltext.replace('\r','')
             os.system(fulltext)
         else:
+            netSearch = False
             for i in self.App_VBox.get_children():
-                i.filterText(data)
-      
+                netSearch |= i.filterText(data)
+            if not netSearch:
+                self.emit('NeedSearch')
+            else:
+                self.emit('NotNeedSearch')
+
     def StartFilter(self, widget, event, category, icon):
         if self.filterTimer:
             gobject.source_remove(self.filterTimer)

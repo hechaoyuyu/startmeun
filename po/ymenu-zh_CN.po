@@ -217,6 +217,9 @@ msgstr "用 Google 搜索"
 msgid "Search Wikipedia"
 msgstr "搜索维基百科"
 
+msgid "Search 116"
+msgstr "用 116 搜索"
+
 #: ymenu/src/lib/ymenu/Globals.py:565
 #: ymenu/src/lib/ymenu/YMenu-Settings.py:362
 msgid "Control Panel"
