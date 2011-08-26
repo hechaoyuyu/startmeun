@@ -1201,7 +1201,7 @@ class FavApplicationLauncher(ApplicationLauncher):
             self.hide()
 
     def filterText(self, text):
-     	pass
+     	return False
 
 class PlaApplicationLauncher(gtk.EventBox):
 
