@@ -499,7 +499,7 @@ class GtkSearchBar(gtk.EventBox, gobject.GObject):
         self.entry.set_max_length(20)
                 
         self.entry.connect("button-press-event", self.enter)
-        self.entry.connect("leave_notify_event", self.leave)
+        self.entry.connect("leave-notify-event", self.leave)
                 
         self.entry.modify_text(gtk.STATE_NORMAL, Globals.NegativeThemeColorCode)
         if Globals.MFontSize == 'small': # or large the change the font size
@@ -510,18 +510,15 @@ class GtkSearchBar(gtk.EventBox, gobject.GObject):
         self.Frame.put(self.entry, int(6 * Globals.width_ratio), int( 3 * Globals.height_ratio) )
 
     def enter(self, widget, event):
-        print event.type
         if event.type == gtk.gdk.BUTTON_PRESS:event_button = event.button
         elif event.type == gtk.gdk.BUTTON_RELEASE:event_button = event.button
         else:event_button = event.button
         if event_button == 1:
             if widget.get_text() == _('Search'):
                 widget.set_text("")
-    
         if event_button == 3 or event_button == 2: # 中键也当右键使
             self.r_clk = True
             self.emit('right-clicked')
-                
         if widget.get_text() == _('Search'):
             widget.set_text("")
                         
@@ -529,6 +526,7 @@ class GtkSearchBar(gtk.EventBox, gobject.GObject):
         if widget.get_text() == '' and not self.r_clk:
             self.win.set_focus(None)
             widget.set_text(_('Search'))
+
 
 class IconManager(gobject.GObject):
 
@@ -578,7 +576,7 @@ class IconManager(gobject.GObject):
             elif os.path.isabs(iconName):
                 iconFileName = iconName
             else:
-                if iconName[-4:] in [".png", ".xpm", ".svg", ".gif", ".ico"]:
+                if iconName[-4:] in [".png", ".xpm", ".svg", ".gif"]:
                     realIconName = iconName[:-4]
                 else:
                     realIconName = iconName
@@ -2104,8 +2102,7 @@ class ProgramClass(gobject.GObject):
         self.all_app.setSelectedTab(True)
     	
         if command == 6:
-            if Globals.searchitem == '' and searchbar_widget and searchbar_widget.r_clk:
-                searchbar_widget.r_clk = False
+            if Globals.searchitem == '' and searchbar_widget:                
                 Globals.searchitem = searchbar_widget.entry.get_text()
             fulltext = "gnome-search-tool --named=\"%s\" &" % Globals.searchitem
             fulltext.replace('\n','')
@@ -2124,6 +2121,7 @@ class ProgramClass(gobject.GObject):
         if self.filterTimer:
             gobject.source_remove(self.filterTimer)
         self.filterTimer = gobject.timeout_add(115, self.Filter, widget, event, category, icon)
+        self.emit('NotNeedSearch')
 
     def StopFilter(self, widget, event):
         if self.filterTimer:

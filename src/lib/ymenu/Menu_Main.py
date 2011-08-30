@@ -89,6 +89,7 @@ class Main_Menu(gobject.GObject):
 		self.window.connect("expose_event", self.expose)
 		self.window.connect("delete_event", self.delete)
 		self.window.connect("focus-out-event", self.lose_focus)
+                self.window.connect("focus-in-event", self.get_focus)
 		self.window.connect("key-press-event", self.key_down)
 		self.gtk_screen = self.window.get_screen()
 		colormap = self.gtk_screen.get_rgba_colormap()
@@ -361,8 +362,6 @@ class Main_Menu(gobject.GObject):
 
 	def lose_focus(self,widget,event):
 		print 'focus lost'
-		self.SearchBar.entry.set_text(_('Search'))
-                self.SearchBar.r_clk = False
                 try:
                     self.PGL.handler_unblock(self.notsearch_env_id)
                     self.PGL.emit('NotNeedSearch')
@@ -371,9 +370,14 @@ class Main_Menu(gobject.GObject):
 		if self.leave_focus is True:
 			self.hide_method()
 
-	def hide_window(self):
-		print 'hide'
+	def get_focus(self, widget, event):
+                print 'focus receive'
+                self.SearchBar.r_clk = False
 
+        def hide_window(self):
+		print 'hide'
+		self.SearchBar.entry.set_text(_('Search'))
+                self.SearchBar.r_clk = False
 		self.window.hide()
 		
 		if Globals.MenuHasSearch:
@@ -430,7 +434,7 @@ class Main_Menu(gobject.GObject):
 
 				self.PlaySound(2)
 
-                elif key == 22 or key == 119:
+                elif key == 22 or key == 119:# del & backspace
                     if self.SearchBar.r_clk:
                         if self.SearchBar.entry.get_text() == '':
                             self.SearchBar.r_clk = False

@@ -473,6 +473,37 @@ def YMenu_factory(applet, iid):
 	app = YMenu(applet,iid)
 	return True
 
+def reload_ymenu(monitor, thefile, arg, event):
+        if event != gio.FILE_MONITOR_EVENT_CHANGED:
+            return
+        object_name = "ymenu_screen0"
+        object_dir  = "/apps/panel/applets/"
+        object_client = gconf.client_get_default()
+        appletidlist = object_client.get_list("/apps/panel/general/applet_id_list", "string")
+        for applet in appletidlist:
+            bonobo_id = object_client.get_string("/apps/panel/applets/" + applet + "/bonobo_iid")
+            panel_position = object_client.get_int("/apps/panel/applets/" + applet + "/position")
+            if bonobo_id == "OAFIID:GNOME_YMenu":
+                panel = object_client.get_string("/apps/panel/applets/" + applet + "/toplevel_id")
+                appletidlist.remove(applet)
+                object_client.set_list("/apps/panel/general/applet_id_list", gconf.VALUE_STRING, appletidlist)
+                os.system("sleep 1.5")
+
+                object_client.set_string(object_dir + object_name +"/"+ "action_type", "lock")
+                object_client.set_bool(object_dir + object_name +"/"+ "locked", True)
+                object_client.set_int(object_dir + object_name +"/"+ "position", 0)
+                object_client.set_string(object_dir + object_name +"/"+ "toplevel_id", panel)
+                object_client.set_string(object_dir + object_name +"/"+ "object_type", "bonobo-applet")
+                object_client.set_string(object_dir + object_name +"/"+ "bonobo_iid", bonobo_id)
+
+                appletidlist.append(object_name)
+                object_client.set_list("/apps/panel/general/applet_id_list", gconf.VALUE_STRING, appletidlist)
+	gtk.main_quit()
+
+import gio
+dir_monitor = gio.File("/usr/lib/ymenu/YMenu.py").monitor(gio.FILE_MONITOR_NONE, None)
+dir_monitor.connect("changed", reload_ymenu)
+
 if len(sys.argv) == 2:
 
 	if sys.argv[1] == "run-in-window" or sys.argv[1] == "run-in-console":
@@ -487,6 +518,7 @@ if len(sys.argv) == 2:
 		main_window.show_all()
 		gtk.main()
 		sys.exit()
+
 
 
 	
