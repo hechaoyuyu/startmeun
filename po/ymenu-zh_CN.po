@@ -212,13 +212,16 @@ msgid "Search"
 msgstr "搜索程序或文件..."
 
 msgid "Search Google"
-msgstr "用 Google 搜索"
+msgstr "谷歌搜索"
 
 msgid "Search Wikipedia"
-msgstr "搜索维基百科"
+msgstr "维基搜索"
 
 msgid "Search 116"
-msgstr "用 116 搜索"
+msgstr "116 搜索"
+
+msgid "Search Baidu"
+msgstr "百度搜索"
 
 #: ymenu/src/lib/ymenu/Globals.py:565
 #: ymenu/src/lib/ymenu/YMenu-Settings.py:362

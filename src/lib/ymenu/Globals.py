@@ -7,6 +7,8 @@ import os
 import xml.dom.minidom
 import backend
 import sys
+import commands
+import re
 try:
 	INSTALL_PREFIX = open("/etc/ymenu/prefix").read()[:-1]
 except:
@@ -432,7 +434,7 @@ def ReloadSettings():
         orig_menu_height = MenuHeight
 
         myscreensize = gtk.gdk.Screen.get_monitor_geometry(gtk.gdk.screen_get_default(), 0)
-        
+
         if myscreensize.height < 768:
             lowresolution = True
             MenuHeight = int( myscreensize.height * 4 / 5 ) # 高度占屏幕分辨率的比率
@@ -502,7 +504,7 @@ def ReloadSettings():
             del button_back_size[0]
         # button pozition
         ButtonBackIconX = int(ButtonBackIconX * width_ratio )
-        ButtonBackIconY = int(ButtonBackIconX * height_ratio)
+        ButtonBackIconY = int(ButtonBackIconX * height_ratio) - 2
 
         # four button's size and position
         if lowresolution:

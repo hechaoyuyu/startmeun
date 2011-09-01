@@ -14,7 +14,7 @@
 	
 	<VLine Image="v_line.png" X="143" Y="64"/>
 	
-	<ButtonBackground Image="m_button.png" ButtonIconX="6" ButtonIconY="4" TextX="36" TextY="7"/>
+	<ButtonBackground Image="m_button.png" ButtonIconX="6" ButtonIconY="2" TextX="36" TextY="7"/>
 	
 	<SearchBarSettings  X="150" Y="495" Width="166" Height="19" Widget="Gtk" Background="searchframe.png"/>
 	

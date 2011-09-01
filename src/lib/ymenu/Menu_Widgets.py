@@ -497,7 +497,7 @@ class GtkSearchBar(gtk.EventBox, gobject.GObject):
         self.entry.set_text(_('Search'))
         self.entry.set_has_frame(False)
         self.entry.set_max_length(20)
-                
+
         self.entry.connect("button-press-event", self.enter)
         self.entry.connect("leave-notify-event", self.leave)
                 
@@ -593,7 +593,7 @@ class IconManager(gobject.GObject):
                     iconFileName = ""
 
             if iconFileName and os.path.exists(iconFileName):
-                icon = gtk.gdk.pixbuf_new_from_file_at_size(iconFileName, iconSize, iconSize)
+                icon = gtk.gdk.pixbuf_new_from_file(iconFileName).scale_simple(iconSize, iconSize, gtk.gdk.INTERP_BILINEAR)
             else:
                 icon = None
 
@@ -970,11 +970,10 @@ class AppButton(gtk.EventBox):
         if "<b>" in text:
             text = "<span size=\"%s\" foreground=\"#FFFF00\">%s</span>" % ( Globals.MFontSize, text )
             text = "<b>%s</b>" % text
-            self.Label.set_markup(text) # don't remove our pango
         else:
             text = "<span size=\"%s\" foreground=\"#FFFFFF\">%s</span>" % ( Globals.MFontSize, text )
-            self.Label.set_markup(text)
-
+            
+        self.Label.set_markup(text)
         self.Label.set_alignment(0.0, 0.0)
         self.Label.set_width_chars(21)
         self.Label.set_ellipsize(pango.ELLIPSIZE_END)
@@ -991,10 +990,10 @@ class AppButton(gtk.EventBox):
 
 # Search Button
 class SearchLauncher(AppButton):
-    def __init__(self, iconName, iconSize, container, text = None):
+    def __init__(self, iconName, container, text = None):
          #self.app_bt = AppButton(iconName, iconSize)
-         AppButton.__init__(self, iconName, iconSize)
-         self.addLabel(text)
+         AppButton.__init__(self, iconName, Globals.PG_iconsize)
+         self.addLabel(text + '<span color="green">' + '<b> ' + Globals.searchitem + '</b>' + '</span>')
          self.connect("enter_notify_event", self.mouse_glide, True)
          self.connect("leave_notify_event", self.mouse_glide)
          container.pack_start(self, False)
@@ -1005,19 +1004,17 @@ class SearchLauncher(AppButton):
 
     def filterText(self, text):
 
+        labeltext = self.Label.get_text()
+        labeltext = labeltext.replace(_("Search Google"), '')
+        labeltext = labeltext.replace(_("Search Wikipedia"), '')
+        labeltext = labeltext.replace(_("Search 116"), '')
+        labeltext = labeltext.replace(_("Search Baidu"), '')
+        
         tmpstr = self.Label.get_label()
-        tmpstr = tmpstr.replace(_("Search Google"), '')
-        tmpstr = tmpstr.replace(_("Search Wikipedia"), '')
-        tmpstr = tmpstr.replace(_("Search 116"), '')
-        newstr = re.search('>.*<', tmpstr)
-        newstr = str(newstr.group(0)).replace('>', '')
-        newstr = newstr.replace('<', '')
-        tmpstr = self.Label.get_label()
-        tmpstr = tmpstr.replace(newstr, ' ' + text)
+        tmpstr = tmpstr.replace(labeltext, ' ' + text)
         self.Label.set_markup(tmpstr)
-        print tmpstr
         tmpstr = None
-        newstr = None
+        labeltext = None
 
         return False
 

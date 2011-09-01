@@ -724,3 +724,15 @@ msgstr "例外: %s"
 #: ymenu/src/lib/ymenu/Popup_Menu.py:272
 msgid "An error occured with desktop-file: %s"
 msgstr "桌面檔案: %s 發生錯誤"
+
+msgid "Search Google"
+msgstr "Google搜尋"
+
+msgid "Search Wikipedia"
+msgstr "Wiki搜尋"
+
+msgid "Search 116"
+msgstr "116 搜尋"
+
+msgid "Search Baidu"
+msgstr "百度搜尋"

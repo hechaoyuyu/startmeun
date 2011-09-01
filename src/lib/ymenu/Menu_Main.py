@@ -287,7 +287,8 @@ class Main_Menu(gobject.GObject):
 				self.SearchBar.set_size_request(Globals.SearchW, Globals.SearchH)
 				self.menuframe.put(self.SearchBar, Globals.SearchX, Globals.SearchY)
 	
-				self.SearchBar.connect_after("key-release-event",self.SearchBarActivate)
+				self.SearchBar.connect_after("key-release-event", self.SearchBarActivate)
+                                self.SearchBar.entry.connect("paste-clipboard", self.searchbar_paste)
 			except:print 'wait'
 			self.prevsearchitem = ""			
 
@@ -362,24 +363,26 @@ class Main_Menu(gobject.GObject):
 
 	def lose_focus(self,widget,event):
 		print 'focus lost'
-                try:
-                    self.PGL.handler_unblock(self.notsearch_env_id)
-                    self.PGL.emit('NotNeedSearch')
-                except:
-                    pass
 		if self.leave_focus is True:
 			self.hide_method()
 
 	def get_focus(self, widget, event):
                 print 'focus receive'
                 self.SearchBar.r_clk = False
+                Globals.searchitem = self.SearchBar.entry.get_text()
 
         def hide_window(self):
-		print 'hide'
-		self.SearchBar.entry.set_text(_('Search'))
+		print 'hide'                
+		self.window.hide()		
+                self.SearchBar.entry.set_text(_('Search'))
                 self.SearchBar.r_clk = False
-		self.window.hide()
-		
+                self.window.set_focus(None)
+                try:
+                    self.PGL.handler_unblock(self.notsearch_env_id)
+                    self.PGL.handler_unblock(self.search_env_id)
+                    self.PGL.emit('NotNeedSearch')
+                except:
+                    pass		
 		if Globals.MenuHasSearch:
 			if Globals.searchitem != '':
                                 Globals.searchitem = ''
@@ -389,7 +392,7 @@ class Main_Menu(gobject.GObject):
 		
 	def key_down (self,widget,event):
 		key = event.hardware_keycode
-                print "key = %s" %key
+                print "key = %s" % key
 		if key == 9:	#Escape Key, hides window
 			self.hide_method()
 		elif key == 98 or key == 104 or key == 102 or key == 100 or key == 36 or key == 116 or key ==111 or key == 113 or key == 114 or key == 23:
@@ -486,14 +489,18 @@ class Main_Menu(gobject.GObject):
                 self.PGL.handler_unblock(self.notsearch_env_id)
             except:
                 pass
-            self.google_search = SearchLauncher('google', Globals.PG_iconsize, self.PGL.App_VBox, _("Search Google") + ' ' + Globals.searchitem)
-            self.google_search.connect('button_release_event', self.search_google)
+            icondir = '/usr/share/ymenu/Themes/Icon/ylmfos/'
+            self.google_search = SearchLauncher(icondir + 'google.xpm', self.PGL.App_VBox, _("Search Google"))
+            self.google_search.connect('button_release_event', self.search_go, 'google')
 
-            self.ylmf116_search = SearchLauncher('116', Globals.PG_iconsize, self.PGL.App_VBox, _("Search 116") + ' ' + Globals.searchitem)
-            self.ylmf116_search.connect('button_release_event', self.search_116)
+            self.baidu_search = SearchLauncher(icondir + 'baidu.xpm', self.PGL.App_VBox, _("Search Baidu"))
+            self.baidu_search.connect('button_release_event', self.search_go, 'baidu')
 
-            self.wiki_search = SearchLauncher('wikipedia', Globals.PG_iconsize, self.PGL.App_VBox, _("Search Wikipedia") + ' ' + Globals.searchitem)
-            self.wiki_search.connect('button_release_event', self.search_wikipedia)
+            self.ylmf116_search = SearchLauncher(icondir + '116.xpm', self.PGL.App_VBox, _("Search 116") )
+            self.ylmf116_search.connect('button_release_event', self.search_go, '116')
+
+            self.wiki_search = SearchLauncher(icondir + 'wikipedia.xpm', self.PGL.App_VBox, _("Search Wikipedia"))
+            self.wiki_search.connect('button_release_event', self.search_go, 'wikipedia')
 
 
         def rm_Search(self, event):
@@ -503,8 +510,10 @@ class Main_Menu(gobject.GObject):
                 self.google_search.destroy()
                 self.wiki_search.destroy()
                 self.ylmf116_search.destroy()
+                self.baidu_search.destroy()
             except:
                 pass
+            self.PGL.App_VBox.show_all()
 
         def searchPopup( self ):
 
@@ -529,26 +538,25 @@ class Main_Menu(gobject.GObject):
              
                 menu.show_all()
                 menu.popup( None, None, None, 3, 0)
-                
-        def search_google(self, widget, event):
+
+        def search_go(self, widget, event, searchEn = None):
         	import urllib
                 text = self.SearchBar.entry.get_text()
-                url = "http://www.google.com.hk/search?q=\"%s\"" %urllib.unquote(str(text))
-                os.system("xdg-open %s &" % url)
-                self.hide_method()   
-        
-        def search_wikipedia(self, widget, event):
-                text = self.SearchBar.entry.get_text()
-                text = text.replace(" ", "+")
-                os.system("xdg-open \"http://zh.wikipedia.org/wiki/Special:Search?search=" + text + "\" &")    	
-		self.hide_method()
-
-        def search_116(self, widget, event):
-                text = self.SearchBar.entry.get_text()
-                text = text.replace(" ", "+")
-                os.system("xdg-open \"http://www.116.com/?q=" + text + "\" &")
-		self.hide_method()
-
+                text = urllib.unquote(str(text))
+                if searchEn is None or text is None:
+                    return
+                elif searchEn == 'google':
+                    url = "http://www.google.com.hk/search?q=%s" % text
+                elif searchEn == 'wikipedia':
+                    url = "http://zh.wikipedia.org/wiki/Special:Search?search=%s" % text
+                elif searchEn == '116':
+                    url = "http://www.116.com/?q=%s" % text
+                elif searchEn == 'baidu':
+                    url = "http://www.baidu.com/s?wd=%s&tn=ylmf_3_pg&ch=57" % text
+                else:
+                    url = "http://www.google.com.hk/search?q=YlmfOS"
+                os.system("xdg-open \"%s\" &" % url)
+                self.hide_method()
 
 #=================================================================
 #PLAY SOUND
@@ -604,8 +612,15 @@ class Main_Menu(gobject.GObject):
 			self.callback_search = gobject.timeout_add(500,self.timeout_callback_search)
                         
 	def timeout_callback_search(self):
-            self.PGL.CallSpecialMenu(5,Globals.searchitem)
+            self.PGL.CallSpecialMenu(5, Globals.searchitem)
             return False
+
+        def searchbar_paste(self, widget):
+            Globals.searchitem = self.SearchBar.entry.get_text()
+            Globals.searchitem = Globals.searchitem.replace('\r', '')
+            Globals.searchitem = Globals.searchitem.replace('\n', '')
+            self.PGL.CallSpecialMenu(5, Globals.searchitem)
+            
 
 # Code to launch menu standalone of base classes
 
