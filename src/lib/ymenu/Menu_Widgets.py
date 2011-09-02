@@ -1002,7 +1002,7 @@ class SearchLauncher(AppButton):
     def mouse_glide(self, widget, event, Flag = False):
         self.setSelectedTab(Flag)
 
-    def filterText(self, text):
+    def filterText(self, text):# 并没有过滤，利用其更改标签
 
         labeltext = self.Label.get_text()
         labeltext = labeltext.replace(_("Search Google"), '')
@@ -1090,6 +1090,7 @@ class ApplicationLauncher(AppButton):
         appGenericName = self.appGenericName.lower()
         appComment = self.appComment.lower()
         appExec = self.appExec.lower()
+
         for keyword in keywords:
             keyw = keyword
             if keyw != "" and appName.find(keyw) == -1 and appGenericName.find(keyw) == -1 and appComment.find(keyw) == -1 and appExec.find(keyw) == -1:
@@ -1194,9 +1195,6 @@ class FavApplicationLauncher(ApplicationLauncher):
             self.show()
         else:
             self.hide()
-
-    def filterText(self, text):
-     	return False
 
 class PlaApplicationLauncher(gtk.EventBox):
 
@@ -1382,7 +1380,6 @@ class RecApplicationLauncher(gtk.EventBox):
             if keyw != "" and appName.find(keyw) == -1 and appGenericName.find(keyw) == -1 and appComment.find(keyw) == -1 and appExec.find(keyw) == -1:
                 self.hide()
                 return False
-
         self.show()
         return True
     
@@ -1621,7 +1618,6 @@ class ProgramClass(gobject.GObject):
             addedFavorites = []
             newFavorites = []
             removeFavorites = []
-            
             for filename in os.listdir(filedir):
                 newFavorites.append(filedir + filename)
             

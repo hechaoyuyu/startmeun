@@ -513,7 +513,10 @@ class Main_Menu(gobject.GObject):
                 self.baidu_search.destroy()
             except:
                 pass
-            self.PGL.App_VBox.show_all()
+            text =  self.SearchBar.entry.get_text()
+            if text == '' or text == _("Search"):
+                return
+            self.SearchBarActivate()
 
         def searchPopup( self ):
 
