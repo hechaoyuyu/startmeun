@@ -254,16 +254,16 @@ class YMenuSettings:
 		self.button7 = gtk.Button(_('Visit Homepage'))
 		self.button7.set_border_width(5)
 		self.button7.connect('clicked', self.button_clicked, 'Homepage')
-
-                self.Image = gtk.Image()
-                self.Image.set_from_file("%s115.gif" % Globals.GraphicsDirectory)
-
-		self.vbox_about.pack_start(self.image_logo, False, False)
+                
+                #self.Image = gtk.Image()
+                #self.Image.set_from_file("%s115.gif" % Globals.GraphicsDirectory)
+                #self.vbox_about.pack_start(self.Image, False, False,10)
+		self.vbox_about.pack_start(self.image_logo, False, False, 20)
 		self.vbox_about.pack_start(self.label_app, False, False,10)
 		self.vbox_about.pack_start(self.label_credits, False, False,10)
 		self.vbox_about.pack_start(self.button5, False, False)
 		self.vbox_about.pack_start(self.button7, False, False)
-		self.vbox_about.pack_start(self.Image, False, False,10)
+		
 
 	def buttonpress(self,widget,id):
 		if id == 'ok':

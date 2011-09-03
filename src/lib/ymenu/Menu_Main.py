@@ -377,6 +377,7 @@ class Main_Menu(gobject.GObject):
                 self.SearchBar.entry.set_text(_('Search'))
                 self.SearchBar.r_clk = False
                 self.window.set_focus(None)
+                self.PGL.App_VBox.show_all()
                 try:
                     self.PGL.handler_unblock(self.notsearch_env_id)
                     self.PGL.handler_unblock(self.search_env_id)
@@ -513,10 +514,6 @@ class Main_Menu(gobject.GObject):
                 self.baidu_search.destroy()
             except:
                 pass
-            text =  self.SearchBar.entry.get_text()
-            if text == '' or text == _("Search"):
-                return
-            self.SearchBarActivate()
 
         def searchPopup( self ):
 

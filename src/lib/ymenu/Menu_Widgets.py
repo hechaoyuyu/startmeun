@@ -1195,6 +1195,9 @@ class FavApplicationLauncher(ApplicationLauncher):
             self.show()
         else:
             self.hide()
+    def filterText(self, text):
+        self.hide()
+        return False
 
 class PlaApplicationLauncher(gtk.EventBox):
 
