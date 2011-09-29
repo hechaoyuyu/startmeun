@@ -74,7 +74,7 @@ class YMenu():
 		# Fixme, reload stuff properly
 
 	def ShowMenu(self,widget):
-		if self.show == False:
+                if self.show == False:
 
 
 			#rootwin = self.hwg.window.get_screen().get_root_window()

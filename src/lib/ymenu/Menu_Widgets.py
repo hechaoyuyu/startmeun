@@ -659,7 +659,7 @@ class CategoryTab(gtk.EventBox):
 
         #Tab上的文字
         self.Label = gtk.Label()
-        self.txt = "<span size=\"%s\" foreground=\"#FFFFFF\">%s</span>" % ( Globals.MFontSize, name )
+        self.txt = "<span size=\"%s\" foreground=\"#FFFFFF\">%s</span>" % ( Globals.MFontSize, name.replace("&","") )
         self.Label.set_alignment(0, 0)
         self.Label.set_markup(self.txt)
 	self.Frame.put(self.Label, Globals.TabBackNameX, Globals.TabBackNameY)
