@@ -101,7 +101,6 @@ class Main_Menu(gobject.GObject):
 		else:
 			self.supports_alpha = True
 		
-		self.SearchBar_HasText = False
 		self.w,self.h = self.window.get_size()
 		self.leave_focus = True
 		self.callback_search = None
@@ -378,9 +377,9 @@ class Main_Menu(gobject.GObject):
                 self.SearchBar.entry.set_text(_('Search'))
                 self.SearchBar.r_clk = False
                 self.window.set_focus(None)
-    		if self.SearchBar_HasText:
+    		if self.PGL.Search_Flag:
                     self.PGL.App_VBox.show_all()
-    		    self.SearchBar_HasText = False
+    		    self.PGL.Search_Flag = False
                 try:
                     self.PGL.handler_unblock(self.notsearch_env_id)
                     self.PGL.handler_unblock(self.search_env_id)
@@ -445,10 +444,8 @@ class Main_Menu(gobject.GObject):
                     if self.SearchBar.r_clk:
                         if self.SearchBar.entry.get_text() == '':
                             self.SearchBar.r_clk = False
-			    self.SearchBar_HasText = False
 
                 else:	#Any other key passes through to search bar
-			self.SearchBar_HasText = True
 			if Globals.MenuHasSearch:
                                 if self.SearchBar.entry.is_focus() == False:
                                         self.SearchBar.entry.grab_focus()

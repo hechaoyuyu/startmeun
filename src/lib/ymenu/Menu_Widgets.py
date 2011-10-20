@@ -1341,6 +1341,7 @@ class RecApplicationLauncher(gtk.EventBox):
         self.connections.append(self.connect(event, callback))
     
     def setSelectedTab(self, flag):
+	self.Search_Flag = False
         if flag == True:
             self.pic = gtk.gdk.pixbuf_new_from_file(Globals.ImageDirectory + Globals.ButtonBackImage)
             self.Image.set_from_pixbuf(self.pic)  
@@ -1401,6 +1402,7 @@ class ProgramClass(gobject.GObject):
     def __init__(self, Frame, usericon, usericonstate, LastUserPicName):
         gobject.GObject.__init__ (self)
        
+	self.Search_Flag = False
         self.MenuWin = Frame
         self.usericon = usericon
         self.usericonstate = usericonstate
@@ -2109,6 +2111,7 @@ class ProgramClass(gobject.GObject):
             for i in self.App_VBox.get_children():
                 netSearch |= i.filterText(data)
             if not netSearch:
+		self.Search_Flag = True
                 self.emit('NeedSearch')
             else:
                 self.emit('NotNeedSearch')
@@ -2117,6 +2120,7 @@ class ProgramClass(gobject.GObject):
         if self.filterTimer:
             gobject.source_remove(self.filterTimer)
         self.filterTimer = gobject.timeout_add(115, self.Filter, widget, event, category, icon)
+	self.Search_Flag = False
         self.emit('NotNeedSearch')
 
     def StopFilter(self, widget, event):
