@@ -189,6 +189,7 @@ class YMenuSettings:
 		self.check4.set_active(int(Globals.Settings['TabHover']))
 		self.hbox12 = gtk.HBox()
 		self.hbox13 = gtk.HBox()
+		self.hbox14 = gtk.HBox()
 		self.hbox16 = gtk.HBox()
 		self.label11 = gtk.Label(_('Icon Size in Program List'))
 		self.label11.set_justify(gtk.JUSTIFY_LEFT)
@@ -204,6 +205,14 @@ class YMenuSettings:
 		self.spinbutton2.set_increments(1, int(100))
 		self.spinbutton2.set_range(1, 50)
 		self.spinbutton2.set_value(Globals.Settings['ListSize'])
+
+                self.menu_height_spinbt = gtk.SpinButton()
+                self.menu_height_spinbt.set_digits(0)
+                self.menu_height_spinbt.set_increments(10, 50)
+                self.menu_height_spinbt.set_range(300, 1000)
+                self.menu_height_spinbt.set_value(Globals.UserMenuHeight)
+                self.menu_height_label  = gtk.Label(_('Height of YMenu'))
+		self.menu_height_label.set_justify(gtk.JUSTIFY_LEFT)
 		
 		self.label14 = gtk.Label(_('Tab hover effect'))
 		self.combo6 = gtk.combo_box_new_text()
@@ -222,6 +231,8 @@ class YMenuSettings:
 		self.hbox12.pack_start(self.label11, False,False,10)
 		self.hbox13.pack_start(self.spinbutton2, False, False)
 		self.hbox13.pack_start(self.label12, False, False,10)
+		self.hbox14.pack_start(self.menu_height_spinbt, False, False)
+		self.hbox14.pack_start(self.menu_height_label, False, False,10)
 
 		self.hbox16.pack_start(self.combo6, False, False)
 		self.hbox16.pack_start(self.label14, False, False,10)
@@ -233,6 +244,7 @@ class YMenuSettings:
 		self.vbox_prefs.pack_start(self.check7, False, False,3)
 		self.vbox_prefs.pack_start(self.hbox12, False, False,3)
 		self.vbox_prefs.pack_start(self.hbox13, False, False,3)
+		self.vbox_prefs.pack_start(self.hbox14, False, False,3)
 		self.vbox_prefs.pack_start(self.hbox16, False, False,3)
 
 	def add_about_tab(self):
@@ -273,9 +285,9 @@ class YMenuSettings:
                         object_client = gconf.client_get_default()
                         appletidlist = object_client.get_list("/apps/panel/general/applet_id_list", "string")
                         for applet in appletidlist:
-                        	bonobo_id = object_client.get_string("/apps/panel/applets/" + applet + "/bonobo_iid")
+                        	applet_id = object_client.get_string("/apps/panel/applets/" + applet + "/applet_iid")
                                 panel_position = object_client.get_int("/apps/panel/applets/" + applet + "/position")
-                                if bonobo_id == "OAFIID:GNOME_YMenu":
+                                if applet_id == "OAFIID:GNOME_YMenu":
                                 	panel = object_client.get_string("/apps/panel/applets/" + applet + "/toplevel_id")
                                         appletidlist.remove(applet)
                                         object_client.set_list("/apps/panel/general/applet_id_list", gconf.VALUE_STRING, appletidlist)
@@ -286,7 +298,7 @@ class YMenuSettings:
                                         object_client.set_int(object_dir + object_name +"/"+ "position", 0)
                                         object_client.set_string(object_dir + object_name +"/"+ "toplevel_id", panel)
                                         object_client.set_string(object_dir + object_name +"/"+ "object_type", "bonobo-applet")
-                                        object_client.set_string(object_dir + object_name +"/"+ "bonobo_iid", bonobo_id)
+                                        object_client.set_string(object_dir + object_name +"/"+ "applet_iid", applet_id)
                                                 
                                         appletidlist.append(object_name)
                                         object_client.set_list("/apps/panel/general/applet_id_list", gconf.VALUE_STRING, appletidlist)
@@ -395,6 +407,7 @@ class YMenuSettings:
 		backend.save_setting("Menu_Name",self.combo_menu.get_active_text())
 		backend.save_setting("IconSize",int(self.spinbutton1.get_value()))
 		backend.save_setting("ListSize",int(self.spinbutton2.get_value()))
+		backend.save_setting("MenuHeight",int(self.menu_height_spinbt.get_value()))
 		backend.save_setting("SuperL",int(self.check1.get_active()))
 		backend.save_setting("Icon_Name",self.combo_icon.get_active_text())
 		backend.save_setting("Button_Name",self.combo_button.get_active_text())

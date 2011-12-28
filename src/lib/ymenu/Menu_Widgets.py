@@ -1432,7 +1432,7 @@ class ProgramClass(gobject.GObject):
         self.App_Scr = gtk.ScrolledWindow()
         self.App_VBox = gtk.VBox(False)
         
-        self.App_Scr.set_size_request(Globals.PG_buttonframedimensions[0], Globals.PG_buttonframedimensions[1])
+	self.App_Scr.set_size_request(Globals.PG_buttonframedimensions[0], Globals.PG_buttonframedimensions[1])
 	self.App_Scr.set_shadow_type(gtk.SHADOW_NONE)
 	self.App_Scr.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
         
@@ -1472,7 +1472,7 @@ class ProgramClass(gobject.GObject):
         self.wine.connect("changed", self.menuChanged, 100)
         
         self.recent_manager = gtk.recent_manager_get_default()
-	self.recent_manager.connect("changed", self.buildRecent)
+        self.recent_manager.connect("changed", self.buildRecent)
 
         self.monitor = gio.volume_monitor_get()
         self.monitor.connect("mount-removed", self.buildPlaces)
@@ -1486,7 +1486,7 @@ class ProgramClass(gobject.GObject):
         pass
 
     def SetInputFocus(self):
-	pass
+		pass
 
     def buildPlaces (self, * args, ** kargs):
         self.NameList, self.IconsList, self.PathList, self.PngList = self.getDrive()
@@ -2049,8 +2049,8 @@ class ProgramClass(gobject.GObject):
         object_client = gconf.client_get_default()
         appletidlist = object_client.get_list("/apps/panel/general/applet_id_list", "string")
         for applet in appletidlist:
-            bonobo_id = object_client.get_string("/apps/panel/applets/" + applet + "/bonobo_iid")
-            if bonobo_id == "OAFIID:GNOME_YMenu":
+            applet_id = object_client.get_string("/apps/panel/applets/" + applet + "/applet_iid")
+            if applet_id == "OAFIID:GNOME_YMenu":
                 self.panel = object_client.get_string("/apps/panel/applets/" + applet + "/toplevel_id")
                 self.panel_position = object_client.get_int("/apps/panel/applets/" + applet + "/position") + 4
         if not os.path.isdir(Globals.PanelLauncher):
@@ -2072,7 +2072,7 @@ class ProgramClass(gobject.GObject):
         object_client.set_string(object_dir + object_name + "/" + "action_type", "lock")
         object_client.set_bool(object_dir + object_name + "/" + "use_custom_icon", False)
         object_client.set_string(object_dir + object_name + "/" + "attached_toplevel_id", "")
-        object_client.set_string(object_dir + object_name + "/" + "bonobo_iid", "")
+        object_client.set_string(object_dir + object_name + "/" + "applet_iid", "")
         object_client.set_string(object_dir + object_name + "/" + "toplevel_id", self.panel)
 
         launchers_list = object_client.get_list("/apps/panel/general/object_id_list", "string")

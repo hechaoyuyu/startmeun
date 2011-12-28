@@ -74,7 +74,7 @@ def ReloadSettings():
 
         # Loads the main configuration and settings file to their respective values
 	global orientation, panel_size, flip, MenuActions, MenuCommands, ImageDirectory, Actions, IconDirectory, MenuButtonDirectory, ThemeColor, ShowTop, FirstUse, StartMenuTemplate, ThemeColorCode,ThemeColorHtml, NegativeThemeColorCode, MenuWidth, MenuHeight, IconW, IconH, IconInX, IconInY, IconInW, IconInH, SearchX, SearchY, SearchW, SearchH, SearchIX, SearchIY, SearchInitialText,SearchTextColor, SearchBackground, SearchWidget, SearchWidgetPath, UserIconFrameOffsetX, UserIconFrameOffsetY, UserIconFrameOffsetH, UserIconFrameOffsetW, PG_tabframe, PG_tabframedimensions, PG_buttonframe, PG_buttonframedimensions, MenuHasSearch, MenuHasIcon, MenuHasFade, MenuHasTab, CairoSearchTextColor, CairoSearchBackColor, CairoSearchBorderColor, CairoSearchRoundAngle, PG_iconsize,RI_numberofitems, MenuButtonCount, MenuButtonNames, MenuButtonMarkup, MenuButtonNameOffsetX, MenuButtonNameOffsetY, MenuButtonCommands, MenuButtonX,MenuButtonY, MenuButtonImage, MenuButtonImageBack, ButtonBackImage, ButtonBackIconX, ButtonBackIconY, ButtonBackNameX, ButtonBackNameY, TabBackImage, TabBackIconX, TabBackIconY, TabBackNameX, TabBackNameY, VLineImage, VLineX, VLineY, MenuButtonIcon, MenuButtonIconSel, MenuButtonIconX,MenuButtonIconY,MenuButtonIconSize, MenuButtonSub,MenuButtonClose, MenuCairoIconButton, ButtonHasTop, ButtonBackground, ButtonTop, StartButton, StartButtonTop, ButtonHasBottom, MenuButtonNameAlignment, GtkColorCode
-        global lowresolution, MenuButtonSize, VLineH, SearchBgSize, width_ratio, height_ratio, m_tabsize, tab_back_size, MFontSize, button_back_size
+        global lowresolution, MenuButtonSize, VLineH, SearchBgSize, width_ratio, height_ratio, m_tabsize, tab_back_size, MFontSize, button_back_size, UserMenuHeight
         MenuButtonSize = []
         MenuButtonSize.append((137, 30))
         MenuButtonSize.append((137, 30))
@@ -163,6 +163,11 @@ def ReloadSettings():
 		SBase = XBase.getElementsByTagName("WindowDimensions")
 		MenuWidth = int(SBase[0].attributes["Width"].value)
 		MenuHeight = int(SBase[0].attributes["Height"].value)
+
+	UserMenuHeight = backend.load_setting("MenuHeight")
+
+	if not UserMenuHeight:
+                UserMenuHeight = MenuHeight
 
 	# Load WindowDimensions
 
@@ -433,19 +438,26 @@ def ReloadSettings():
         orig_menu_width  = MenuWidth
         orig_menu_height = MenuHeight
 
-        myscreensize = gtk.gdk.Screen.get_monitor_geometry(gtk.gdk.screen_get_default(), 0)
+        '''myscreensize = gtk.gdk.Screen.get_monitor_geometry(gtk.gdk.screen_get_default(), 0)
 
         if myscreensize.height < 768:
             lowresolution = True
             MenuHeight = int( myscreensize.height * 4 / 5 ) # 高度占屏幕分辨率的比率
-            ScaleFlag = True
+
             if MenuHeight < 600:
 	    	MFontSize = 'small'
                 if MenuHeight < 350:
                     MenuHeight = 350
                     
         elif myscreensize.height > 800:
-            MenuHeight = MenuHeight + 35
+            MenuHeight = MenuHeight + 35 '''
+
+        if UserMenuHeight != orig_menu_height:
+            MenuHeight = UserMenuHeight
+            if MenuHeight < 614: # 纵向分辨率768 的 4 / 5
+                lowresolution = True
+                if MenuHeight <  500:
+                    MFontSize = 'small'
       
         else:
             return

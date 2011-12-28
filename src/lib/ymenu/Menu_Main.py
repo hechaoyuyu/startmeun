@@ -60,6 +60,10 @@ class Main_Menu(gobject.GObject):
         'state-changed': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE,(gobject.TYPE_INT,gobject.TYPE_INT)),
         }
 
+        BlockSearchFlag = 1
+        BlockNotSearchFlag = 2
+        UnBlockSearchOpt = 0
+       
 	first_time = True
 	def __init__(self, hide_method):
 		gobject.GObject.__init__(self)
@@ -78,7 +82,7 @@ class Main_Menu(gobject.GObject):
 		#self.window.set_keep_above(0) #Make this always above other windows
 		self.window.stick() #Make this appear on all desktops
 		#self.window.set_default_size(Globals.MenuWidth,Globals.MenuHeight)
-                #在ubuntu11.04中需要下面两句
+		#在ubuntu11.04中需要下面两句
 		self.window.set_resizable(False)
 		self.window.set_size_request(Globals.MenuWidth, Globals.MenuHeight)
 		self.window.set_events(gtk.gdk.ALL_EVENTS_MASK)
@@ -377,15 +381,19 @@ class Main_Menu(gobject.GObject):
                 self.SearchBar.entry.set_text(_('Search'))
                 self.SearchBar.r_clk = False
                 self.window.set_focus(None)
+                self.PGL.emit('NotNeedSearch')
     		if self.PGL.Search_Flag:
                     self.PGL.App_VBox.show_all()
     		    self.PGL.Search_Flag = False
-                try:
+
+                if self.UnBlockSearchOpt & self.BlockNotSearchFlag:
                     self.PGL.handler_unblock(self.notsearch_env_id)
+                    self.UnBlockSearchOpt &= ~self.BlockNotSearchFlag
+
+                if self.UnBlockSearchOpt & self.BlockSearchFlag:
                     self.PGL.handler_unblock(self.search_env_id)
-                    self.PGL.emit('NotNeedSearch')
-                except:
-                    pass		
+                    self.UnBlockSearchOpt &= ~self.BlockSearchFlag
+
 		if Globals.MenuHasSearch:
 			if Globals.searchitem != '':
                                 Globals.searchitem = ''
@@ -487,11 +495,14 @@ class Main_Menu(gobject.GObject):
                         self.PlaySound(2)
 	
 	def net_Search(self, event):
+
             self.PGL.handler_block(self.search_env_id)
-            try:
+            self.UnBlockSearchOpt |= self.BlockSearchFlag
+
+            if self.UnBlockSearchOpt & self.BlockNotSearchFlag:
                 self.PGL.handler_unblock(self.notsearch_env_id)
-            except:
-                pass
+                self.UnBlockSearchOpt &= ~self.BlockNotSearchFlag
+
             icondir = INSTALL_PREFIX + '/share/ymenu/Themes/Icon/ylmfos/'
             self.google_search = SearchLauncher(icondir + 'google.xpm', self.PGL.App_VBox, _("Search Google"))
             self.google_search.connect('button_release_event', self.search_go, 'google')
@@ -508,8 +519,11 @@ class Main_Menu(gobject.GObject):
 
         def rm_Search(self, event):
             self.PGL.handler_block(self.notsearch_env_id)
-            try:
+            self.UnBlockSearchOpt |= self.BlockNotSearchFlag 
+            if self.UnBlockSearchOpt & self.BlockSearchFlag:
                 self.PGL.handler_unblock(self.search_env_id)
+                self.UnBlockSearchOpt &= ~self.BlockSearchFlag
+            try:
                 self.google_search.destroy()
                 self.wiki_search.destroy()
                 self.ylmf116_search.destroy()
