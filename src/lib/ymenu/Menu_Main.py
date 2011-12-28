@@ -566,7 +566,7 @@ class Main_Menu(gobject.GObject):
                 elif searchEn == 'wikipedia':
                     url = "http://zh.wikipedia.org/wiki/Special:Search?search=%s" % text
                 elif searchEn == '116':
-                    url = "http://www.116.com/?q=%s" % text
+                    url = "http://s.116.com/?q=ylmfos%s" % text
                 elif searchEn == 'baidu':
                     url = "http://www.baidu.com/s?wd=%s&tn=ylmf_3_pg&ch=57" % text
                 else:
