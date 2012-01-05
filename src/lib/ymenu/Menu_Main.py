@@ -16,6 +16,7 @@ import Launcher
 import gconf
 import gio
 import backend
+import math
 
 try:
 	has_gst = True
@@ -83,7 +84,7 @@ class Main_Menu(gobject.GObject):
 		self.window.stick() #Make this appear on all desktops
 		#self.window.set_default_size(Globals.MenuWidth,Globals.MenuHeight)
 		#在ubuntu11.04中需要下面两句
-		self.window.set_resizable(False)
+		#self.window.set_resizable(False)
 		self.window.set_size_request(Globals.MenuWidth, Globals.MenuHeight)
 		self.window.set_events(gtk.gdk.ALL_EVENTS_MASK)
 		#if not self.window.window:
@@ -199,45 +200,61 @@ class Main_Menu(gobject.GObject):
 #=================================================================
 #WINDOW SETUP
 #=================================================================
-	def expose (self, widget, event):
+
+        def special_rectangle(self, ctx, x, y, w, h, lw, r, lcolor, rcolor):
+
+                color = []
+                ctx.move_to(x + r, y) # 上  left width
+                ctx.line_to(x + lw, y)
+
+                ctx.line_to(x + lw, y + h) # right 
+
+                ctx.line_to(x + r, y + h) # bottom
+
+		ctx.line_to(x, y + h - r)
+                ctx.line_to(x, y + r)  # left 
+
+                ctx.arc(x + r, y + r, r, math.pi, 3 * math.pi / 2) #左上
+                ctx.arc(x + r, y + h - r, r, math.pi / 2, math.pi)     # 90 - 0
+                color = Globals.color_translate(lcolor)
+                ctx.set_source_rgb(color[2], color[1], color[0])
+                ctx.fill()
+
+		# 右半部分
+		x = x + lw # y = y
+		rw = w - lw
+		
+		ctx.move_to(x, y) # 上  left width
+                ctx.line_to(x + rw - r, y)
+
+		ctx.move_to(x + rw, y + r) # 
+                ctx.line_to(x + rw, y + h - r) # right 
+
+		ctx.move_to(x + rw - r, y + h) # 
+                ctx.line_to(x, y + h) # bottom
+
+                ctx.line_to(x, y)  # left 
+
+                ctx.arc(x + rw - r, y + r, r, 3 * math.pi / 2, math.pi * 2) #右上
+                ctx.arc(x + rw - r, y + h - r, r, 0, math.pi / 2)     # 0 - 90
+                color = Globals.color_translate(rcolor)
+                ctx.set_source_rgb(color[2], color[1], color[0])
+                ctx.fill()
+                del color
+
+        def expose (self, widget, event):
 
 		self.ctx = widget.window.cairo_create()
-		# set a clip region for the expose event
-		if self.supports_alpha == False:
-			self.ctx.set_source_rgb(1, 1, 1)
-		else:
-			self.ctx.set_source_rgba(1, 1, 1,0)
 		self.ctx.set_operator (cairo.OPERATOR_SOURCE)
-		self.ctx.paint()
-		cairo_drawing.draw_image(self.ctx, 0, 0, Globals.ImageDirectory + Globals.StartMenuTemplate, Globals.MenuWidth, Globals.MenuHeight )
+		# set a clip region for the expose event
+		if self.supports_alpha:
+                        self.ctx.set_source_rgba(0.0, 0.0, 0.0, 0.0)
+                        self.ctx.paint()
 
-	def shape(self):
-		#Standard shape setup of window
-		print 'shaping window'
-		w,h = self.window.get_size()
-		if w==0: w = 100
-		if h==0: h = 100
-		self.w = w
-		self.h = h
-		self.pixmap = gtk.gdk.Pixmap (None, w, h, 1)
-		ctx = self.pixmap.cairo_create()
-		ctx.save()
-		ctx.set_source_rgba(1, 1, 1,0)
-		ctx.set_operator (cairo.OPERATOR_SOURCE)
-		ctx.paint()
-		ctx.restore()
-		self.bgpb = gtk.gdk.pixbuf_new_from_file(Globals.ImageDirectory + Globals.StartMenuTemplate)
-                self.bgpb = self.bgpb.scale_simple(Globals.MenuWidth, Globals.MenuHeight, gtk.gdk.INTERP_BILINEAR)
-                if Globals.MenuHasIcon==1:
-			w,h = utils.get_image_size(Globals.UserImageFrame)
-			cairo_drawing.draw_image(ctx,Globals.UserIconFrameOffsetX,Globals.UserIconFrameOffsetY,Globals.UserImageFrame, w, h)
-			cairo_drawing.draw_scaled_image(ctx,Globals.IconInX +Globals.UserIconFrameOffsetX, Globals.UserIconFrameOffsetY+Globals.IconInY,Globals.UserImage,Globals.IconInW ,Globals.IconInH)
-		cairo_drawing.draw_enhanced_image(ctx, 0, 0,Globals.ImageDirectory + Globals.StartMenuTemplate)
-                '''if self.window.is_composited():
-			self.window.input_shape_combine_mask(self.pixmap,0,0)
-		else:
-			self.window.shape_combine_mask(self.pixmap, 0, 0)'''
-        
+                self.special_rectangle(self.ctx, 5, 0, Globals.MenuWidth - 5, Globals.MenuHeight - 5, \
+                                                Globals.PG_tabframedimensions[0], 6.0, \
+                                                Globals.PG_bgcolor, Globals.App_bgcolor)
+                
 	def setup(self):
 		self.menuframe = gtk.Fixed()
 		self.window.add (self.menuframe)
@@ -247,16 +264,11 @@ class Main_Menu(gobject.GObject):
 		if h==0: h = 100
 		self.w = w
 		self.h = h
-		self.shape()
-		self.window.set_opacity(0.99)
-		if Globals.MenuHasIcon == 1:
-                        self.usericon = ImageFrame(Globals.IconW,Globals.IconH,Globals.IconInX,Globals.IconInY,Globals.IconInW,Globals.IconInH,self.menuframe,self.bgpb)
-			self.usericonstate = 0
-			self.LastUserPicName = ""
+		#self.window.set_opacity(0.99)
 		
                 if Globals.MenuHasTab == 1:
                         # init
-                        self.PGL = ProgramClass(self.menuframe,self.usericon,self.usericonstate,self.LastUserPicName)
+                        self.PGL = ProgramClass(self.menuframe) 
                         self.PGL.connect ('menu', self.menu_callback)
 			self.PGL.connect ('right-clicked', self.menu_right_clicked)
                         self.search_env_id = self.PGL.connect ('NeedSearch', self.net_Search)
@@ -274,7 +286,7 @@ class Main_Menu(gobject.GObject):
      
 		self.MenuButtons = []
 		for i in range(0,Globals.MenuButtonCount):
-			self.MenuButtons.append(MenuButton(i,self.menuframe, self.bgpb))
+			self.MenuButtons.append(MenuButton(i, self.menuframe))
 			self.MenuButtons[i].Button.connect("enter-notify-event", self.Button_enter, i)
 			self.MenuButtons[i].Button.connect("leave-notify-event", self.Button_leave, i)
 			self.MenuButtons[i].Button.connect("button-release-event", self.Button_click, i)
@@ -347,23 +359,9 @@ class Main_Menu(gobject.GObject):
 				self.window.window.focus(int(time.time())/100)
 		self.window.set_urgency_hint(1)
 		self.window.activate_focus()             
-                self.window.set_opacity(0.86)
-                self.ChangeUserPic_Normalise()
+                self.window.set_opacity(0.85)
 		self.PlaySound(0)
 
-        def ChangeUserPic_Normalise(self):
-		# Restore userpic to mode 2  (speed lag if overwriting already current values)
-		# Place the usericon
-		if Globals.MenuHasIcon==1:
-			self.usericon.move(Globals.UserIconFrameOffsetX,Globals.UserIconFrameOffsetY)
-			self.usericon.updateimage(0,Globals.UserImageFrame)
-                        if os.path.isfile(Globals.UserFace):
-                                self.usericon.updateimage(1,Globals.UserFace)
-                        else:
-                                self.usericon.updateimage(1,Globals.UserImage)
-			self.usericon.transition([1,1,-1,-1],Globals.TransitionS,Globals.TransitionQ,None)
-			self.usericonstate == 0
-			self.LastUserPicName = ""
 
 	def lose_focus(self,widget,event):
 		print 'focus lost'
@@ -566,7 +564,7 @@ class Main_Menu(gobject.GObject):
                 elif searchEn == 'wikipedia':
                     url = "http://zh.wikipedia.org/wiki/Special:Search?search=%s" % text
                 elif searchEn == '116':
-                    url = "http://s.116.com/?q=%s" % text
+                    url = "http://www.116.com/?q=%s" % text
                 elif searchEn == 'baidu':
                     url = "http://www.baidu.com/s?wd=%s&tn=ylmf_3_pg&ch=57" % text
                 else:
@@ -650,6 +648,3 @@ if __name__ == "__main__":
 	hwg.show_window()
 	gtk.main()
 	
-
-
-

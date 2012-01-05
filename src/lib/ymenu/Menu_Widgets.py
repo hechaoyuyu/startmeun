@@ -46,7 +46,7 @@ def _(s):
     return gettext.gettext(s)
 
 class MenuButton:
-    def __init__(self, i, base, backimage):
+    def __init__(self, i, base):
         # base > EventBox > Fixed > All the rest
         self.i = i
         self.backimagearea = None
@@ -56,7 +56,7 @@ class MenuButton:
             self.supports_alpha = False
         else:
             self.supports_alpha = True
-        self.Button.connect("composited-changed", self.composite_changed)
+        self.Button.connect("composited-changed", self.composite_changed) # 属于GdkScreen, 当窗口
         self.Button.connect("enter_notify_event", self.enter, self.i)
         self.Button.connect("leave_notify_event", self.leave, self.i)
         self.Frame.connect("expose_event", self.expose)
@@ -71,32 +71,26 @@ class MenuButton:
         self.Setimage(Globals.ImageDirectory + Globals.MenuButtonImage[i])
         #self.w = self.pic.get_width()
         #self.h = self.pic.get_height()
-        self.w = Globals.MenuButtonSize[i][0]
-        self.h = Globals.MenuButtonSize[i][1]
+        self.w = Globals.MenuButtonW[i]
+        self.h = Globals.MenuButtonH[i]
 
-        if self.backimagearea is None:
-            if Globals.flip == False:
-                self.backimagearea = backimage.subpixbuf(Globals.MenuButtonX[i], Globals.MenuHeight - Globals.MenuButtonY[i] - self.h, self.w, self.h)
-                self.backimagearea = self.backimagearea.flip(Globals.flip)
-            else:
-                self.backimagearea = backimage.subpixbuf(Globals.MenuButtonX[i], Globals.MenuButtonY[i], self.w, self.h )
         # Set the background which is always present
         self.BackgroundImage = gtk.Image()
         if Globals.MenuButtonImageBack[i] != '':
             tmppic = gtk.gdk.pixbuf_new_from_file(Globals.ImageDirectory + Globals.MenuButtonImageBack[i] )
             tmppic = tmppic.scale_simple(self.w, self.h, gtk.gdk.INTERP_BILINEAR)
-            self.BackgroundImage.set_from_pixbuf( tmppic )
+            self.BackgroundImage.set_from_pixbuf (tmppic)
             del tmppic
         else:
             self.BackgroundImage.set_from_pixbuf(None)
+
         self.Image.set_size_request(self.w, self.h)
         self.Frame.set_size_request(self.w, self.h)
         self.SetBackground()
 
         self.Frame.put(self.BackgroundImage, 0, 0)
         self.Frame.put(self.Image, 0, 0)
-        if Globals.MenuButtonIcon[i]:
-            self.Frame.put(self.Icon, Globals.MenuButtonIconX[i], Globals.MenuButtonIconY[i])
+        
         self.Label = gtk.Label()
         self.txt = Globals.MenuButtonMarkup[i]
         try:
@@ -121,13 +115,16 @@ class MenuButton:
     def expose (self, widget, event):
         self.ctx = widget.window.cairo_create()
         # set a clip region for the expose event
+        color = []
+        color = Globals.color_translate(Globals.App_bgcolor)
         if self.supports_alpha == False:
-            self.ctx.set_source_rgb(1, 1, 1)
+            self.ctx.set_source_rgb(color[2], color[1], color[0])
         else:
-            self.ctx.set_source_rgba(1, 1, 1, 0)
+            self.ctx.set_source_rgba(color[2], color[1], color[0], 1)
         self.ctx.set_operator (cairo.OPERATOR_SOURCE)
         self.ctx.paint()
-        cairo_drawing.draw_pixbuf(self.ctx, self.backimagearea)
+        del color
+        #cairo_drawing.draw_pixbuf(self.ctx, self.backimagearea)
 	  
     def SetIcon(self, filename):
         # If the menu has an icon on top, then add that
@@ -219,7 +216,7 @@ class MenuButton:
                 
     def Setimage(self, imagefile):
         # The image is background when it's not displaying the overlay
-        self.pic = gtk.gdk.pixbuf_new_from_file(imagefile).scale_simple(Globals.MenuButtonSize[self.i][0], Globals.MenuButtonSize[self.i][1], gtk.gdk.INTERP_NEAREST)
+        self.pic = gtk.gdk.pixbuf_new_from_file(imagefile).scale_simple(Globals.MenuButtonW[self.i], Globals.MenuButtonH[self.i], gtk.gdk.INTERP_NEAREST)
         #self.pic = gtk.gdk.pixbuf_new_from_file(imagefile)
         self.Image.set_from_pixbuf(self.pic)
 
@@ -301,8 +298,7 @@ class ImageFrame:
         self.intrans = False
         self.Pic = None
         self.frame_window = gtk.EventBox()
-        if not self.frame_window.is_composited():
-	 
+        if not self.frame_window.is_composited():	 
             self.supports_alpha = False
         else:
             self.supports_alpha = True
@@ -492,8 +488,8 @@ class GtkSearchBar(gtk.EventBox, gobject.GObject):
         sel = gtk.gdk.pixbuf_new_from_file(BackImageFile).scale_simple(Globals.SearchBgSize[0], Globals.SearchBgSize[1], gtk.gdk.INTERP_BILINEAR )
         self.back.set_from_pixbuf(sel)
 
-        self.entry.modify_base(gtk.STATE_NORMAL, Globals.ThemeColorCode)
-                        
+        #self.entry.modify_base(gtk.STATE_NORMAL, Globals.ThemeColorCode)
+        self.entry.modify_base(gtk.STATE_NORMAL, gtk.gdk.Color(52 / 255.0, 57 / 255.0, 61 / 255.0))
         self.entry.set_text(_('Search'))
         self.entry.set_has_frame(False)
         self.entry.set_max_length(20)
@@ -502,12 +498,12 @@ class GtkSearchBar(gtk.EventBox, gobject.GObject):
         self.entry.connect("leave-notify-event", self.leave)
                 
         self.entry.modify_text(gtk.STATE_NORMAL, Globals.NegativeThemeColorCode)
-        if Globals.MFontSize == 'small': # or large the change the font size
+        if Globals.MFontSize == 'small': # or large to change the font size
             pfd = pango.FontDescription("8")
             self.entry.modify_font(pfd)
 
         self.Frame.put(self.back, 0, 0)
-        self.Frame.put(self.entry, int(6 * Globals.width_ratio), int( 3 * Globals.height_ratio) )
+        self.Frame.put(self.entry, int(6 * Globals.width_ratio), int( 6 * Globals.height_ratio) )
 
     def enter(self, widget, event):
         if event.type == gtk.gdk.BUTTON_PRESS:event_button = event.button
@@ -645,28 +641,16 @@ class CategoryTab(gtk.EventBox):
         self.Frame.set_size_request(self.w, self.h )
         self.Frame.put(self.Image, 0, 0)
         
-        #Tab上的图标
-        self.iconName = iconName
-        self.iconSize = iconSize
-        icon = self.getIcon(self.iconSize)
-        self.buttonImage = gtk.Image()
-        if icon:
-            self.buttonImage.set_from_pixbuf(icon)
-            del icon
-        else:
-            self.buttonImage.set_size_request(self.iconSize, self.iconSize)
-        self.Frame.put(self.buttonImage, Globals.TabBackIconX, Globals.TabBackIconY)
-
         #Tab上的文字
         self.Label = gtk.Label()
-        self.txt = "<span size=\"%s\" foreground=\"#FFFFFF\">%s</span>" % ( Globals.MFontSize, name.replace("&","") )
+        self.txt = "<span size=\"%s\" foreground=\"%s\">%s</span>" % ( Globals.MFontSize, Globals.PG_fgcolor, name.replace("&","") )
         self.Label.set_alignment(0, 0)
         self.Label.set_markup(self.txt)
 	self.Frame.put(self.Label, Globals.TabBackNameX, Globals.TabBackNameY)
         
         self.connectSelf("destroy", self.onDestroy)
-        self.connectSelf("enter_notify_event", self.enter)
-        self.connectSelf("leave_notify_event", self.leave)
+        #self.connectSelf("enter_notify_event", self.enter)
+        #self.connectSelf("leave_notify_event", self.leave)
         self.themeChangedHandlerId = iconManager.connect("changed", self.themeChanged)
       
     def connectSelf(self, event, callback):
@@ -785,8 +769,8 @@ class CategoryTab(gtk.EventBox):
             self.buttonImage.set_size_request(self.iconSize, self.iconSize)
     
     def onDestroy(self, widget):
-        self.buttonImage.clear()
-        iconManager.disconnect(self.themeChangedHandlerId)
+        #self.buttonImage.clear()
+        #iconManager.disconnect(self.themeChangedHandlerId)
         for connection in self.connections:
             self.disconnect(connection)
         del self.connections                
@@ -795,7 +779,7 @@ class CategoryTab(gtk.EventBox):
 	if tab == False:
             self.Image.set_from_pixbuf(None)
         else:
-            self.pic = gtk.gdk.pixbuf_new_from_file_at_size(Globals.ImageDirectory + Globals.TabBackImage, Globals.m_tabsize[0], Globals.m_tabsize[1])
+            self.pic = gtk.gdk.pixbuf_new_from_file_at_size(Globals.ImageDirectory + Globals.TabBackImage, Globals.tab_back_size[0], Globals.tab_back_size[1])
             #self.pic = gtk.gdk.pixbuf_new_from_file(Globals.ImageDirectory + Globals.TabBackImage)
             self.Image.set_from_pixbuf(self.pic)
 	    del self.pic
@@ -971,7 +955,7 @@ class AppButton(gtk.EventBox):
             text = "<span size=\"%s\" foreground=\"#FFFF00\">%s</span>" % ( Globals.MFontSize, text )
             text = "<b>%s</b>" % text
         else:
-            text = "<span size=\"%s\" foreground=\"#FFFFFF\">%s</span>" % ( Globals.MFontSize, text )
+            text = "<span size=\"%s\" foreground=\"%s\">%s</span>" % ( Globals.MFontSize, Globals.App_fgcolor, text )
             
         self.Label.set_markup(text)
         self.Label.set_alignment(0.0, 0.0)
@@ -1399,35 +1383,18 @@ class ProgramClass(gobject.GObject):
         'NotNeedSearch':(gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, ())
         }
     
-    def __init__(self, Frame, usericon, usericonstate, LastUserPicName):
+    def __init__(self, Frame): #, usericon, usericonstate, LastUserPicName):
         gobject.GObject.__init__ (self)
        
 	self.Search_Flag = False
         self.MenuWin = Frame
-        self.usericon = usericon
-        self.usericonstate = usericonstate
-        self.LastUserPicName = LastUserPicName
 
         # app category list
-        self.Category_Scr = gtk.ScrolledWindow()
         self.Category_VBox = gtk.VBox(False)
         
-        self.Category_Scr.set_size_request(Globals.PG_tabframedimensions[0], Globals.PG_tabframedimensions[1])
-	self.Category_Scr.set_shadow_type(gtk.SHADOW_NONE)
-	self.Category_Scr.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
-        
-        self.Category_Scr.add_with_viewport(self.Category_VBox)
-        self.Category_Scr.get_children()[0].set_shadow_type(gtk.SHADOW_NONE)
-        self.Category_Scr.get_children()[0].modify_bg(gtk.STATE_NORMAL, Globals.ThemeColorCode)
-        self.MenuWin.put(self.Category_Scr, Globals.PG_tabframe[0], Globals.PG_tabframe[1])
-
-        # middle vline
-        self.seperator = gtk.Image()
-        self.seperator.set_size_request(2, Globals.VLineH)
-        self.seperatorImage = gtk.gdk.pixbuf_new_from_file(Globals.ImageDirectory + Globals.VLineImage)  
-        self.seperator.set_from_pixbuf(self.seperatorImage)
-        self.MenuWin.put(self.seperator, Globals.VLineX, Globals.VLineY)
-
+        self.Category_VBox.set_size_request(Globals.PG_tabframedimensions[0], Globals.PG_tabframedimensions[1])
+	self.MenuWin.put(self.Category_VBox, Globals.PG_tabframe[0], Globals.PG_tabframe[1])
+	
         # app list
         self.App_Scr = gtk.ScrolledWindow()
         self.App_VBox = gtk.VBox(False)
@@ -1438,7 +1405,7 @@ class ProgramClass(gobject.GObject):
         
         self.App_Scr.add_with_viewport(self.App_VBox)
         self.App_Scr.get_children()[0].set_shadow_type(gtk.SHADOW_NONE)
-        self.App_Scr.get_children()[0].modify_bg(gtk.STATE_NORMAL, Globals.ThemeColorCode)
+        self.App_Scr.get_children()[0].modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse(Globals.App_bgcolor))
         self.MenuWin.put(self.App_Scr, Globals.PG_buttonframe[0], Globals.PG_buttonframe[1])
                 
         self.filterTimer = None
@@ -1695,7 +1662,14 @@ class ProgramClass(gobject.GObject):
 
         self.menuChangedTimer = gobject.timeout_add(timer, self.updateBoxes, True)		
         
-    def updateBoxes(self, menu_has_changed):        
+    def ExecCommand(self, widget, event, item):
+        if item["name"] == _("Software Center"):
+            os.system("%s &" % Globals.CategoryCommands['Y Center'])
+        elif item["name"] == _("Control Panel"):
+            os.system("%s &" % Globals.CategoryCommands['Control Panel'])
+
+
+    def updateBoxes(self, menu_has_changed):
         # FIXME: This is really bad!
         if self.rebuildLock:            
             return
@@ -1761,6 +1735,8 @@ class ProgramClass(gobject.GObject):
                 if Globals.Settings['TabHover']:
                     item["button"].connect("enter-notify-event", self.StartFilter, item["filter"], item["icon"])
                     item["button"].connect("leave-notify-event", self.StopFilter)
+                    if item["name"] == _("Software Center") or item["name"] == _("Control Panel"):
+                        item["button"].connect("button-release-event", self.ExecCommand, item)
                 else:
                     item["button"].connect("button-release-event", self.Filter, item["filter"], item["icon"])
                 
@@ -1782,13 +1758,13 @@ class ProgramClass(gobject.GObject):
 		self.StartEngine()
    
             if menu_has_changed == True:
-                for item in sortedCategoryList:
+                for item in sortedCategoryList[0:-3]:
                     self.Category_VBox.pack_start(item[1], False)
             
             else:
-                for item in sortedCategoryList[0:-3]:
+                for item in sortedCategoryList[0:-5]:
                     self.Category_VBox.pack_start(item[1], False)
-                for item in sortedCategoryList[-3:]:
+                for item in sortedCategoryList[-5:]:
                     self.Category_VBox.pack_end(item[1], False)
             del sortedCategoryList            
             
@@ -2117,9 +2093,10 @@ class ProgramClass(gobject.GObject):
                 self.emit('NotNeedSearch')
 
     def StartFilter(self, widget, event, category, icon):
+
         if self.filterTimer:
             gobject.source_remove(self.filterTimer)
-        self.filterTimer = gobject.timeout_add(115, self.Filter, widget, event, category, icon)
+        self.filterTimer = gobject.timeout_add(80, self.Filter, widget, event, category, icon)
 	self.Search_Flag = False
         self.emit('NotNeedSearch')
 
@@ -2130,12 +2107,11 @@ class ProgramClass(gobject.GObject):
 
     def Filter(self, widget, event, category, icon):
         
-        self.UpdateUserImage(widget, event, icon)
+        #self.UpdateUserImage(widget, event, icon)
         
         for item in self.categoryList:
             item["button"].setSelectedTab(False)
         widget.setSelectedTab(True)
-        
         self.activeFilter = (1, category)
         self.cate_button = widget
         for i in self.App_VBox.get_children():
@@ -2217,10 +2193,12 @@ class ProgramClass(gobject.GObject):
             if isinstance(child, xdg.Menu.Menu):
                 newCategoryList.append({"name": child.getName(), "icon": child.getIcon(), "tooltip": child.getComment(), "filter": child.getName(), "index": num})            
         num += 1
-        
-        newCategoryList.append({"name": _("My Computer"), "icon": "computer", "tooltip": _("Show all Places"), "filter": _("My Computer"), "index": num})          
-        newCategoryList.append({"name": _("Recent"), "icon": "document-open-recent", "tooltip": _("Recent All"), "filter": _("Recent"), "index": num + 1})
-        newCategoryList.append({"name": _("Favorites"), "icon": "emblem-favorite", "tooltip": _("Show all Favorites"), "filter": _("Favorites"), "index": num + 2})
+
+        newCategoryList.append({"name": _("Software Center"), "icon": "emblem-favorite", "tooltip": _("Ylmf OS software center"), "filter":None, "index": num})
+        newCategoryList.append({"name": _("Control Panel"), "icon": "emblem-favorite", "tooltip": _("Control Panel"), "filter":None , "index": num + 1})
+        newCategoryList.append({"name": _("My Computer"), "icon": "computer", "tooltip": _("Show all Places"), "filter": _("My Computer"), "index": num + 2})
+        newCategoryList.append({"name": _("Recent"), "icon": "document-open-recent", "tooltip": _("Recent All"), "filter": _("Recent"), "index": num + 3})
+        newCategoryList.append({"name": _("Favorites"), "icon": "emblem-favorite", "tooltip": _("Show all Favorites"), "filter": _("Favorites"), "index": num + 4})
         return newCategoryList
 
     # Build a list containing the DesktopEntry object and the category of each application in the menu

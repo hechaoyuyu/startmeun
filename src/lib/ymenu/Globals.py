@@ -73,13 +73,11 @@ def ReloadSettings():
 			Settings[x] = backend.load_setting(x)
 
         # Loads the main configuration and settings file to their respective values
-	global orientation, panel_size, flip, MenuActions, MenuCommands, ImageDirectory, Actions, IconDirectory, MenuButtonDirectory, ThemeColor, ShowTop, FirstUse, StartMenuTemplate, ThemeColorCode,ThemeColorHtml, NegativeThemeColorCode, MenuWidth, MenuHeight, IconW, IconH, IconInX, IconInY, IconInW, IconInH, SearchX, SearchY, SearchW, SearchH, SearchIX, SearchIY, SearchInitialText,SearchTextColor, SearchBackground, SearchWidget, SearchWidgetPath, UserIconFrameOffsetX, UserIconFrameOffsetY, UserIconFrameOffsetH, UserIconFrameOffsetW, PG_tabframe, PG_tabframedimensions, PG_buttonframe, PG_buttonframedimensions, MenuHasSearch, MenuHasIcon, MenuHasFade, MenuHasTab, CairoSearchTextColor, CairoSearchBackColor, CairoSearchBorderColor, CairoSearchRoundAngle, PG_iconsize,RI_numberofitems, MenuButtonCount, MenuButtonNames, MenuButtonMarkup, MenuButtonNameOffsetX, MenuButtonNameOffsetY, MenuButtonCommands, MenuButtonX,MenuButtonY, MenuButtonImage, MenuButtonImageBack, ButtonBackImage, ButtonBackIconX, ButtonBackIconY, ButtonBackNameX, ButtonBackNameY, TabBackImage, TabBackIconX, TabBackIconY, TabBackNameX, TabBackNameY, VLineImage, VLineX, VLineY, MenuButtonIcon, MenuButtonIconSel, MenuButtonIconX,MenuButtonIconY,MenuButtonIconSize, MenuButtonSub,MenuButtonClose, MenuCairoIconButton, ButtonHasTop, ButtonBackground, ButtonTop, StartButton, StartButtonTop, ButtonHasBottom, MenuButtonNameAlignment, GtkColorCode
-        global lowresolution, MenuButtonSize, VLineH, SearchBgSize, width_ratio, height_ratio, m_tabsize, tab_back_size, MFontSize, button_back_size, UserMenuHeight
-        MenuButtonSize = []
-        MenuButtonSize.append((137, 30))
-        MenuButtonSize.append((137, 30))
-        MenuButtonSize.append((83, 28))
-        MenuButtonSize.append((83, 28))
+	global orientation, panel_size, flip, MenuActions, MenuCommands, ImageDirectory, Actions, IconDirectory, MenuButtonDirectory, ThemeColor, ShowTop, FirstUse, StartMenuTemplate, ThemeColorCode,ThemeColorHtml, NegativeThemeColorCode, MenuWidth, MenuHeight, IconW, IconH, IconInX, IconInY, IconInW, IconInH, SearchWidget, SearchWidgetPath, UserIconFrameOffsetX, UserIconFrameOffsetY, UserIconFrameOffsetH, UserIconFrameOffsetW, PG_tabframe, PG_tabframedimensions, PG_buttonframe, PG_buttonframedimensions, MenuHasSearch, MenuHasIcon, MenuHasFade, MenuHasTab, CairoSearchTextColor, CairoSearchBackColor, CairoSearchBorderColor, CairoSearchRoundAngle, PG_iconsize,RI_numberofitems, MenuButtonCount, MenuButtonNames, MenuButtonMarkup, MenuButtonNameOffsetX, MenuButtonNameOffsetY, MenuButtonCommands, MenuButtonX,MenuButtonY, MenuButtonImage, MenuButtonImageBack, ButtonBackImage, ButtonBackIconX, ButtonBackIconY, ButtonBackNameX, ButtonBackNameY, TabBackImage, TabBackIconX, TabBackIconY, TabBackNameX, TabBackNameY, MenuButtonIcon, MenuButtonIconSel, MenuButtonIconX,MenuButtonIconY,MenuButtonIconSize, MenuButtonSub, MenuButtonClose, MenuCairoIconButton, ButtonHasTop, ButtonBackground, ButtonTop, StartButton, StartButtonTop, ButtonHasBottom, MenuButtonNameAlignment, GtkColorCode
+        global SearchX, SearchY, SearchW, SearchH, SearchIX, SearchIY, SearchInitialText,SearchTextColor, SearchBackground, SearchBgSize
+        global lowresolution, width_ratio, height_ratio, tab_back_size, MFontSize, button_back_size, UserMenuHeight
+        global App_fgcolor, App_bgcolor, PG_fgcolor, PG_bgcolor, CategoryCommands
+        global MenuButtonW, MenuButtonH
         
         lowresolution = False
 
@@ -106,10 +104,8 @@ def ReloadSettings():
 			break
 	MenuActions = []
 	MenuCommands = []
-	MenuActions.append('Control Panel')
-	MenuCommands.append(Settings['Control_Panel'])
-        MenuActions.append('Y Center')
-	MenuCommands.append(Settings['Y_Center'])
+        CategoryCommands = {'Control Panel':Settings['Control_Panel'], 'Y Center':Settings['Y_Center']}
+
 	MenuActions.append('Power')
 	MenuCommands.append(Settings['Power'])
 	MenuActions.append('Logout')
@@ -120,6 +116,11 @@ def ReloadSettings():
 	MenuButtonDirectory = "%s/share/%s/Themes/Button/%s/" % (INSTALL_PREFIX, appdirname, Settings['Button_Name'])
 	PG_iconsize = int(float(Settings['IconSize']))
 	RI_numberofitems = int(float(Settings['ListSize']))
+
+        PG_tabframe = []
+        PG_buttonframe = []
+	PG_tabframedimensions = []
+        PG_buttonframedimensions = []
 
         # Menu Themes
 	try:
@@ -149,10 +150,6 @@ def ReloadSettings():
 		for node in XContent:
 			print node.attributes["color"].value
 		sys.exit()
-		
-	# Load Background Image
-	SBase = XBase.getElementsByTagName("Background")
-	StartMenuTemplate = SBase[0].attributes["Image"].value
 	
 	try:
 		im = gtk.gdk.pixbuf_new_from_file('%s%s' % (ImageDirectory, StartMenuTemplate))
@@ -169,29 +166,7 @@ def ReloadSettings():
 	if not UserMenuHeight:
                 UserMenuHeight = MenuHeight
 
-	# Load WindowDimensions
-
-	SBase = XBase.getElementsByTagName("IconSettings")
-	try:
-		UserIconFrameOffsetX = int(SBase[0].attributes["X"].value)
-		UserIconFrameOffsetW = int(SBase[0].attributes["Width"].value)
-		UserIconFrameOffsetH = int(SBase[0].attributes["Height"].value)
-		if orientation == 'botton':
-			UserIconFrameOffsetY = int(SBase[0].attributes["Y"].value)
-	
-		elif orientation == 'top':
-	
-			UserIconFrameOffsetY =  MenuHeight - int(SBase[0].attributes["Y"].value) - UserIconFrameOffsetH
-		else:
-			UserIconFrameOffsetY = int(SBase[0].attributes["Y"].value)
-	
-		IconW = int(SBase[0].attributes["Width"].value)
-		IconH = int(SBase[0].attributes["Height"].value)
-		IconInX = int(SBase[0].attributes["InsetX"].value)
-		IconInY = int(SBase[0].attributes["InsetY"].value)
-		IconInW = int(SBase[0].attributes["InsetWidth"].value)
-		IconInH = int(SBase[0].attributes["InsetHeight"].value)
-	except:pass
+	# Load WindowDimensions end
         
         # Load TabBackground Image
         try:
@@ -201,12 +176,6 @@ def ReloadSettings():
                 TabBackIconY = int(SBase[0].attributes["TabIconY"].value)
                 TabBackNameX = int(SBase[0].attributes["TextX"].value)
                 TabBackNameY = int(SBase[0].attributes["TextY"].value)
-        
-                # Load VLine Image
-                SBase = XBase.getElementsByTagName("VLine")
-                VLineImage = SBase[0].attributes["Image"].value
-                VLineX = int(SBase[0].attributes["X"].value)
-                VLineY = int(SBase[0].attributes["Y"].value)
         
                 # Load ButtonBackground Image
                 SBase = XBase.getElementsByTagName("ButtonBackground")
@@ -240,19 +209,29 @@ def ReloadSettings():
         # Load ProGramTabSettings
         try:
                 SBase = XBase.getElementsByTagName("ProgramTabSettings")
-                PG_tabframedimensions = int(SBase[0].attributes["Width"].value),int(SBase[0].attributes["Height"].value)
-                PG_tabframe = int(SBase[0].attributes["X"].value),int(SBase[0].attributes["Y"].value)
+                PG_tabframedimensions.append(int(SBase[0].attributes["Width"].value))
+                PG_tabframedimensions.append(int(SBase[0].attributes["Height"].value))
+                PG_tabframe.append(int(SBase[0].attributes["X"].value))
+                PG_tabframe.append(int(SBase[0].attributes["Y"].value))
+                PG_fgcolor = SBase[0].attributes["Foreground"].value
+                PG_bgcolor = SBase[0].attributes["Background"].value
         except:pass
-        
+
 	# Load ProgramListSettings
 	SBase = XBase.getElementsByTagName("ProgramListSettings")
-	PG_buttonframedimensions = int(SBase[0].attributes["Width"].value),int(SBase[0].attributes["Height"].value)
-	if orientation == 'botton':
-		PG_buttonframe = int(SBase[0].attributes["X"].value),int(SBase[0].attributes["Y"].value)
+	PG_buttonframedimensions.append(int(SBase[0].attributes["Width"].value))
+        PG_buttonframedimensions.append(int(SBase[0].attributes["Height"].value))
+	App_fgcolor = SBase[0].attributes["Foreground"].value
+        App_bgcolor = SBase[0].attributes["Background"].value
+        if orientation == 'botton':
+		PG_buttonframe.append(int(SBase[0].attributes["X"].value))
+                PG_buttonframe.append(int(SBase[0].attributes["Y"].value))
 	elif orientation == 'top':
-		PG_buttonframe = int(SBase[0].attributes["X"].value),MenuHeight - int(SBase[0].attributes["Y"].value) - int(PG_buttonframedimensions[1])
+		PG_buttonframe.append(int(SBase[0].attributes["X"].value))
+                PG_buttonframe.append(MenuHeight - int(SBase[0].attributes["Y"].value) - int(PG_buttonframedimensions[1]))
 	else:
-		PG_buttonframe = int(SBase[0].attributes["X"].value),int(SBase[0].attributes["Y"].value)
+		PG_buttonframe.append(int(SBase[0].attributes["X"].value))
+                PG_buttonframe.append(int(SBase[0].attributes["Y"].value))
 	
 	# Load Capabilities
 	SBase = XBase.getElementsByTagName("Capabilities")
@@ -273,6 +252,8 @@ def ReloadSettings():
 	MenuButtonNameOffsetY = []
 	MenuButtonX = []
 	MenuButtonY = []
+        MenuButtonW = []
+        MenuButtonH = []
 	MenuButtonImage = []
 	MenuButtonImageBack = []
 	MenuButtonIcon = []
@@ -319,12 +300,20 @@ def ReloadSettings():
 		try:  
 			MenuButtonIconY.append(int(node.attributes["ButtonIconY"].value)) 
 		except:
-
 			MenuButtonIconY.append(0) 
 		try:
 			MenuButtonIconSize.append(int(node.attributes["ButtonIconSize"].value)) 
 		except:
-			MenuButtonIconSize.append(0)    	    	
+			MenuButtonIconSize.append(0)
+                try:
+                        MenuButtonW.append(int(node.attributes["ButtonW"].value))
+                except:
+                        MenuButtonW.append(83)
+                try:
+                        MenuButtonH.append(int(node.attributes["ButtonH"].value))
+                except:
+                        MenuButtonH.append(28)
+                        
 		MenuButtonX.append(int(node.attributes["ButtonX"].value))
 		if orientation == 'botton':
 			MenuButtonNameOffsetY.append(int(node.attributes["TextY"].value))
@@ -385,29 +374,18 @@ def ReloadSettings():
                      MenuButtonDirectory+"start-here-top-depressed.png")
 
         # ----------------------------------------------------------------
-        MenuButtonIconSize[0] = 24
-        MenuButtonIconSize[1] = 24
-        #VLine
-
-        try:
-            sel = gtk.gdk.pixbuf_get_file_info(ImageDirectory + VLineImage)
-            VLineH = sel[2]
-            sel = None
-        except: VLineH = 457
 
         # Category tab's background m_tab.png
-        m_tabsize = []
+        tab_back_size = []
         try:
             sel = gtk.gdk.pixbuf_get_file_info( ImageDirectory + TabBackImage )
-            m_tabsize.append(sel[1])
-            m_tabsize.append(sel[2])
+            tab_back_size.append(sel[1])
+            tab_back_size.append(sel[2])
             sel = None
         except:
-            m_tabsize.append(137)
-            m_tabsize.append(30)
+            tab_back_size.append(137)
+            tab_back_size.append(30)
             
-        tab_back_size = m_tabsize
-
         # App list button background size
         button_back_size = []
         try:
@@ -463,115 +441,86 @@ def ReloadSettings():
             return
 
         # ------------------scale processing  -----------------------------------------
+
+        height_ratio = MenuHeight * 1.0 / orig_menu_height # 参照菜单，控件缩小比率
+
+        # Category list
+        PG_tabframe[1] = int(PG_tabframe[1] * height_ratio)
+        PG_tabframedimensions[1] = int(PG_tabframedimensions[1] * height_ratio)
+
+        # Program list
+        PG_buttonframe[1] = int(PG_buttonframe[1] * height_ratio)
+        PG_buttonframedimensions[1] = int(PG_buttonframedimensions[1] * height_ratio)
+
+
+        # Search Bar
+        SearchY = int( SearchY * height_ratio)
+
+	# Menu Button
+	for i in range(0, MenuButtonCount): 
+	    MenuButtonY[i] = int(MenuButtonY[i] * height_ratio)
+	
+        # ---------------------低分辨率时--------------------------
+
         if lowresolution:
-            MenuWidth    = int(MenuHeight * orig_menu_width / orig_menu_height) # 保持选单宽高比例
-            width_ratio  = MenuWidth / orig_menu_width
-        height_ratio = MenuHeight / orig_menu_height # 参照菜单，控件缩小比率
+            MenuWidth    = MenuHeight * orig_menu_width / orig_menu_height # 保持选单宽高比例
+            width_ratio  = MenuWidth * 1.0 / orig_menu_width # 换成浮点数
+            # category_scr size and  position
+            PG_tabframe[0] = int(PG_tabframe[0] * width_ratio)
+            PG_tabframedimensions[0] = int(PG_tabframedimensions[0] * width_ratio)
+	    TabBackIconX = int(TabBackIconX * width_ratio)
+	    TabBackIconY = int(TabBackIconY * height_ratio)
+	    TabBackNameX = int(TabBackNameX * width_ratio)
+	    TabBackNameY = int(TabBackNameY * height_ratio)
 
-        # Icon of Main Menu's size and position
-        if lowresolution:
-            IconW = int(IconW * width_ratio)
-            IconH = int(IconH * height_ratio)
-            IconInW = int(IconInW * width_ratio)
-            IconInH = int(IconInH * height_ratio)
-        IconInX = int(IconInX * width_ratio)
-        IconInY = int(IconInY * height_ratio)
-        UserIconFrameOffsetX = int(UserIconFrameOffsetX * width_ratio)
-        UserIconFrameOffsetY = int(UserIconFrameOffsetY * height_ratio)
+	    tab_back_size[0] = int(tab_back_size[0] * width_ratio)
+	    tab_back_size[1] = int(tab_back_size[1] * height_ratio)
 
-        # category_scr size and  position
-        PG_tabframe = int(PG_tabframe[0] * width_ratio), int(PG_tabframe[1] * height_ratio)
-        PG_tabframedimensions = int(PG_tabframedimensions[0] * width_ratio), int(PG_tabframedimensions[1] * height_ratio)
-        if lowresolution:
-            PG_iconsize = int( PG_iconsize * width_ratio )
+            PG_iconsize = int(PG_iconsize * width_ratio) # PG_iconsize 菜单条目图标，与程序列表共用
 
-        # Category Tab Back Icon, Label position
-        TabBackNameX = int( TabBackNameX * width_ratio )
-        TabBackNameY = int( TabBackNameY * height_ratio )
-        TabBackIconX = int( TabBackIconX * width_ratio )
-        TabBackIconY = int( TabBackIconY * height_ratio )
-        #  Category Tab Background size
-        if lowresolution:
-            tab_back_size.append(int( tab_back_size[0] * width_ratio ))
-            tab_back_size.append(int( tab_back_size[1] * height_ratio ))
-            del tab_back_size[0]
-            del tab_back_size[0]
+            # app_scr size and position
+            PG_buttonframedimensions[0] = int(PG_buttonframedimensions[0] * width_ratio)
+            PG_buttonframe[0] = int(PG_buttonframe[0] * width_ratio)
 
-        # middle vline's position
-        VLineX = int(VLineX * width_ratio)
-        VLineY = int(VLineY * height_ratio)
-        VLineH = int(VLineH * height_ratio)
+	    ButtonBackIconX = int(ButtonBackIconX * width_ratio)
+	    ButtonBackIconY = int(ButtonBackIconY * height_ratio)
+	    ButtonBackNameX = int(ButtonBackNameX * width_ratio)
+	    ButtonBackNameY = int(ButtonBackNameY * height_ratio)
 
-        # app_scr size and position
-        PG_buttonframedimensions = int(PG_buttonframedimensions[0] * width_ratio), int(PG_buttonframedimensions[1] * height_ratio)
-        PG_buttonframe = int(PG_buttonframe[0] * width_ratio), int(PG_buttonframe[1] * height_ratio)
-        # the position of button name(label)
-        ButtonBackNameX = int( ButtonBackNameX * width_ratio )
-        ButtonBackNameY = int( ButtonBackNameY * height_ratio )
-        # button size
-        if lowresolution:
-            button_back_size.append(int(button_back_size[0] * width_ratio))
-            button_back_size.append(int(button_back_size[1] * height_ratio))
-            del button_back_size[0]
-            del button_back_size[0]
-        # button pozition
-        ButtonBackIconX = int(ButtonBackIconX * width_ratio )
-        ButtonBackIconY = int(ButtonBackIconX * height_ratio) - 2
+	    button_back_size[0] = int(button_back_size[0] * width_ratio)
+	    button_back_size[1] = int(button_back_size[1] * height_ratio)
 
-        # four button's size and position
-        if lowresolution:
-            iconsize = int( MenuWidth * 24 / orig_menu_width )
-            MenuButtonIconSize[0] = iconsize
-            MenuButtonIconSize[1] = iconsize
-        MenuButtonIconX[0] = int( MenuButtonIconX[0] * width_ratio )
-        MenuButtonIconX[1] = int( MenuButtonIconX[1] * height_ratio )
-
-        MenuButtonNameOffsetX[0] = int( MenuButtonNameOffsetX[0] * width_ratio ) # 四大按钮标签相对坐标偏移
-        MenuButtonNameOffsetX[1] = int( MenuButtonNameOffsetX[1] * width_ratio )
-        MenuButtonNameOffsetX[2] = int( MenuButtonNameOffsetX[2] * width_ratio )
-        MenuButtonNameOffsetX[3] = int( MenuButtonNameOffsetX[3] * width_ratio )
-
-        MenuButtonNameOffsetY[0] = int( MenuButtonNameOffsetY[0] * height_ratio )
-        MenuButtonNameOffsetY[1] = int( MenuButtonNameOffsetY[1] * height_ratio )
-        MenuButtonNameOffsetY[2] = int( MenuButtonNameOffsetY[2] * height_ratio )
-        MenuButtonNameOffsetY[3] = int( MenuButtonNameOffsetY[3] * height_ratio )
-
-                    # control panel's position, x= x , y = Category_src's y + its height + 4
-        if lowresolution:
-            NewMenuButtonSize = []
-            NewMenuButtonSize.append((int( MenuButtonSize[0][0] * width_ratio ), int( MenuButtonSize[0][1] * height_ratio )))
-            NewMenuButtonSize.append((int( MenuButtonSize[1][0] * width_ratio ), int( MenuButtonSize[1][1] * height_ratio )))
-            NewMenuButtonSize.append((int( MenuButtonSize[2][0] * width_ratio ), int( MenuButtonSize[2][1] * height_ratio )))
-            NewMenuButtonSize.append((int( MenuButtonSize[3][0] * width_ratio ), int( MenuButtonSize[3][1] * height_ratio )))
-            del MenuButtonSize
-            MenuButtonSize = NewMenuButtonSize
-
-        MenuButtonX[0] = int( MenuButtonX[0] * width_ratio )
-        MenuButtonY[0] = int( MenuButtonY[0] * height_ratio )
-
-        MenuButtonX[1] = int( MenuButtonX[1] * width_ratio )
-        MenuButtonY[1] = int( MenuButtonY[1] * height_ratio )
-
-        MenuButtonX[2] = int( MenuButtonX[2] * width_ratio )
-        MenuButtonY[2] = int( MenuButtonY[2] * height_ratio )
-
-        MenuButtonX[3] = int( MenuButtonX[3] * width_ratio )
-        MenuButtonY[3] = int( MenuButtonY[3] * height_ratio )
-
-                    # search bar position
-        if lowresolution:
+	    # search bar position
             SearchW = int( SearchW * width_ratio )
             SearchH = int( SearchH * height_ratio )
-            SearchBgSize.append(int(SearchBgSize[0] * width_ratio))
-            SearchBgSize.append(int(SearchBgSize[1] * height_ratio))
-            del SearchBgSize[0]
-            del SearchBgSize[0]
-        SearchX = PG_buttonframe[0] # 与App_Scr X坐标相同
-        SearchY = int( SearchY * height_ratio )
+            SearchBgSize[0] = int(SearchBgSize[0] * width_ratio)
+            SearchBgSize[1] = int(SearchBgSize[1] * height_ratio)
+            SearchX = int( SearchX * width_ratio)
 
-        # --------- scale  processing  end -----------------------------------------
+	    # Menu Button
+
+            for i in range(0, MenuButtonCount):
+                MenuButtonX[i] = int(MenuButtonX[i] * width_ratio)
+                MenuButtonW[i] = int(MenuButtonW[i] * width_ratio)
+                MenuButtonH[i] = int(MenuButtonH[i] * height_ratio)
+		MenuButtonNameOffsetX[i] = int(MenuButtonNameOffsetX[i] * width_ratio)
+		MenuButtonNameOffsetY[i] = int(MenuButtonNameOffsetY[i] * height_ratio)
+		MenuButtonIconX[i] = int(MenuButtonIconX[i] * width_ratio)
+		MenuButtonIconY[i] = int(MenuButtonIconY[i] * height_ratio)
+		MenuButtonIconSize[i] = int(MenuButtonIconSize[i] * width_ratio) # 因为其宽高相等, 以宽比率换算，可能会变形
+            # --------- scale  processing  end -----------------------------------------
         
 searchitem = ''
+
+# color value from html format to decimal format
+def color_translate(hexcolor):
+    hexcolor = hexcolor.replace("#", "")
+    octcolor = int(hexcolor, 16)
+    red = (octcolor >> 16) & 0x0000ff
+    green = (octcolor >> 8) & 0x0000ff
+    blue = octcolor & 0x0000ff
+    return red / 255.0, green / 255.0, blue / 255.0
+
 
 try:
 	ReloadSettings()

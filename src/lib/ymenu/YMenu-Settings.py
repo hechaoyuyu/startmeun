@@ -209,7 +209,7 @@ class YMenuSettings:
                 self.menu_height_spinbt = gtk.SpinButton()
                 self.menu_height_spinbt.set_digits(0)
                 self.menu_height_spinbt.set_increments(10, 50)
-                self.menu_height_spinbt.set_range(300, 1000)
+                self.menu_height_spinbt.set_range(350, 1000)
                 self.menu_height_spinbt.set_value(Globals.UserMenuHeight)
                 self.menu_height_label  = gtk.Label(_('Height of YMenu'))
 		self.menu_height_label.set_justify(gtk.JUSTIFY_LEFT)
