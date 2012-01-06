@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-import pygtk
-pygtk.require('2.0')
 import gtk
 import os
 import gconf
@@ -213,16 +211,6 @@ class YMenuSettings:
                 self.menu_height_spinbt.set_value(Globals.UserMenuHeight)
                 self.menu_height_label  = gtk.Label(_('Height of YMenu'))
 		self.menu_height_label.set_justify(gtk.JUSTIFY_LEFT)
-		
-		self.label14 = gtk.Label(_('Tab hover effect'))
-		self.combo6 = gtk.combo_box_new_text()
-		self.combo6.append_text(_('None'))
-		self.combo6.append_text(_('Grow'))
-		self.combo6.append_text(_('Black and White'))
-		self.combo6.append_text(_('Blur'))
-		self.combo6.append_text(_('Glow'))
-		self.combo6.append_text(_('Saturate'))
-		self.combo6.set_active(Globals.Settings['Tab_Efect'])
 
 		self.check7 = gtk.CheckButton(_('Show tooltips in program list'))
 		self.check7.set_active(int(Globals.Settings['Show_Tips']))
@@ -233,9 +221,6 @@ class YMenuSettings:
 		self.hbox13.pack_start(self.label12, False, False,10)
 		self.hbox14.pack_start(self.menu_height_spinbt, False, False)
 		self.hbox14.pack_start(self.menu_height_label, False, False,10)
-
-		self.hbox16.pack_start(self.combo6, False, False)
-		self.hbox16.pack_start(self.label14, False, False,10)
 
 		#self.vbox_prefs.pack_start(self.hbox_check1, False, False,3)
 		
@@ -277,7 +262,15 @@ class YMenuSettings:
 		self.vbox_about.pack_start(self.button7, False, False)
 		
 
-	def buttonpress(self,widget,id):
+	def verify_height(self):
+            value = int(self.menu_height_spinbt.get_value())
+            if value > 1000:
+                value = 1000
+            elif value < 350:
+                value = 350
+            self.menu_height_spinbt.set_value(value)
+            
+        def buttonpress(self,widget,id):
 		if id == 'ok':
 			self.SaveSettings()
                         object_name = "ymenu_screen0"
@@ -403,10 +396,10 @@ class YMenuSettings:
 		backend.save_setting("Show_Tips",int(self.check7.get_active()))
 		backend.save_setting("TabHover",int(self.check4.get_active()))
 		backend.save_setting("Sound_Theme",self.combo_sound.get_active_text())
-		backend.save_setting("Tab_Efect",self.combo6.get_active())
 		backend.save_setting("Menu_Name",self.combo_menu.get_active_text())
 		backend.save_setting("IconSize",int(self.spinbutton1.get_value()))
 		backend.save_setting("ListSize",int(self.spinbutton2.get_value()))
+                self.verify_height()
 		backend.save_setting("MenuHeight",int(self.menu_height_spinbt.get_value()))
 		backend.save_setting("SuperL",int(self.check1.get_active()))
 		backend.save_setting("Icon_Name",self.combo_icon.get_active_text())

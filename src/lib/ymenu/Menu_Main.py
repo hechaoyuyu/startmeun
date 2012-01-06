@@ -2,13 +2,11 @@
 # -*- coding: utf-8 -*-
 
 import sys
-import pygtk
-pygtk.require("2.0")
 import gtk
 import gobject
 import cairo
 import os
-from Menu_Widgets import MenuButton , ImageFrame, ProgramClass, SearchLauncher
+from Menu_Widgets import MenuButton, ProgramClass, SearchLauncher
 import Globals
 import cairo_drawing
 import utils
@@ -16,7 +14,7 @@ import Launcher
 import gconf
 import gio
 import backend
-import math
+from math import pi
 
 try:
 	has_gst = True
@@ -214,8 +212,8 @@ class Main_Menu(gobject.GObject):
 		ctx.line_to(x, y + h - r)
                 ctx.line_to(x, y + r)  # left 
 
-                ctx.arc(x + r, y + r, r, math.pi, 3 * math.pi / 2) #左上
-                ctx.arc(x + r, y + h - r, r, math.pi / 2, math.pi)     # 90 - 0
+                ctx.arc(x + r, y + r, r, pi, 3 * pi / 2) #左上
+                ctx.arc(x + r, y + h - r, r, pi / 2, pi)     # 90 - 0
                 color = Globals.color_translate(lcolor)
                 ctx.set_source_rgb(color[2], color[1], color[0])
                 ctx.fill()
@@ -235,8 +233,8 @@ class Main_Menu(gobject.GObject):
 
                 ctx.line_to(x, y)  # left 
 
-                ctx.arc(x + rw - r, y + r, r, 3 * math.pi / 2, math.pi * 2) #右上
-                ctx.arc(x + rw - r, y + h - r, r, 0, math.pi / 2)     # 0 - 90
+                ctx.arc(x + rw - r, y + r, r, 3 * pi / 2, pi * 2) #右上
+                ctx.arc(x + rw - r, y + h - r, r, 0, pi / 2)     # 0 - 90
                 color = Globals.color_translate(rcolor)
                 ctx.set_source_rgb(color[2], color[1], color[0])
                 ctx.fill()
@@ -251,7 +249,7 @@ class Main_Menu(gobject.GObject):
                         self.ctx.set_source_rgba(0.0, 0.0, 0.0, 0.0)
                         self.ctx.paint()
 
-                self.special_rectangle(self.ctx, 5, 0, Globals.MenuWidth - 5, Globals.MenuHeight - 5, \
+                self.special_rectangle(self.ctx, 2, 0, Globals.MenuWidth - 2, Globals.MenuHeight - 2, \
                                                 Globals.PG_tabframedimensions[0], 6.0, \
                                                 Globals.PG_bgcolor, Globals.App_bgcolor)
                 
@@ -399,7 +397,7 @@ class Main_Menu(gobject.GObject):
                                 self.PGL.Restart('previous')
 		self.PlaySound(1)
 		
-	def key_down (self,widget,event):
+	def key_down (self, widget, event):
 		key = event.hardware_keycode
                 print "key = %s" % key
 		if key == 9:	#Escape Key, hides window
@@ -554,9 +552,9 @@ class Main_Menu(gobject.GObject):
                 menu.popup( None, None, None, 3, 0)
 
         def search_go(self, widget, event, searchEn = None):
-        	import urllib
+        	from urllib import unquote
                 text = self.SearchBar.entry.get_text()
-                text = urllib.unquote(str(text))
+                text = unquote(str(text))
                 if searchEn is None or text is None:
                     return
                 elif searchEn == 'google':
@@ -564,7 +562,7 @@ class Main_Menu(gobject.GObject):
                 elif searchEn == 'wikipedia':
                     url = "http://zh.wikipedia.org/wiki/Special:Search?search=%s" % text
                 elif searchEn == '116':
-                    url = "http://www.116.com/?q=%s" % text
+                    url = "http://s.116.com/?q=%s" % text
                 elif searchEn == 'baidu':
                     url = "http://www.baidu.com/s?wd=%s&tn=ylmf_3_pg&ch=57" % text
                 else:

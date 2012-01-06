@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-import pygtk
-pygtk.require("2.0")
 import gtk
 import cairo
 import gobject
@@ -11,13 +9,13 @@ import os
 import commands
 import Globals
 import IconFactory
-import cairo_drawing
+#import cairo_drawing
 import time
 import gconf
 from Popup_Menu import add_menuitem, add_image_menuitem
 import gc
 import gio
-import urllib
+from urllib import unquote, url2pathname
 import xdg.DesktopEntry
 import xdg.Menu
 from execute import *
@@ -57,8 +55,6 @@ class MenuButton:
         else:
             self.supports_alpha = True
         self.Button.connect("composited-changed", self.composite_changed) # 属于GdkScreen, 当窗口
-        self.Button.connect("enter_notify_event", self.enter, self.i)
-        self.Button.connect("leave_notify_event", self.leave, self.i)
         self.Frame.connect("expose_event", self.expose)
         self.Button.add(self.Frame)
 
@@ -145,75 +141,6 @@ class MenuButton:
             self.Icon.set_from_pixbuf(self.Pic)
         except:print 'error on button seticon'  + filename
 				
-    def enter (self, widget, event, i):
-
-        if Globals.Settings['Tab_Efect'] != 0 and Globals.MenuButtonIcon[i]:
-            #增大
-            if Globals.Settings['Tab_Efect'] == 1: #grow
-                self.Pic = gtk.gdk.pixbuf_new_from_file_at_size(self.ico, self.ww + 2, self.hh + 2)
-
-            #黑白
-            elif Globals.Settings['Tab_Efect'] == 2:#bw
-                self.Pic = gtk.gdk.pixbuf_new_from_file_at_size(self.ico, self.ww, self.hh)
-                self.Pic.saturate_and_pixelate(self.Pic, 0.0, False)
-            #模糊
-            elif Globals.Settings['Tab_Efect'] == 3:#Blur
-
-                colorpb = gtk.gdk.pixbuf_new_from_file_at_size(self.ico, self.ww, self.hh)
-                alpha = 255#int(int(70) * 2.55 + 0.2)
-                tk = 2
-                bg = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, True, 8, self.ww, self.hh)
-                bg.fill(0x00000000)
-                glow = bg.copy()
-                # Prepare the glow that should be put bind the icon
-                tk1 = tk - int(tk / 2)
-                for x, y in ((-tk1, -tk1), (-tk1, tk1), (tk1, -tk1), (tk1, tk1)):
-                    colorpb.composite(glow, 0, 0, self.ww, self.hh, x, y, 1, 1, gtk.gdk.INTERP_BILINEAR, 170)
-                for x, y in ((-tk, -tk), (-tk, tk), (tk, -tk), (tk, tk)):
-                    colorpb.composite(glow, 0, 0, self.ww, self.hh, x, y, 1, 1, gtk.gdk.INTERP_BILINEAR, 70)
-                glow.composite(bg, 0, 0, self.ww, self.hh, 0, 0, 1, 1, gtk.gdk.INTERP_BILINEAR, alpha)
-                self.Pic = bg
-				
-            #醒目
-            elif Globals.Settings['Tab_Efect'] == 4:#glow
-                r = 255
-                g = 255
-                b = 0
-                self.Pic = gtk.gdk.pixbuf_new_from_file_at_size(self.ico, self.ww, self.hh)
-                colorpb = self.Pic.copy()
-                for row in colorpb.get_pixels_array():
-                    for pix in row:
-                        pix[0] = r
-                        pix[1] = g
-                        pix[2] = b
-	
-                alpha = 255#int(int(70) * 2.55 + 0.2)
-                tk = 2
-                bg = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, True, 8, self.ww, self.hh)
-                bg.fill(0x00000000)
-                glow = bg.copy()
-                # Prepare the glow that should be put bind the icon
-                tk1 = tk - int(tk / 2)
-                for x, y in ((-tk1, -tk1), (-tk1, tk1), (tk1, -tk1), (tk1, tk1)):
-                    colorpb.composite(glow, 0, 0, self.ww, self.hh, x, y, 1, 1, gtk.gdk.INTERP_BILINEAR, 170)
-                for x, y in ((-tk, -tk), (-tk, tk), (tk, -tk), (tk, tk)):
-                    colorpb.composite(glow, 0, 0, self.ww, self.hh, x, y, 1, 1, gtk.gdk.INTERP_BILINEAR, 70)
-                glow.composite(bg, 0, 0, self.ww, self.hh, 0, 0, 1, 1, gtk.gdk.INTERP_BILINEAR, alpha)
-                self.Pic.composite(bg, 0, 0, self.ww, self.hh, 0, 0, 1, 1, gtk.gdk.INTERP_BILINEAR, 255)
-                self.Pic = bg
-
-            #加深
-            elif Globals.Settings['Tab_Efect'] == 5:#saturate
-                self.Pic = gtk.gdk.pixbuf_new_from_file_at_size(self.ico, self.ww, self.hh)
-                self.Pic.saturate_and_pixelate(self.Pic, 6.0, False)
-					
-            self.Icon.set_from_pixbuf(self.Pic)
-
-    def leave (self, widget, event, i):
-        if Globals.Settings['Tab_Efect'] != 0 and Globals.MenuButtonIcon[i]:
-            self.Pic = gtk.gdk.pixbuf_new_from_file_at_size(self.ico, self.ww, self.hh)
-            self.Icon.set_from_pixbuf(self.Pic)
-                
     def Setimage(self, imagefile):
         # The image is background when it's not displaying the overlay
         self.pic = gtk.gdk.pixbuf_new_from_file(imagefile).scale_simple(Globals.MenuButtonW[self.i], Globals.MenuButtonH[self.i], gtk.gdk.INTERP_NEAREST)
@@ -279,191 +206,6 @@ class MenuImage:
         self.ctx.set_operator (cairo.OPERATOR_SOURCE)
         self.ctx.paint()
 
-
-class ImageFrame:
-    def __init__(self, w, h, ix, iy, iw, ih, base, backimage):
-        self.backimagearea = None
-        self.w = w
-        self.h = h
-        #print w,h,iw,ih,ix,iy
-        self.ix = ix
-        self.iy = iy
-        self.iw = iw
-        self.ih = ih
-        self.base = base
-        self.timer = None
-        self.icons = [None, None, None, None]
-        self.iconopacity = [0, 0, 0, 0]
-        self.step = [0, 0, 0, 0]
-        self.intrans = False
-        self.Pic = None
-        self.frame_window = gtk.EventBox()
-        if not self.frame_window.is_composited():	 
-            self.supports_alpha = False
-        else:
-            self.supports_alpha = True
-        self.Frame = gtk.Fixed()
-        self.Image = gtk.Image()
-        self.frame_window.set_tooltip_text(_('About Me'))
-        self.frame_window.connect("button-press-event", self.but_click)
-        self.frame_window.connect("composited-changed", self.composite_changed)
-        self.Frame.connect('expose-event', self.expose)
-        self.frame_window.add(self.Frame)
-        self.frame_window.set_size_request(w, h)
-        # Grab the background pixels from under the location of the menu button
-
-        #self.backimagearea = self.backimagearea.add_alpha(True, chr(0xff), chr(0xff), chr(0xff))
-        if self.backimagearea is None:
-	
-            if Globals.flip == False:
-
-                self.backimagearea = backimage.subpixbuf(Globals.UserIconFrameOffsetX, Globals.MenuHeight - Globals.UserIconFrameOffsetY - self.h, self.w, self.h)
-                self.backimagearea = self.backimagearea.flip(Globals.flip)
-	
-            else:
-                self.backimagearea = backimage.subpixbuf(Globals.UserIconFrameOffsetX, Globals.UserIconFrameOffsetY, self.w, self.h)
-        # Set the background which is always present
-        self.Image.set_size_request(self.w, self.h)
-        self.Frame.set_size_request(self.w, self.h)
-        self.SetBackground()
-        self.Frame.put(self.Image, 0, 0)
-        self.base.put(self.frame_window, self.ix, self.iy)
-        self.Pic = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, True, 8, self.w, self.h)
-        self.Pic.fill(0x00000000)
-        #gc.collect()
-
-
-    def expose (self, widget, event):
-        self.ctx = widget.window.cairo_create()
-        # set a clip region for the expose event
-        if self.supports_alpha == False:
-            self.ctx.set_source_rgb(1, 1, 1)
-        else:
-            self.ctx.set_source_rgba(1, 1, 1, 0)
-        self.ctx.set_operator (cairo.OPERATOR_SOURCE)
-        self.ctx.paint()
-        cairo_drawing.draw_pixbuf(self.ctx, self.backimagearea)
-
-    def composite_changed(self, widget):
-        print self.frame_window.is_composited()
-
-    def screen_changed(self, widget):
-        # Screen change event
-        screen = widget.get_screen()
-        colormap = screen.get_rgba_colormap()
-        widget.set_colormap(colormap)
-
-    def Setimage(self):
-        # The image is background when it's not displaying the overlay
-        self.Image.set_from_pixbuf(None)
-        self.Pic = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, True, 8, self.w, self.h)
-        self.Pic.fill(0x00000000)
-        bg = self.Pic.copy()
-        for i in range(0, len(self.iconopacity)):
-            if self.icons[i] != None and self.iconopacity[i] > 0:
-                if i == 1:
-                    self.icons[i].composite(self.Pic, self.ix, self.iy, self.icons[i].get_width(), self.icons[i].get_height(), self.ix, self.iy, 1, 1, gtk.gdk.INTERP_BILINEAR, int(self.iconopacity[i] * 255))
-                else:
-                    self.icons[i].composite(self.Pic, 0, 0, self.icons[i].get_width(), self.icons[i].get_height(), 0, 0, 1, 1, gtk.gdk.INTERP_BILINEAR, int(self.iconopacity[i] * 255))
-        #print "#"*10,self.Pic,"#"*10,len(self.iconopacity)
-        self.Image.set_from_pixbuf(self.Pic)
-
-    def SetBackground(self):
-        self.Image.set_from_pixbuf(None)
-
-
-    def but_click(self, widget, event):
-        os.system(Globals.Settings['User'] + ' &')
-
-
-    def move(self, x, y):
-        # Relocate the window
-        self.base.move(self.frame_window, x, y)
-
-    def transition(self, step, speed, rate, termination_event):
-        if self.timer:
-            gobject.source_remove(self.timer)
-            self.intrans = False
-            self.Pic = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, True, 8, self.w, self.h)
-            self.Pic.fill(0x00000000)
-		
-        if step != self.step:
-            if self.timer:
-                gobject.source_remove(self.timer)
-                self.intrans = False
-        self.step = step
-        if self.intrans == False:
-            self.intrans = True
-            # Add timer
-            self.Pic = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, True, 8, self.w, self.h)
-            self.Pic.fill(0x00000000)
-            self.timer = gobject.timeout_add(speed, self.updatefade, termination_event, rate)
-
-    def updatefade(self, termination_event, rate):
-
-        if self.step == [0, 0, 0, 0]:
-            self.intrans = False
-            if termination_event:
-                termination_event()
-            return False
-        for i in range(0, len(self.iconopacity)):
-            self.iconopacity[i] = self.iconopacity[i] + round((rate * self.step[i]), 2)
-            if self.iconopacity[i] < 0: self.iconopacity[i] = 0
-            if self.iconopacity[i] > 1: self.iconopacity[i] = 1
-            if (self.iconopacity[i] <= 0 or self.iconopacity[i] >= 1) and self.step[i] != 0:
-                self.step[i] = 0
-				
-                self.iconopacity[i] = int(self.iconopacity[i])
-            self.iconopacity[i] = round(self.iconopacity[i], 2)
-		
-        self.Setimage()
-        if self.step == [0, 0, 0, 0]:
-            self.Pic = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, True, 8, self.w, self.h)
-            self.Pic.fill(0x00000000)
-            self.intrans = False
-            if termination_event:
-                termination_event()
-            return False
-        return True
-
-
-    def updateimage(self, index, imagefile):
-        #print "##"*10,imagefile,"##"*10
-            # All .face files will load through this routine, even though they may be 'png' format
-
-        if index == 1:
-
-            self.temp = gtk.gdk.pixbuf_new_from_file(imagefile).scale_simple(self.iw, self.ih, gtk.gdk.INTERP_BILINEAR)
-
-        elif index == 0:
-
-            self.temp = gtk.gdk.pixbuf_new_from_file(imagefile).scale_simple(self.w, self.h, gtk.gdk.INTERP_BILINEAR)
-            self.w = self.temp.get_width()
-            self.h = self.temp.get_height()
-        else:
-            try:
-                self.temp = gtk.gdk.pixbuf_new_from_file_at_size(imagefile, self.w, self.h)
-            except:
-                print 'Warning: icon %s not found in ymenu icons, trying system icons instead!' % imagefile
-                image = IconFactory.GetSystemIcon(imagefile.split('/').pop())
-                if not image:
-                    print 'Warning: icon %s was not found in system icons either!' % imagefile
-                    image = IconFactory.GetSystemIcon('gtk-missing-image')
-				
-                self.temp = gtk.gdk.pixbuf_new_from_file_at_size(image, self.w, self.h)
-        if index == 0:
-            #FRAME
-            self.icons[0] = self.temp
-        if index == 1:
-            #.FACE
-            self.icons[1] = self.temp
-        if index == 2:
-            #1ST ICON
-            self.icons[2] = self.temp
-        if index == 3:
-            #2ND ICON
-            self.icons[3] = self.temp
-
 class GtkSearchBar(gtk.EventBox, gobject.GObject):
     __gsignals__ = {
         'right-clicked': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, ())
@@ -489,7 +231,10 @@ class GtkSearchBar(gtk.EventBox, gobject.GObject):
         self.back.set_from_pixbuf(sel)
 
         #self.entry.modify_base(gtk.STATE_NORMAL, Globals.ThemeColorCode)
-        self.entry.modify_base(gtk.STATE_NORMAL, gtk.gdk.Color(52 / 255.0, 57 / 255.0, 61 / 255.0))
+        color = []
+        color = Globals.color_translate(Globals.App_bgcolor)
+        self.entry.modify_base(gtk.STATE_NORMAL, gtk.gdk.Color(color[0], color[1], color[2]))
+        del color
         self.entry.set_text(_('Search'))
         self.entry.set_has_frame(False)
         self.entry.set_max_length(20)
@@ -649,8 +394,6 @@ class CategoryTab(gtk.EventBox):
 	self.Frame.put(self.Label, Globals.TabBackNameX, Globals.TabBackNameY)
         
         self.connectSelf("destroy", self.onDestroy)
-        #self.connectSelf("enter_notify_event", self.enter)
-        #self.connectSelf("leave_notify_event", self.leave)
         self.themeChangedHandlerId = iconManager.connect("changed", self.themeChanged)
       
     def connectSelf(self, event, callback):
@@ -666,77 +409,6 @@ class CategoryTab(gtk.EventBox):
 
         return icon
 
-    def enter (self, widget, event):
-        icon = self.getIcon(self.iconSize)
-        if Globals.Settings['Tab_Efect'] != 0:
-            #增大
-            if Globals.Settings['Tab_Efect'] == 1: #grow
-                icon = self.getIcon(self.iconSize + 2)
-
-            #黑白
-            elif Globals.Settings['Tab_Efect'] == 2:#bw
-                icon.saturate_and_pixelate(icon, 0.0, False)
-            
-            #模糊
-            elif Globals.Settings['Tab_Efect'] == 3:#Blur
-		alpha = 255#int(int(70) * 2.55 + 0.2)
-		tk = 2
-		bg = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, True, 8, self.w, self.h)
-		bg.fill(0x00000000)
-		glow = bg.copy()
-		# Prepare the glow that should be put bind the icon
-		tk1 = tk - int(tk / 2)
-		for x, y in ((-tk1, -tk1), (-tk1, tk1), (tk1, -tk1), (tk1, tk1)):
-                    icon.composite(glow, 0, 0, self.w, self.h, x, y, 1, 1, gtk.gdk.INTERP_BILINEAR, 170)
-		for x, y in ((-tk, -tk), (-tk, tk), (tk, -tk), (tk, tk)):
-                    icon.composite(glow, 0, 0, self.w, self.h, x, y, 1, 1, gtk.gdk.INTERP_BILINEAR, 70)
-		glow.composite(bg, 0, 0, self.w, self.h, 0, 0, 1, 1, gtk.gdk.INTERP_BILINEAR, alpha)
-		icon = bg
-                
-            #醒目
-            elif Globals.Settings['Tab_Efect'] == 4:#glow
-                r = 255
-                g = 255
-                b = 0
-                colorpb = icon.copy()
-                for row in colorpb.get_pixels_array():
-                    for pix in row:
-                        pix[0] = r
-                        pix[1] = g
-                        pix[2] = b
-	
-                alpha = 255#int(int(70) * 2.55 + 0.2)
-                tk = 2
-                bg = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, True, 8, self.w, self.h)
-                bg.fill(0x00000000)
-                glow = bg.copy()
-                # Prepare the glow that should be put bind the icon
-                tk1 = tk - int(tk / 2)
-                for x, y in ((-tk1, -tk1), (-tk1, tk1), (tk1, -tk1), (tk1, tk1)):
-                    colorpb.composite(glow, 0, 0, self.w, self.h, x, y, 1, 1, gtk.gdk.INTERP_BILINEAR, 170)
-                for x, y in ((-tk, -tk), (-tk, tk), (tk, -tk), (tk, tk)):
-                    colorpb.composite(glow, 0, 0, self.w, self.h, x, y, 1, 1, gtk.gdk.INTERP_BILINEAR, 70)
-                glow.composite(bg, 0, 0, self.w, self.h, 0, 0, 1, 1, gtk.gdk.INTERP_BILINEAR, alpha)
-                icon.composite(bg, 0, 0, self.w, self.h, 0, 0, 1, 1, gtk.gdk.INTERP_BILINEAR, 255)
-                icon = bg
-                       
-            #加深
-            elif Globals.Settings['Tab_Efect'] == 5:#saturate
-                icon.saturate_and_pixelate(icon, 6.0, False)
-					
-            self.buttonImage.set_from_pixbuf(icon)
-
-	if Globals.Settings['Tab_Efect'] == 1:
-            self.Frame.move(self.buttonImage, Globals.TabBackIconX-2, Globals.TabBackIconY-2)
-	else:
-            self.Frame.move(self.buttonImage, Globals.TabBackIconX, Globals.TabBackIconY)
-
-    def leave (self, widget, event):
-        icon = self.getIcon(self.iconSize)
-	if Globals.Settings['Tab_Efect'] != 0:		
-            self.Frame.move(self.buttonImage, Globals.TabBackIconX, Globals.TabBackIconY)
-            self.buttonImage.set_from_pixbuf(icon)
-    
     def setIcon (self, iconName):
         self.iconName = iconName
         self.iconChanged()
@@ -822,8 +494,6 @@ class AppButton(gtk.EventBox):
         self.Frame.put(self.buttonImage, Globals.ButtonBackIconX, Globals.ButtonBackIconY)
             
         self.connectSelf("destroy", self.onDestroy)
-        self.connectSelf("enter_notify_event", self.enter)
-        self.connectSelf("leave_notify_event", self.leave)
         self.themeChangedHandlerId = iconManager.connect("changed", self.themeChanged)
     
     def connectSelf(self, event, callback):
@@ -846,77 +516,6 @@ class AppButton(gtk.EventBox):
             icon = iconManager.getIcon("application-default-icon", iconSize)
        
         return icon
-    
-    def enter (self, widget, event):
-        icon = self.getIcon(self.iconSize)
-        if Globals.Settings['Tab_Efect'] != 0:
-            #增大
-            if Globals.Settings['Tab_Efect'] == 1: #grow
-                icon = self.getIcon(self.iconSize + 2)
-
-            #黑白
-            elif Globals.Settings['Tab_Efect'] == 2:#bw
-                icon.saturate_and_pixelate(icon, 0.0, False)
-            
-            #模糊
-            elif Globals.Settings['Tab_Efect'] == 3:#Blur
-		alpha = 255#int(int(70) * 2.55 + 0.2)
-		tk = 2
-		bg = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, True, 8, self.w, self.h)
-		bg.fill(0x00000000)
-		glow = bg.copy()
-		# Prepare the glow that should be put bind the icon
-		tk1 = tk - int(tk / 2)
-		for x, y in ((-tk1, -tk1), (-tk1, tk1), (tk1, -tk1), (tk1, tk1)):
-                    icon.composite(glow, 0, 0, self.w, self.h, x, y, 1, 1, gtk.gdk.INTERP_BILINEAR, 170)
-		for x, y in ((-tk, -tk), (-tk, tk), (tk, -tk), (tk, tk)):
-                    icon.composite(glow, 0, 0, self.w, self.h, x, y, 1, 1, gtk.gdk.INTERP_BILINEAR, 70)
-		glow.composite(bg, 0, 0, self.w, self.h, 0, 0, 1, 1, gtk.gdk.INTERP_BILINEAR, alpha)
-		icon = bg
-                
-            #醒目
-            elif Globals.Settings['Tab_Efect'] == 4:#glow
-                r = 255
-                g = 255
-                b = 0
-                colorpb = icon.copy()
-                for row in colorpb.get_pixels_array():
-                    for pix in row:
-                        pix[0] = r
-                        pix[1] = g
-                        pix[2] = b
-	
-                alpha = 255#int(int(70) * 2.55 + 0.2)
-                tk = 2
-                bg = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, True, 8, self.w, self.h)
-                bg.fill(0x00000000)
-                glow = bg.copy()
-                # Prepare the glow that should be put bind the icon
-                tk1 = tk - int(tk / 2)
-                for x, y in ((-tk1, -tk1), (-tk1, tk1), (tk1, -tk1), (tk1, tk1)):
-                    colorpb.composite(glow, 0, 0, self.w, self.h, x, y, 1, 1, gtk.gdk.INTERP_BILINEAR, 170)
-                for x, y in ((-tk, -tk), (-tk, tk), (tk, -tk), (tk, tk)):
-                    colorpb.composite(glow, 0, 0, self.w, self.h, x, y, 1, 1, gtk.gdk.INTERP_BILINEAR, 70)
-                glow.composite(bg, 0, 0, self.w, self.h, 0, 0, 1, 1, gtk.gdk.INTERP_BILINEAR, alpha)
-                icon.composite(bg, 0, 0, self.w, self.h, 0, 0, 1, 1, gtk.gdk.INTERP_BILINEAR, 255)
-                icon = bg
-                       
-            #加深
-            elif Globals.Settings['Tab_Efect'] == 5:#saturate
-                icon.saturate_and_pixelate(icon, 6.0, False)					
-
-            self.buttonImage.set_from_pixbuf(icon)
-
-	if Globals.Settings['Tab_Efect'] == 1:
-            self.Frame.move(self.buttonImage, Globals.ButtonBackIconX-2, Globals.ButtonBackIconY-2)
-	else:
-            self.Frame.move(self.buttonImage, Globals.ButtonBackIconX, Globals.ButtonBackIconY)
-
-    def leave (self, widget, event):
-        icon = self.getIcon(self.iconSize)
-	if Globals.Settings['Tab_Efect'] != 0:		
-            self.Frame.move(self.buttonImage, Globals.ButtonBackIconX, Globals.ButtonBackIconY)
-            self.buttonImage.set_from_pixbuf(icon)
     
     def setIcon (self, iconName):
         self.iconName = iconName
@@ -1288,7 +887,7 @@ class RecApplicationLauncher(gtk.EventBox):
         self.cmd = ExceString
         self.path = Name
         
-        command = urllib.unquote(str(self.cmd))
+        command = unquote(str(self.cmd))
         if os.path.isfile(self.path) or os.path.isdir(command.replace('file://', '')):
             self.flag = True
         else:self.flag = False
@@ -1521,11 +1120,11 @@ class ProgramClass(gobject.GObject):
             for i in data:		
 		self.bm = str(i).replace("\n", "")
 		if self.bm.find(' ') != -1:
-                    self.folder = urllib.url2pathname(self.bm[:self.bm.find(' ')])
-                    self.name = urllib.url2pathname(self.bm[self.bm.find(' ') + 1:])
+                    self.folder = url2pathname(self.bm[:self.bm.find(' ')])
+                    self.name = url2pathname(self.bm[self.bm.find(' ') + 1:])
 		else: 
                     self.folder = self.bm
-                    self.name = urllib.url2pathname(str(self.bm).split("/").pop()) 
+                    self.name = url2pathname(str(self.bm).split("/").pop()) 
 		try:
                     Gfile = gio.File(self.folder)
                     tuble = [Gfile, Gfile.query_info("standard::*"), []]
@@ -1896,7 +1495,7 @@ class ProgramClass(gobject.GObject):
             
         elif isinstance(widget, PlaApplicationLauncher):
             f = widget.cmd.replace('file://', '')
-            f = urllib.unquote(str(f))
+            f = unquote(str(f))
             name = widget.path
             def searchfolder(folder, me):
                 dirs = os.listdir(folder)

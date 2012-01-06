@@ -379,6 +379,9 @@ msgstr "程式列表圖示大小"
 msgid "Number of Items in Recent Items List"
 msgstr "近期使用項目列表的顯示數量"
 
+msgid "Height of YMenu"
+msgstr "選單高度"
+
 #: ymenu/src/lib/ymenu/YMenu-Settings.py:269
 msgid "Listview"
 msgstr ""

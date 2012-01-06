@@ -49,7 +49,7 @@ TransitionS = 	25 #step update speed in miliseconds
 TransitionQ = 0.05 #step update transparency 0 to 1
 FirstUse = False
 
-DefaultSettings = { "Tab_Efect":1 , "Bind_Key":"Super_L" , "Sound_Theme":"None" , "Num_lock":"on", "flag":0, "Show_Tips":1 , "Distributor_Logo":0, "Menu_Name":"ylmfos" , "IconSize":24 , "ListSize":12 , "SuperL":1 , "Icon_Name":"ylmfos" , "Button_Name":"ylmfos" , "GtkColors":0 , "TabHover":1 , "Control_Panel":"gnome-control-center"  ,"Y_Center":"ycenter" , "Power":"gnome-session-save --shutdown-dialog" , "Logout":"gnome-session-save --logout-dialog" , "User":"gnome-about-me" , "AdminRun":"gksu", "MenuEditor":"gmenu-simple-editor"}
+DefaultSettings = {"Bind_Key":"Super_L" , "Sound_Theme":"None" , "Num_lock":"on", "flag":0, "Show_Tips":1 , "Distributor_Logo":0, "Menu_Name":"ylmfos" , "IconSize":24 , "ListSize":12 , "SuperL":1 , "Icon_Name":"ylmfos" , "Button_Name":"ylmfos-new" , "GtkColors":0 , "TabHover":1 , "Control_Panel":"gnome-control-center"  ,"Y_Center":"ycenter" , "Power":"gnome-session-save --shutdown-dialog" , "Logout":"gnome-session-save --logout-dialog" , "User":"gnome-about-me" , "AdminRun":"gksu", "MenuEditor":"gmenu-simple-editor"}
 
 Settings = DefaultSettings.copy()
 
@@ -165,6 +165,10 @@ def ReloadSettings():
 
 	if not UserMenuHeight:
                 UserMenuHeight = MenuHeight
+        elif UserMenuHeight > 1000:
+            UserMenuHeight = 1000
+        elif UserMenuHeight < 350:
+            UserMenuHeight = 350
 
 	# Load WindowDimensions end
         
@@ -392,7 +396,7 @@ def ReloadSettings():
             sel = gtk.gdk.pixbuf_get_file_info(ImageDirectory + ButtonBackImage)
             button_back_size.append(sel[1])
             button_back_size.append(sel[2])
-            sel = None
+            del sel
         except:
             button_back_size.append(191)
             button_back_size.append(30)
@@ -403,7 +407,7 @@ def ReloadSettings():
             sel = gtk.gdk.pixbuf_get_file_info(ImageDirectory + SearchBackground)
             SearchBgSize.append(sel[1])
             SearchBgSize.append(sel[2])
-            sel = None
+            del sel
         except:
             SearchBgSize.append(191)
             SearchBgSize.append(25)
@@ -415,20 +419,6 @@ def ReloadSettings():
         MFontSize = 'medium'
         orig_menu_width  = MenuWidth
         orig_menu_height = MenuHeight
-
-        '''myscreensize = gtk.gdk.Screen.get_monitor_geometry(gtk.gdk.screen_get_default(), 0)
-
-        if myscreensize.height < 768:
-            lowresolution = True
-            MenuHeight = int( myscreensize.height * 4 / 5 ) # 高度占屏幕分辨率的比率
-
-            if MenuHeight < 600:
-	    	MFontSize = 'small'
-                if MenuHeight < 350:
-                    MenuHeight = 350
-                    
-        elif myscreensize.height > 800:
-            MenuHeight = MenuHeight + 35 '''
 
         if UserMenuHeight != orig_menu_height:
             MenuHeight = UserMenuHeight

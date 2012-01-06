@@ -401,6 +401,9 @@ msgstr "程序列表中的图标大小"
 msgid "Number of Items in Recent Items List"
 msgstr "最近项目列表中项目的个数"
 
+msgid "Height of YMenu"
+msgstr "菜单高度"
+
 #: ymenu/src/lib/ymenu/YMenu-Settings.py:269
 msgid "Listview"
 msgstr "列表视图"

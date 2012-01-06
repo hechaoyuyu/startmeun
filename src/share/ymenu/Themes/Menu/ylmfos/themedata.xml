@@ -14,7 +14,7 @@
 	
 	<ProgramTabSettings X="12" Y="15" Width="145" Height="548"  Foreground='#FFFFFF' Background='#000000'/>
 	
-	<ProgramListSettings X="154" Y="15" Width="260" Height="480" Foreground='#FFFFFF' Background='#1B1C1C'/>
+	<ProgramListSettings X="154" Y="15" Width="260" Height="475" Foreground='#FFFFFF' Background='#1B1C1C'/>
 	
 	<Capabilities HasSearch="1" HasIcon="1" HasFadeTransition="1" HasTab="1"/>
 	
