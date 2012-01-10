@@ -448,8 +448,8 @@ class CategoryTab(gtk.EventBox):
 	if tab == False:
             self.Image.set_from_pixbuf(None)
         else:
-            self.pic = gtk.gdk.pixbuf_new_from_file_at_size(Globals.ImageDirectory + Globals.TabBackImage, Globals.tab_back_size[0], Globals.tab_back_size[1])
-            #self.pic = gtk.gdk.pixbuf_new_from_file(Globals.ImageDirectory + Globals.TabBackImage)
+            self.pic = gtk.gdk.pixbuf_new_from_file(Globals.ImageDirectory + Globals.TabBackImage)
+            self.pic = self.pic.scale_simple(Globals.tab_back_size[0], Globals.tab_back_size[1], gtk.gdk.INTERP_BILINEAR)
             self.Image.set_from_pixbuf(self.pic)
 	    del self.pic
             
@@ -1767,7 +1767,7 @@ class ProgramClass(gobject.GObject):
                 newCategoryList.append({"name": child.getName(), "icon": child.getIcon(), "tooltip": child.getComment(), "filter": child.getName(), "index": num})
         num += 1
 
-        newCategoryList.append({"name": _("Software Center"), "icon": "emblem-favorite", "tooltip": _("Ylmf OS software center"), "filter":None, "index": num})
+        newCategoryList.append({"name": _("Software Center"), "icon": "emblem-favorite", "tooltip": _("Software Center"), "filter":None, "index": num})
         newCategoryList.append({"name": _("Control Panel"), "icon": "emblem-favorite", "tooltip": _("Control Panel"), "filter":"gnomecc" , "index": num + 1})
         newCategoryList.append({"name": _("My Computer"), "icon": "computer", "tooltip": _("Show all Places"), "filter": _("My Computer"), "index": num + 2})
         newCategoryList.append({"name": _("Recent"), "icon": "document-open-recent", "tooltip": _("Recent All"), "filter": _("Recent"), "index": num + 3})
