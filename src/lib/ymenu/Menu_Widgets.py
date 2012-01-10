@@ -1751,12 +1751,18 @@ class ProgramClass(gobject.GObject):
                 os.system('mplayer %s &' % uri)
 
     def loadMenuFiles(self):
-        self.tree = xdg.Menu.parse("applications.menu")
-        self.directory = self.tree.getEntries()
+        tree = xdg.Menu.parse("applications.menu")
+        self.directory = tree.getEntries()
+        del tree
 
-        self.gnomecc_tree = xdg.Menu.parse("settings.menu")
-        self.gnomecc_dir  = self.gnomecc_tree.getEntries()
-            
+        gnomecc_tree = xdg.Menu.parse("settings.menu")
+        self.gnomecc_dir  = gnomecc_tree.getEntries()
+        del gnomecc_tree
+
+        self.menu_dir = []
+        self.menu_dir.append({'dir' : self.gnomecc_dir, 'category' : 'gnomecc'})
+        self.menu_dir.append({'dir' : self.directory,   'category' : ''})
+
     def buildCategoryList(self):
         newCategoryList = [{"name": _("All Applications"), "icon": "application-x-executable", "tooltip": _("Show all applications"), "filter":"", "index": 0}]
         
@@ -1770,7 +1776,7 @@ class ProgramClass(gobject.GObject):
         newCategoryList.append({"name": _("Software Center"), "icon": "emblem-favorite", "tooltip": _("Software Center"), "filter":None, "index": num})
         newCategoryList.append({"name": _("Control Panel"), "icon": "emblem-favorite", "tooltip": _("Control Panel"), "filter":"gnomecc" , "index": num + 1})
         newCategoryList.append({"name": _("My Computer"), "icon": "computer", "tooltip": _("Show all Places"), "filter": _("My Computer"), "index": num + 2})
-        newCategoryList.append({"name": _("Recent"), "icon": "document-open-recent", "tooltip": _("Recent All"), "filter": _("Recent"), "index": num + 3})
+        newCategoryList.append({"name": _("Recent"), "icon": "document-open-recent", "tooltip": _("Recent Documents"), "filter": _("Recent"), "index": num + 3})
         newCategoryList.append({"name": _("Favorites"), "icon": "emblem-favorite", "tooltip": _("Show all Favorites"), "filter": _("Favorites"), "index": num + 4})
         return newCategoryList
 
@@ -1778,7 +1784,7 @@ class ProgramClass(gobject.GObject):
     def buildApplicationList(self):
 
         newApplicationsList = []
-        self.directory = self.tree.getEntries()
+        self.menu_dir[1]['dir'] = xdg.Menu.parse("applications.menu").getEntries()
         
         def find_applications_recursively(app_list, directory, catName):
             for item in directory.getEntries():
@@ -1787,20 +1793,14 @@ class ProgramClass(gobject.GObject):
                 elif isinstance(item, xdg.Menu.Menu):
                     find_applications_recursively(app_list, item, catName)
         
-        for entry in self.directory:#.get_contents():
-            if isinstance(entry, xdg.Menu.Menu):
-                for item in entry.getEntries():
-                    if isinstance(item, xdg.Menu.Menu):
-                        find_applications_recursively(newApplicationsList, item, entry.getName())
-                    elif isinstance(item, xdg.Menu.MenuEntry):
-                        newApplicationsList.append({"entry": item, "category": entry.getName()})
-
-        for entry in self.gnomecc_dir:
-            if isinstance(entry, xdg.Menu.Menu):
-                for item in entry.getEntries():
-                    if isinstance(item, xdg.Menu.Menu):
-                        find_applications_recursively(newApplicationsList, item, entry.getName())
-                    elif isinstance(item, xdg.Menu.MenuEntry):
-                        newApplicationsList.append({"entry": item, "category": "gnomecc"})
+        for menu_dict in self.menu_dir:
+            for entry in menu_dict['dir']:#.get_contents():
+                if isinstance(entry, xdg.Menu.Menu):
+                    for item in entry.getEntries():
+                        entry_category = menu_dict["category"] and "gnomecc" or entry.getName()
+                        if isinstance(item, xdg.Menu.Menu):
+                            find_applications_recursively(newApplicationsList, item, entry_category)
+                        elif isinstance(item, xdg.Menu.MenuEntry):
+                            newApplicationsList.append({"entry": item, "category": entry_category})
 
         return newApplicationsList        
