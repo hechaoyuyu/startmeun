@@ -45,8 +45,7 @@ GraphicsDirectory = "%s/lib/%s/graphics/"  % (INSTALL_PREFIX,appdirname)
 
 ThemeCategories = ["Menu","Icon","Button"]
 gconf_app_key = '/apps/%s' % appdirname
-TransitionS = 	25 #step update speed in miliseconds
-TransitionQ = 0.05 #step update transparency 0 to 1
+
 FirstUse = False
 
 DefaultSettings = {"Bind_Key":"Super_L" , "Sound_Theme":"None" , "Num_lock":"on", "flag":0, "Show_Tips":1 , "Distributor_Logo":0, "Menu_Name":"ylmfos" , "IconSize":24 , "ListSize":12 , "SuperL":1 , "Icon_Name":"ylmfos" , "Button_Name":"ylmfos-new" , "GtkColors":0 , "TabHover":1 , "Control_Panel":"gnome-control-center"  ,"Y_Center":"ycenter" , "Power":"gnome-session-save --shutdown-dialog" , "Logout":"gnome-session-save --logout-dialog" , "User":"gnome-about-me" , "AdminRun":"gksu", "MenuEditor":"gmenu-simple-editor"}
@@ -73,8 +72,8 @@ def ReloadSettings():
 			Settings[x] = backend.load_setting(x)
 
         # Loads the main configuration and settings file to their respective values
-	global orientation, panel_size, flip, MenuActions, MenuCommands, ImageDirectory, Actions, IconDirectory, MenuButtonDirectory, ThemeColor, ShowTop, FirstUse, StartMenuTemplate, ThemeColorCode,ThemeColorHtml, NegativeThemeColorCode, MenuWidth, MenuHeight, IconW, IconH, IconInX, IconInY, IconInW, IconInH, SearchWidget, SearchWidgetPath, UserIconFrameOffsetX, UserIconFrameOffsetY, UserIconFrameOffsetH, UserIconFrameOffsetW, PG_tabframe, PG_tabframedimensions, PG_buttonframe, PG_buttonframedimensions, MenuHasSearch, MenuHasIcon, MenuHasFade, MenuHasTab, CairoSearchTextColor, CairoSearchBackColor, CairoSearchBorderColor, CairoSearchRoundAngle, PG_iconsize,RI_numberofitems, MenuButtonCount, MenuButtonNames, MenuButtonMarkup, MenuButtonNameOffsetX, MenuButtonNameOffsetY, MenuButtonCommands, MenuButtonX,MenuButtonY, MenuButtonImage, MenuButtonImageBack, ButtonBackImage, ButtonBackIconX, ButtonBackIconY, ButtonBackNameX, ButtonBackNameY, TabBackImage, TabBackIconX, TabBackIconY, TabBackNameX, TabBackNameY, MenuButtonIcon, MenuButtonIconSel, MenuButtonIconX,MenuButtonIconY,MenuButtonIconSize, MenuButtonSub, MenuButtonClose, MenuCairoIconButton, ButtonHasTop, ButtonBackground, ButtonTop, StartButton, StartButtonTop, ButtonHasBottom, MenuButtonNameAlignment, GtkColorCode
-        global SearchX, SearchY, SearchW, SearchH, SearchIX, SearchIY, SearchInitialText,SearchTextColor, SearchBackground, SearchBgSize
+	global orientation, panel_size, flip, MenuActions, MenuCommands, ImageDirectory, Actions, IconDirectory, MenuButtonDirectory, ThemeColor, ShowTop, FirstUse, StartMenuTemplate, ThemeColorCode,ThemeColorHtml, NegativeThemeColorCode, MenuWidth, MenuHeight, IconW, IconH, IconInX, IconInY, IconInW, IconInH, SearchWidget, SearchWidgetPath, PG_tabframe, PG_tabframedimensions, PG_buttonframe, PG_buttonframedimensions, MenuHasSearch, MenuHasIcon, MenuHasFade, MenuHasTab, CairoSearchTextColor, CairoSearchBackColor, CairoSearchBorderColor, CairoSearchRoundAngle, PG_iconsize,RI_numberofitems, MenuButtonCount, MenuButtonNames, MenuButtonMarkup, MenuButtonNameOffsetX, MenuButtonNameOffsetY, MenuButtonCommands, MenuButtonX,MenuButtonY, MenuButtonImage, MenuButtonImageBack, ButtonBackImage, ButtonBackIconX, ButtonBackIconY, ButtonBackNameX, ButtonBackNameY, TabBackImage, TabBackIconX, TabBackIconY, TabBackNameX, TabBackNameY, MenuButtonIcon, MenuButtonIconSel, MenuButtonIconX,MenuButtonIconY,MenuButtonIconSize, MenuButtonSub, MenuButtonClose, MenuCairoIconButton, ButtonHasTop, ButtonBackground, ButtonTop, StartButton, StartButtonTop, ButtonHasBottom, MenuButtonNameAlignment, GtkColorCode
+        global SearchX, SearchY, SearchW, SearchH, SearchIX, SearchIY, SearchInitialText, SearchTextColor, SearchBackground, SearchBgSize
         global lowresolution, width_ratio, height_ratio, tab_back_size, MFontSize, button_back_size, UserMenuHeight
         global App_fgcolor, App_bgcolor, PG_fgcolor, PG_bgcolor, CategoryCommands
         global MenuButtonW, MenuButtonH
@@ -151,17 +150,13 @@ def ReloadSettings():
 			print node.attributes["color"].value
 		sys.exit()
 	
-	try:
-		im = gtk.gdk.pixbuf_new_from_file('%s%s' % (ImageDirectory, StartMenuTemplate))
-		MenuWidth = im.get_width()
-		MenuHeight = im.get_height()
-	except:
+	
 	# Load WindowDimensions
-		SBase = XBase.getElementsByTagName("WindowDimensions")
-		MenuWidth = int(SBase[0].attributes["Width"].value)
-		MenuHeight = int(SBase[0].attributes["Height"].value)
+	SBase = XBase.getElementsByTagName("WindowDimensions")
+	MenuWidth = int(SBase[0].attributes["Width"].value)
+	MenuHeight = int(SBase[0].attributes["Height"].value)
 
-	UserMenuHeight = backend.load_setting("MenuHeight")
+	UserMenuHeight = int(backend.load_setting("MenuHeight"))
 
 	if not UserMenuHeight:
                 UserMenuHeight = MenuHeight
@@ -241,7 +236,6 @@ def ReloadSettings():
 	SBase = XBase.getElementsByTagName("Capabilities")
 	MenuHasSearch = int(SBase[0].attributes["HasSearch"].value)
 	MenuHasIcon = int(SBase[0].attributes["HasIcon"].value)
-	MenuHasFade = int(SBase[0].attributes["HasFadeTransition"].value)
         try:
                 MenuHasTab = int(SBase[0].attributes["HasTab"].value)
         except:
@@ -413,6 +407,14 @@ def ReloadSettings():
             SearchBgSize.append(25)
 
 
+        # iconsize 32 | 24
+        if PG_iconsize > 28:
+            PG_iconsize = 32
+            button_back_size[1] += 8
+        else:
+            PG_iconsize = 24
+
+
         # if encounter the low/high resolution monitor, scaled the menu size --------
         width_ratio = 1
         height_ratio = 1
@@ -453,7 +455,7 @@ def ReloadSettings():
         # ---------------------低分辨率时--------------------------
 
         if lowresolution:
-            MenuWidth    = MenuHeight * orig_menu_width / orig_menu_height # 保持选单宽高比例
+            MenuWidth    = int(MenuHeight * orig_menu_width / orig_menu_height) # 保持选单宽高比例
             width_ratio  = MenuWidth * 1.0 / orig_menu_width # 换成浮点数
             # category_scr size and  position
             PG_tabframe[0] = int(PG_tabframe[0] * width_ratio)
@@ -525,13 +527,6 @@ DefaultIconTheme = gtk.settings_get_default().get_property("gtk-icon-theme-name"
 GtkIconTheme = gtk.icon_theme_get_default()
 
 distro_logo = gtk.icon_theme_get_default().lookup_icon('distributor-logo',48,gtk.ICON_LOOKUP_FORCE_SVG).get_filename()
-
-#User Image
-UserImageFrame = ImageDirectory+"user-image-frame.png"
-DefaultUserImage = IconDirectory+"gtk-missing-image.png"
-UserFace = UserImage = HomeDirectory + "/.face"
-if os.path.isfile(UserImage) == 0 or os.path.exists(UserImage) == 0:
-    UserImage=DefaultUserImage
 
 #Application logo
 Applogo = GraphicsDirectory +"logo.png"

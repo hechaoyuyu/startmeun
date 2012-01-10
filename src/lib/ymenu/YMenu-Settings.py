@@ -195,8 +195,8 @@ class YMenuSettings:
 		self.label12.set_justify(gtk.JUSTIFY_LEFT)
 		self.spinbutton1 = gtk.SpinButton()
 		self.spinbutton1.set_digits(1)
-		self.spinbutton1.set_increments(1, int(256))
-		self.spinbutton1.set_range(16, 256)
+		self.spinbutton1.set_increments(8, int(8))
+		self.spinbutton1.set_range(24, 32)
 		self.spinbutton1.set_value(Globals.Settings['IconSize'])
 		self.spinbutton2 = gtk.SpinButton()
 		self.spinbutton2.set_digits(1)
@@ -262,13 +262,20 @@ class YMenuSettings:
 		self.vbox_about.pack_start(self.button7, False, False)
 		
 
-	def verify_height(self):
+	def verify_input_data(self):
             value = int(self.menu_height_spinbt.get_value())
             if value > 1000:
                 value = 1000
             elif value < 350:
                 value = 350
             self.menu_height_spinbt.set_value(value)
+
+            value = int(self.spinbutton1.get_value())
+            if value > 28:
+                value = 32
+            else:
+                value = 24
+            self.spinbutton1.set_value(value)
             
         def buttonpress(self,widget,id):
 		if id == 'ok':
@@ -392,6 +399,7 @@ class YMenuSettings:
                                 self.image_sound.set_from_pixbuf(Pixbuf)
 
 	def SaveSettings(self):
+                self.verify_input_data()
 		backend.save_setting("Bind_Key",self.entry_check1.get_text())
 		backend.save_setting("Show_Tips",int(self.check7.get_active()))
 		backend.save_setting("TabHover",int(self.check4.get_active()))
@@ -399,7 +407,6 @@ class YMenuSettings:
 		backend.save_setting("Menu_Name",self.combo_menu.get_active_text())
 		backend.save_setting("IconSize",int(self.spinbutton1.get_value()))
 		backend.save_setting("ListSize",int(self.spinbutton2.get_value()))
-                self.verify_height()
 		backend.save_setting("MenuHeight",int(self.menu_height_spinbt.get_value()))
 		backend.save_setting("SuperL",int(self.check1.get_active()))
 		backend.save_setting("Icon_Name",self.combo_icon.get_active_text())

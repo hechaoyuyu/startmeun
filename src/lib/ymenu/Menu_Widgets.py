@@ -9,7 +9,6 @@ import os
 import commands
 import Globals
 import IconFactory
-#import cairo_drawing
 import time
 import gconf
 from Popup_Menu import add_menuitem, add_image_menuitem
@@ -54,7 +53,7 @@ class MenuButton:
             self.supports_alpha = False
         else:
             self.supports_alpha = True
-        self.Button.connect("composited-changed", self.composite_changed) # 属于GdkScreen, 当窗口
+        self.Button.connect("composited-changed", self.composite_changed) 
         self.Frame.connect("expose_event", self.expose)
         self.Button.add(self.Frame)
 
@@ -65,8 +64,6 @@ class MenuButton:
         self.Image = gtk.Image()
 
         self.Setimage(Globals.ImageDirectory + Globals.MenuButtonImage[i])
-        #self.w = self.pic.get_width()
-        #self.h = self.pic.get_height()
         self.w = Globals.MenuButtonW[i]
         self.h = Globals.MenuButtonH[i]
 
@@ -467,15 +464,12 @@ class AppButton(gtk.EventBox):
         self.set_visible_window(0)
         self.add(self.Frame)
         
-        #self.Label = gtk.Label()
-        
         #Button背景
         self.Image = gtk.Image()
         #sel = gtk.gdk.pixbuf_get_file_info(Globals.ImageDirectory + Globals.ButtonBackImage)
 	self.w = Globals.button_back_size[0] #sel[1]
-	self.h = Globals.button_back_size[1] #sel[2]
-	sel = None
-        self.Image.set_from_pixbuf(sel)
+	self.h = Globals.button_back_size[1]#sel[2]
+        self.Image.set_from_pixbuf(None)
         self.set_size_request(self.w, self.h)
         self.Image.set_size_request(self.w, self.h)
         self.Frame.set_size_request(self.w, self.h)
@@ -802,8 +796,7 @@ class PlaApplicationLauncher(gtk.EventBox):
         #sel = gtk.gdk.pixbuf_get_file_info(Globals.ImageDirectory + Globals.ButtonBackImage)
 	self.w = Globals.button_back_size[0] #sel[1]
 	self.h = Globals.button_back_size[1] #sel[2]
-	sel = None
-        self.Image.set_from_pixbuf(sel)
+        self.Image.set_from_pixbuf(None)
         self.set_size_request(self.w, self.h)
         self.Image.set_size_request(self.w, self.h)
         self.Frame.set_size_request(self.w, self.h)
@@ -1717,28 +1710,6 @@ class ProgramClass(gobject.GObject):
             i.filterCategory(category)
         self.PlaySound(3)
 
-    def UpdateUserImage(self, widget, event, icon):
-	ico = IconFactory.GetSystemIcon(icon)
-	if ico == None:
-	    ico = icon
-	self.UserPicName = ico
-        
-	if self.LastUserPicName != self.UserPicName:
-            self.LastUserPicName = self.UserPicName
-            if self.usericonstate == 0:
-                self.usericon.updateimage(2, self.UserPicName)
-		self.usericon.transition([-1, -1, 1, -1], Globals.TransitionS, Globals.TransitionQ, None)
-            elif self.usericonstate == 1:
-		self.usericon.updateimage(3, self.UserPicName)
-		self.usericon.transition([-1, -1, -1, 1], Globals.TransitionS, Globals.TransitionQ, None)
-            elif self.usericonstate == 2:
-		self.usericon.updateimage(2, self.UserPicName)
-		self.usericon.transition([-1, -1, 1, -1], Globals.TransitionS, Globals.TransitionQ, None)
-            if self.usericonstate == 1:
-		self.usericonstate = 2
-            else:
-		self.usericonstate = 1  
-        
     def Select_install(self, category=""):
         for i in self.App_VBox.get_children():
             i.filterCategory(category)
@@ -1782,6 +1753,9 @@ class ProgramClass(gobject.GObject):
     def loadMenuFiles(self):
         self.tree = xdg.Menu.parse("applications.menu")
         self.directory = self.tree.getEntries()
+
+        self.gnomecc_tree = xdg.Menu.parse("settings.menu")
+        self.gnomecc_dir  = self.gnomecc_tree.getEntries()
             
     def buildCategoryList(self):
         newCategoryList = [{"name": _("All Applications"), "icon": "application-x-executable", "tooltip": _("Show all applications"), "filter":"", "index": 0}]
@@ -1790,11 +1764,11 @@ class ProgramClass(gobject.GObject):
 
         for child in self.directory:#.get_contents():
             if isinstance(child, xdg.Menu.Menu):
-                newCategoryList.append({"name": child.getName(), "icon": child.getIcon(), "tooltip": child.getComment(), "filter": child.getName(), "index": num})            
+                newCategoryList.append({"name": child.getName(), "icon": child.getIcon(), "tooltip": child.getComment(), "filter": child.getName(), "index": num})
         num += 1
 
         newCategoryList.append({"name": _("Software Center"), "icon": "emblem-favorite", "tooltip": _("Ylmf OS software center"), "filter":None, "index": num})
-        newCategoryList.append({"name": _("Control Panel"), "icon": "emblem-favorite", "tooltip": _("Control Panel"), "filter":None , "index": num + 1})
+        newCategoryList.append({"name": _("Control Panel"), "icon": "emblem-favorite", "tooltip": _("Control Panel"), "filter":"gnomecc" , "index": num + 1})
         newCategoryList.append({"name": _("My Computer"), "icon": "computer", "tooltip": _("Show all Places"), "filter": _("My Computer"), "index": num + 2})
         newCategoryList.append({"name": _("Recent"), "icon": "document-open-recent", "tooltip": _("Recent All"), "filter": _("Recent"), "index": num + 3})
         newCategoryList.append({"name": _("Favorites"), "icon": "emblem-favorite", "tooltip": _("Show all Favorites"), "filter": _("Favorites"), "index": num + 4})
@@ -1819,5 +1793,14 @@ class ProgramClass(gobject.GObject):
                     if isinstance(item, xdg.Menu.Menu):
                         find_applications_recursively(newApplicationsList, item, entry.getName())
                     elif isinstance(item, xdg.Menu.MenuEntry):
-                        newApplicationsList.append({"entry": item, "category": entry.getName()})                    
+                        newApplicationsList.append({"entry": item, "category": entry.getName()})
+
+        for entry in self.gnomecc_dir:
+            if isinstance(entry, xdg.Menu.Menu):
+                for item in entry.getEntries():
+                    if isinstance(item, xdg.Menu.Menu):
+                        find_applications_recursively(newApplicationsList, item, entry.getName())
+                    elif isinstance(item, xdg.Menu.MenuEntry):
+                        newApplicationsList.append({"entry": item, "category": "gnomecc"})
+
         return newApplicationsList        

@@ -16,7 +16,7 @@
 	
 	<ProgramListSettings X="154" Y="15" Width="260" Height="475" Foreground='#FFFFFF' Background='#1B1C1C'/>
 	
-	<Capabilities HasSearch="1" HasIcon="1" HasFadeTransition="1" HasTab="1"/>
+	<Capabilities HasSearch="1" HasIcon="1" HasTab="1"/>
 	
 	<Button Name="Logout" Markup="&lt;span foreground='#FFFFFF' &gt;Logout&lt;/span&gt;" TextX="40" TextY="8" Image="m_logout.png" ImageBack="m_logout_sel.png" ButtonIcon="" ButtonIconSel="" ButtonX="160" ButtonY="535" ButtonW="110" ButtonH="31" SubMenu="0" Command="Logout" CloseMenu="1" Icon=""/>
 

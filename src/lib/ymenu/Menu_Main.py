@@ -8,8 +8,6 @@ import cairo
 import os
 from Menu_Widgets import MenuButton, ProgramClass, SearchLauncher
 import Globals
-import cairo_drawing
-import utils
 import Launcher
 import gconf
 import gio
