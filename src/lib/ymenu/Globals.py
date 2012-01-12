@@ -161,9 +161,7 @@ def ReloadSettings():
 	except:
 		UserMenuHeight = 575
 
-	if not UserMenuHeight:
-                UserMenuHeight = MenuHeight
-        elif UserMenuHeight > 1000:
+        if UserMenuHeight > 1000:
             UserMenuHeight = 1000
         elif UserMenuHeight < 350:
             UserMenuHeight = 350

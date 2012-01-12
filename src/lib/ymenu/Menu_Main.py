@@ -15,8 +15,8 @@ import backend
 from math import pi
 
 try:
-	has_gst = True
-	import gst
+	has_gst = False # gst module meets problem,disable it
+	#import gst
 except:
 	has_gst = False
 

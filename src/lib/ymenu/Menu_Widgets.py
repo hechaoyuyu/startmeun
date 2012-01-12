@@ -23,8 +23,8 @@ import re
 
 
 try:
-    has_gst = True
-    import gst
+    has_gst = False
+    #import gst
 except:
     has_gst = False
 
