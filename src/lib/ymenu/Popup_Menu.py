@@ -325,12 +325,6 @@ class ImageMenuItem(gtk.ImageMenuItem):
 		
 		# get the label and image for later
 		self.label = self.get_child()
-		if Globals.Settings['GtkColors'] == 0:
-			theme_color = Globals.ThemeColorCode
-			color = Globals.NegativeThemeColorCode
-			self.label.modify_fg(gtk.STATE_NORMAL, color)
-			self.label.modify_base(gtk.STATE_NORMAL, color)
-			self.label.modify_text(gtk.STATE_NORMAL, color)
 		self.image = self.get_image()
 		
 		# set the label to custom text
@@ -342,8 +336,6 @@ class ImageMenuItem(gtk.ImageMenuItem):
 
 	def expose(self,widget, event):
 		if not self.once:
-			if Globals.Settings['GtkColors'] == 0:
-				self.get_parent().modify_bg(gtk.STATE_NORMAL, Globals.ThemeColorCode)
 			self.once = True
 	
 	def set_image_from_file (self, filename):
