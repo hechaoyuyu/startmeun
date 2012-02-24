@@ -213,7 +213,7 @@ class Main_Menu(gobject.GObject):
                 ctx.arc(x + r, y + r, r, pi, 3 * pi / 2) #左上
                 ctx.arc(x + r, y + h - r, r, pi / 2, pi)     # 90 - 0
                 color = Globals.color_translate(lcolor)
-                ctx.set_source_rgb(color[2], color[1], color[0])
+                ctx.set_source_rgb(color[0], color[1], color[2])
                 ctx.fill()
 
 		# 右半部分

@@ -111,9 +111,9 @@ class MenuButton:
         color = []
         color = Globals.color_translate(Globals.App_bgcolor)
         if self.supports_alpha == False:
-            self.ctx.set_source_rgb(color[2], color[1], color[0])
+            self.ctx.set_source_rgb(color[0], color[1], color[2])
         else:
-            self.ctx.set_source_rgba(color[2], color[1], color[0], 1)
+            self.ctx.set_source_rgba(color[0], color[1], color[2], 1)
         self.ctx.set_operator (cairo.OPERATOR_SOURCE)
         self.ctx.paint()
         del color

@@ -12,9 +12,9 @@
 	
 	<SearchBarSettings  X="160" Y="497" Width="166" Height="19" Widget="Gtk" Background="searchframe.png"/>
 	
-	<ProgramTabSettings X="12" Y="15" Width="145" Height="548"  Foreground='#FFFFFF' Background='#000000'/>
+	<ProgramTabSettings X="2" Y="15" Width="145" Height="548"  Foreground='#FFFFFF' Background='#000000'/>
 	
-	<ProgramListSettings X="154" Y="15" Width="260" Height="475" Foreground='#FFFFFF' Background='#1B1C1C'/>
+	<ProgramListSettings X="147" Y="15" Width="260" Height="475" Foreground='#FFFFFF' Background='#1B1C1C'/>
 	
 	<Capabilities HasSearch="1" HasIcon="1" HasTab="1"/>
 	
