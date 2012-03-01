@@ -363,7 +363,7 @@ gobject.type_register(IconManager)
 
 class CategoryTab(gtk.EventBox):
     #CategoryTab(i,addedCategories[i]["icon"],Globals.PG_iconsize,addedCategories[i]["name"],addedCategories[i]["tooltip"])
-    def __init__(self, iconName, iconSize, name):
+    def __init__(self, name):
         gtk.EventBox.__init__(self)
         
         self.Name = name
@@ -391,52 +391,10 @@ class CategoryTab(gtk.EventBox):
 	self.Frame.put(self.Label, Globals.TabBackNameX, Globals.TabBackNameY)
         
         self.connectSelf("destroy", self.onDestroy)
-        self.themeChangedHandlerId = iconManager.connect("changed", self.themeChanged)
       
     def connectSelf(self, event, callback):
         self.connections.append(self.connect(event, callback))    
         
-    def getIcon (self, iconSize):
-        #if not self.iconName:
-        #    return None
-
-        icon = iconManager.getIcon(self.iconName, iconSize)
-        if not icon:
-            icon = iconManager.getIcon("application-default-icon", iconSize)
-
-        return icon
-
-    def setIcon (self, iconName):
-        self.iconName = iconName
-        self.iconChanged()
-
-    # IconTheme changed, setup new button icons
-    def themeChanged(self, theme):
-        self.iconChanged()
-
-    def iconChanged(self):
-        icon = self.getIcon(self.iconSize)
-        self.buttonImage.clear()
-        if icon:
-            self.buttonImage.set_from_pixbuf(icon)
-            self.buttonImage.set_size_request(-1, -1)
-            del icon
-        else:
-            #[iW, iH ] = iconManager.getIconSize( self.iconSize )
-            self.buttonImage.set_size_request(self.iconSize, self.iconSize)
-
-    def setIconSize(self, size):
-        self.iconSize = size
-        icon = self.getIcon(self.iconSize)
-        self.buttonImage.clear()
-        if icon:
-            self.buttonImage.set_from_pixbuf(icon)
-            self.buttonImage.set_size_request(-1, -1)
-            del icon
-        elif self.iconSize:
-            #[ iW, iH ] = iconManager.getIconSize( self.iconSize )
-            self.buttonImage.set_size_request(self.iconSize, self.iconSize)
-    
     def onDestroy(self, widget):
         #self.buttonImage.clear()
         #iconManager.disconnect(self.themeChangedHandlerId)
@@ -1003,6 +961,8 @@ class ProgramClass(gobject.GObject):
         self.filterTimer = None
         self.menuChangedTimer = None
 
+        self.prev_selTab = None # 因"软件中心"不参与过滤, 在选择其后恢复前所选项的背景
+
         self.buildingButtonList = False
         self.stopBuildingButtonList = False
 
@@ -1257,6 +1217,9 @@ class ProgramClass(gobject.GObject):
     def ExecCommand(self, widget, event, item):
         if item["name"] == _("Software Center"):
             os.system("%s &" % Globals.CategoryCommands['Y Center'])
+            if self.prev_selTab: 
+                widget.setSelectedTab(False)
+                self.prev_selTab.setSelectedTab(True)
         elif item["name"] == _("Control Panel"):
             os.system("%s &" % Globals.CategoryCommands['Control Panel'])
 
@@ -1283,7 +1246,7 @@ class ProgramClass(gobject.GObject):
             for item in newCategoryList:
                 found = False
                 for item2 in self.categoryList:
-                    if item["name"] == item2["name"] and item["icon"] == item2["icon"] and item["tooltip"] == item2["tooltip"] and item["index"] == item2["index"]:
+                    if item["name"] == item2["name"] and item["tooltip"] == item2["tooltip"] and item["index"] == item2["index"]:
                         found = True
                         break
                 if not found:
@@ -1293,7 +1256,7 @@ class ProgramClass(gobject.GObject):
             for item in self.categoryList:
                 found = False
                 for item2 in newCategoryList:
-                    if item["name"] == item2["name"] and item["icon"] == item2["icon"] and item["tooltip"] == item2["tooltip"] and item["index"] == item2["index"]:
+                    if item["name"] == item2["name"] and item["tooltip"] == item2["tooltip"] and item["index"] == item2["index"]:
                         found = True
                         break
                 if not found:
@@ -1314,24 +1277,31 @@ class ProgramClass(gobject.GObject):
           
         if addedCategories:
             sortedCategoryList = []
-            for item in self.categoryList[0:-3]:
+            for item in self.categoryList[0:-5]:
                 self.Category_VBox.remove(item["button"])
                 sortedCategoryList.append((item["name"], item["button"]))
             
             for item in addedCategories:
-                item["button"] = CategoryTab(item["icon"], Globals.PG_iconsize, item["name"])
+                item["button"] = CategoryTab(item["name"])
                 
                 if Globals.Settings['Show_Tips']:
                     item["button"].Frame.set_tooltip_text(item["tooltip"])
                     
                 if Globals.Settings['TabHover']:
-                    item["button"].connect("enter-notify-event", self.StartFilter, item["filter"], item["icon"])
-                    item["button"].connect("leave-notify-event", self.StopFilter)
-                    if item["name"] == _("Software Center") or item["name"] == _("Control Panel"):
-                        item["button"].connect("button-release-event", self.ExecCommand, item)
-                else:
-                    item["button"].connect("button-release-event", self.Filter, item["filter"], item["icon"])
-                
+		    if item["name"] == _("Software Center") or item["name"] == _("Control Panel"): 
+                        needfilter = item["name"] == _("Control Panel") 
+                        item["button"].connect("enter-notify-event", self.StartFilter, item["filter"], needfilter) 
+			item["button"].connect("button-release-event", self.ExecCommand, item) 
+		    else: 
+			item["button"].connect("enter-notify-event", self.StartFilter, item["filter"]) 
+
+		    item["button"].connect("leave-notify-event", self.StopFilter) 
+
+		elif item["name"] == _("Software Center"):
+	             item["button"].connect("button-release-event", self.ExecCommand, item) 
+		else: 
+                    item["button"].connect("button-release-event", self.Filter, item["filter"])
+
                 item["button"].show_all()
                 
                 if item["filter"] == "" and not menu_has_changed:
@@ -1350,7 +1320,7 @@ class ProgramClass(gobject.GObject):
 		self.StartEngine()
    
             if menu_has_changed == True:
-                for item in sortedCategoryList[0:-3]:
+                for item in sortedCategoryList:
                     self.Category_VBox.pack_start(item[1], False)
             
             else:
@@ -1684,11 +1654,11 @@ class ProgramClass(gobject.GObject):
             else:
                 self.emit('NotNeedSearch')
 
-    def StartFilter(self, widget, event, category, icon):
+    def StartFilter(self, widget, event, category, needfilter = True):
 
         if self.filterTimer:
             gobject.source_remove(self.filterTimer)
-        self.filterTimer = gobject.timeout_add(80, self.Filter, widget, event, category, icon)
+        self.filterTimer = gobject.timeout_add(80, self.Filter, widget, event, category, needfilter)
 	self.Search_Flag = False
         self.emit('NotNeedSearch')
 
@@ -1697,17 +1667,20 @@ class ProgramClass(gobject.GObject):
             gobject.source_remove(self.filterTimer)
             self.filterTimer = None
 
-    def Filter(self, widget, event, category, icon):
+    def Filter(self, widget, event, category, needfilter):
         
         #self.UpdateUserImage(widget, event, icon)
         
         for item in self.categoryList:
             item["button"].setSelectedTab(False)
+        if needfilter:
+            self.prev_selTab = widget # 用于在选择"软件中心"后返回标签用
         widget.setSelectedTab(True)
         self.activeFilter = (1, category)
         self.cate_button = widget
-        for i in self.App_VBox.get_children():
-            i.filterCategory(category)
+	if needfilter: 
+	    for i in self.App_VBox.get_children():
+		i.filterCategory(category)
         self.PlaySound(3)
 
     def Select_install(self, category=""):
@@ -1764,20 +1737,20 @@ class ProgramClass(gobject.GObject):
         self.menu_dir.append({'dir' : self.directory,   'category' : ''})
 
     def buildCategoryList(self):
-        newCategoryList = [{"name": _("All Applications"), "icon": "application-x-executable", "tooltip": _("Show all applications"), "filter":"", "index": 0}]
+        newCategoryList = [{"name": _("All Applications"), "tooltip": _("Show all applications"), "filter":"", "index": 0}]
         
         num = 1
 
         for child in self.directory:#.get_contents():
             if isinstance(child, xdg.Menu.Menu):
-                newCategoryList.append({"name": child.getName(), "icon": child.getIcon(), "tooltip": child.getComment(), "filter": child.getName(), "index": num})
+                newCategoryList.append({"name": child.getName(), "tooltip": child.getComment(), "filter": child.getName(), "index": num})
         num += 1
 
-        newCategoryList.append({"name": _("Software Center"), "icon": "emblem-favorite", "tooltip": _("Software Center"), "filter":None, "index": num})
-        newCategoryList.append({"name": _("Control Panel"), "icon": "emblem-favorite", "tooltip": _("Control Panel"), "filter":"gnomecc" , "index": num + 1})
-        newCategoryList.append({"name": _("My Computer"), "icon": "computer", "tooltip": _("Show all Places"), "filter": _("My Computer"), "index": num + 2})
-        newCategoryList.append({"name": _("Recent"), "icon": "document-open-recent", "tooltip": _("Recent Documents"), "filter": _("Recent"), "index": num + 3})
-        newCategoryList.append({"name": _("Favorites"), "icon": "emblem-favorite", "tooltip": _("Show all Favorites"), "filter": _("Favorites"), "index": num + 4})
+        newCategoryList.append({"name": _("Software Center"), "tooltip": _("Software Center"), "filter":None, "index": num})
+        newCategoryList.append({"name": _("Control Panel"), "tooltip": _("Control Panel"), "filter":"gnomecc" , "index": num + 1})
+        newCategoryList.append({"name": _("My Computer"), "tooltip": _("Show all Places"), "filter": _("My Computer"), "index": num + 2})
+        newCategoryList.append({"name": _("Recent"), "tooltip": _("Recent Documents"), "filter": _("Recent"), "index": num + 3})
+        newCategoryList.append({"name": _("Favorites"), "tooltip": _("Show all Favorites"), "filter": _("Favorites"), "index": num + 4})
         return newCategoryList
 
     # Build a list containing the DesktopEntry object and the category of each application in the menu
