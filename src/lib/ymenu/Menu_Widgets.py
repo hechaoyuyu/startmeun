@@ -205,14 +205,15 @@ class MenuImage:
 
 class GtkSearchBar(gtk.EventBox, gobject.GObject):
     __gsignals__ = {
-        'right-clicked': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, ())
+        'right-clicked': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, ()),
+        'searchbar-search': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, ())
     }
         
     def __init__(self, BackImageFile, W, H, win):
         gtk.EventBox.__init__(self)
         gobject.GObject.__init__(self)
 
-        self.r_clk = False
+        self.key_state = 0 # 0-初始状态， 1 - 中键曾按下， 2 - 右键曾按下
         self.Frame = gtk.Fixed()
         self.set_visible_window(0)
         self.add(self.Frame)
@@ -221,50 +222,81 @@ class GtkSearchBar(gtk.EventBox, gobject.GObject):
         self.entry = gtk.Entry()
         self.entry.set_inner_border(None)
         self.back = gtk.Image()
-
         self.entry.set_size_request(W, H)
+        self.search_pic = gtk.Image()
+
+        self.entry_prompt = gtk.Entry() # gtk2的fixed控件Z向构件的层次有问题,同时使用2个entry能对付着使用
+        self.entry_prompt.set_inner_border(None)
+        self.entry_prompt.set_size_request(W, H)
+        self.entry_prompt.set_editable(False)
+        self.entry_prompt.set_text(_('Search'))
+        self.entry_prompt.set_has_frame(False)
+        self.entry_prompt.set_inner_border(None)
+        self.entry_prompt.set_can_default(False)
+
+        self.entry_pixmap = gtk.gdk.Pixmap(None, W, H, 1)
+        self.entry_prompt.input_shape_combine_mask(self.entry_pixmap, W, H)
+
+        self.search_button = gtk.EventBox()
+        self.search_button.set_size_request(22, 22)
+        #self.search_button.connect("expose_event", self.search_button_expose)
+        self.search_button.connect("button-release-event", self.searchbar_search_signal)
+        self.search_button.set_visible_window(False)
+        sel = gtk.gdk.pixbuf_new_from_file(Globals.ImageDirectory + Globals.SearchPic).scale_simple(Globals.SearchPicW, Globals.SearchPicH, gtk.gdk.INTERP_BILINEAR)
+        self.search_pic.set_from_pixbuf(sel)
+        self.search_button.add(self.search_pic)
+        del sel
 
         sel = gtk.gdk.pixbuf_new_from_file(BackImageFile).scale_simple(Globals.SearchBgSize[0], Globals.SearchBgSize[1], gtk.gdk.INTERP_BILINEAR )
         self.back.set_from_pixbuf(sel)
+        del sel
 
-        #self.entry.modify_base(gtk.STATE_NORMAL, Globals.ThemeColorCode)
         color = []
         color = Globals.color_translate(Globals.App_bgcolor)
         self.entry.modify_base(gtk.STATE_NORMAL, gtk.gdk.Color(color[0], color[1], color[2]))
+        self.entry_prompt.modify_base(gtk.STATE_NORMAL, gtk.gdk.Color(color[0], color[1], color[2]))
         del color
-        self.entry.set_text(_('Search'))
+
         self.entry.set_has_frame(False)
         self.entry.set_max_length(20)
 
         self.entry.connect("button-press-event", self.enter)
+        self.entry.connect("focus-in-event", self.enter)
         self.entry.connect("leave-notify-event", self.leave)
-                
+        self.entry.connect("focus-out-event", self.leave)
+
         self.entry.modify_text(gtk.STATE_NORMAL, Globals.NegativeThemeColorCode)
+        self.entry_prompt.modify_text(gtk.STATE_NORMAL, Globals.NegativeThemeColorCode)
         if Globals.MFontSize == 'small': # or large to change the font size
             pfd = pango.FontDescription("8")
             self.entry.modify_font(pfd)
 
         self.Frame.put(self.back, 0, 0)
-        self.Frame.put(self.entry, int(6 * Globals.width_ratio), int( 6 * Globals.height_ratio) )
+        self.Frame.put(self.entry, int(6 * Globals.width_ratio), int( 6 * Globals.height_ratio))
+        self.Frame.put(self.entry_prompt, int(6 * Globals.width_ratio), int( 6 * Globals.height_ratio))
+        self.Frame.put(self.search_button, Globals.SearchPicX, Globals.SearchPicY)
 
     def enter(self, widget, event):
-        if event.type == gtk.gdk.BUTTON_PRESS:event_button = event.button
-        elif event.type == gtk.gdk.BUTTON_RELEASE:event_button = event.button
-        else:event_button = event.button
-        if event_button == 1:
-            if widget.get_text() == _('Search'):
-                widget.set_text("")
-        if event_button == 3 or event_button == 2: # 中键也当右键使
-            self.r_clk = True
-            self.emit('right-clicked')
-        if widget.get_text() == _('Search'):
-            widget.set_text("")
-                        
-    def leave(self, widget, event):
-        if widget.get_text() == '' and not self.r_clk:
-            self.win.set_focus(None)
-            widget.set_text(_('Search'))
+        self.entry_prompt.hide()
+        if event.type == gtk.gdk.BUTTON_PRESS and (event.button == 2 or event.button == 3):
+            self.key_state = event.button - 1
+            if event.button == 2: # right button
+                self.emit('right-clicked')
 
+    def leave(self, widget, event):
+        if widget.get_text() == '' and not self.key_state:
+            self.win.set_focus(None)
+            self.entry_prompt.show()
+
+    '''def search_button_expose(self, widget, event):
+        ctx = widget.window.cairo_create()
+        ctx.set_source_rgb(1.0, 0.0, 0.0)
+        ctx.set_operator(cairo.OPERATOR_SOURCE)
+        ctx.paint()
+        return True'''
+
+    def searchbar_search_signal(self, widget, event):
+        self.emit('searchbar-search')
 
 class IconManager(gobject.GObject):
 

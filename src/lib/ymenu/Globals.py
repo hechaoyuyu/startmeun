@@ -74,6 +74,7 @@ def ReloadSettings():
         # Loads the main configuration and settings file to their respective values
 	global orientation, panel_size, flip, MenuActions, MenuCommands, ImageDirectory, Actions, IconDirectory, MenuButtonDirectory, ThemeColor, ShowTop, FirstUse, StartMenuTemplate, ThemeColorCode,ThemeColorHtml, NegativeThemeColorCode, MenuWidth, MenuHeight, IconW, IconH, IconInX, IconInY, IconInW, IconInH, SearchWidget, SearchWidgetPath, PG_tabframe, PG_tabframedimensions, PG_buttonframe, PG_buttonframedimensions, MenuHasSearch, MenuHasIcon, MenuHasFade, MenuHasTab, CairoSearchTextColor, CairoSearchBackColor, CairoSearchBorderColor, CairoSearchRoundAngle, PG_iconsize,RI_numberofitems, MenuButtonCount, MenuButtonNames, MenuButtonMarkup, MenuButtonNameOffsetX, MenuButtonNameOffsetY, MenuButtonCommands, MenuButtonX,MenuButtonY, MenuButtonImage, MenuButtonImageBack, ButtonBackImage, ButtonBackIconX, ButtonBackIconY, ButtonBackNameX, ButtonBackNameY, TabBackImage, TabBackIconX, TabBackIconY, TabBackNameX, TabBackNameY, MenuButtonIcon, MenuButtonIconSel, MenuButtonIconX,MenuButtonIconY,MenuButtonIconSize, MenuButtonSub, MenuButtonClose, MenuCairoIconButton, ButtonHasTop, ButtonBackground, ButtonTop, StartButton, StartButtonTop, ButtonHasBottom, MenuButtonNameAlignment, GtkColorCode
         global SearchX, SearchY, SearchW, SearchH, SearchIX, SearchIY, SearchInitialText, SearchTextColor, SearchBackground, SearchBgSize
+        global SearchPic, SearchPicX, SearchPicY, SearchPicW, SearchPicH
         global lowresolution, width_ratio, height_ratio, tab_back_size, MFontSize, button_back_size, UserMenuHeight
         global App_fgcolor, App_bgcolor, PG_fgcolor, PG_bgcolor, CategoryCommands
         global MenuButtonW, MenuButtonH
@@ -205,7 +206,18 @@ def ReloadSettings():
                         SearchBackground = SBase[0].attributes["Background"].value
 			SearchW = int(SBase[0].attributes["Width"].value)
                         SearchH = int(SBase[0].attributes["Height"].value)
-			
+
+        #load search picture settings
+        SBase = XBase.getElementsByTagName("SearchPicSettings")
+        try:
+            SearchPic = SBase[0].attributes["Image"].value
+            SearchPicX = int(SBase[0].attributes["X"].value)
+            SearchPicY = int(SBase[0].attributes["Y"].value)
+            SearchPicW = int(SBase[0].attributes["Width"].value)
+            SearchPicH = int(SBase[0].attributes["Height"].value)
+        except:
+            print "SearchPicSettings is not correct"
+
         # Load ProGramTabSettings
         try:
                 SBase = XBase.getElementsByTagName("ProgramTabSettings")
@@ -397,15 +409,16 @@ def ReloadSettings():
             button_back_size.append(30)
 
         # SearchBar background
-        SearchBgSize = []
-        try:
-            sel = gtk.gdk.pixbuf_get_file_info(ImageDirectory + SearchBackground)
-            SearchBgSize.append(sel[1])
-            SearchBgSize.append(sel[2])
-            del sel
-        except:
-            SearchBgSize.append(191)
-            SearchBgSize.append(25)
+        if MenuHasSearch:
+            SearchBgSize = []
+            try:
+                sel = gtk.gdk.pixbuf_get_file_info(ImageDirectory + SearchBackground)
+                SearchBgSize.append(sel[1])
+                SearchBgSize.append(sel[2])
+                del sel
+            except:
+                SearchBgSize.append(191)
+                SearchBgSize.append(25)
 
 
         # iconsize 32 | 24
@@ -416,7 +429,7 @@ def ReloadSettings():
             PG_iconsize = 24
 
 
-        # if encounter the low/high resolution monitor, scaled the menu size --------
+        # if encounter the low/high resolution monitor, scaling the menu size --------
         width_ratio = 1
         height_ratio = 1
         MFontSize = 'medium'
@@ -448,6 +461,9 @@ def ReloadSettings():
 
         # Search Bar
         SearchY = int( SearchY * height_ratio)
+
+        # Search Picture
+        SearchPicY = int( SearchPicY * height_ratio)
 
 	# Menu Button
 	for i in range(0, MenuButtonCount): 
@@ -490,6 +506,10 @@ def ReloadSettings():
             SearchBgSize[1] = int(SearchBgSize[1] * height_ratio)
             SearchX = int( SearchX * width_ratio)
 
+            # search picture position
+            SearchPicW = int( SearchPicW * width_ratio )
+            SearchPicH = int( SearchPicH * height_ratio )
+            SearchPicX = int( SearchPicX * width_ratio)
 	    # Menu Button
 
             for i in range(0, MenuButtonCount):

@@ -11,6 +11,8 @@
 	<ButtonBackground Image="m_button.png" ButtonIconX="6" ButtonIconY="2" TextX="42" TextY="7"/>
 	
 	<SearchBarSettings  X="160" Y="497" Width="166" Height="19" Widget="Gtk" Background="searchframe.png"/>
+
+        <SearchPicSettings Image="search.png" X="198" Y="6" Width="22" Height="22"/>
 	
 	<ProgramTabSettings X="2" Y="15" Width="145" Height="548"  Foreground='#FFFFFF' Background='#000000'/>
 	

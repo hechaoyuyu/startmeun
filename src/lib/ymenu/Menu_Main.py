@@ -293,14 +293,12 @@ class Main_Menu(gobject.GObject):
 				from Menu_Widgets import  GtkSearchBar
 				gobject.type_register(GtkSearchBar)
 				self.SearchBar = GtkSearchBar(Globals.ImageDirectory + Globals.SearchBackground,Globals.SearchW,Globals.SearchH,self.window)
-                                self.SearchBar.connect ('right-clicked', self.menu_right_clicked)
-
 			try:
 				self.SearchBar.set_size_request(Globals.SearchW, Globals.SearchH)
 				self.menuframe.put(self.SearchBar, Globals.SearchX, Globals.SearchY)
-	
 				self.SearchBar.connect_after("key-release-event", self.SearchBarActivate)
-                                self.SearchBar.entry.connect("paste-clipboard", self.searchbar_paste)
+                                self.SearchBar.connect ('right-clicked', self.check_SearchBar_content)
+                                self.SearchBar.connect ('searchbar-search', self.searchbar_search_signal_handler)
 			except:print 'wait'
 			self.prevsearchitem = ""			
 
@@ -311,7 +309,6 @@ class Main_Menu(gobject.GObject):
         
         def menu_callback(self,event):
 		
-		self.leave_focus = False
 		if self.leave_focus == False:
 			self.callback = gobject.timeout_add(500,self.timeout_callback)
 
@@ -361,38 +358,39 @@ class Main_Menu(gobject.GObject):
 
 	def lose_focus(self,widget,event):
 		print 'focus lost'
-		if self.leave_focus is True:
+		if self.leave_focus and self.SearchBar.key_state == 0:
 			self.hide_method()
 
 	def get_focus(self, widget, event):
                 print 'focus receive'
-                self.SearchBar.r_clk = False
-                Globals.searchitem = self.SearchBar.entry.get_text()
+                self.leave_focus = True
+                self.check_SearchBar_content(self.SearchBar)
+               
 
         def hide_window(self):
 		print 'hide'                
 		self.window.hide()		
-                self.SearchBar.entry.set_text(_('Search'))
-                self.SearchBar.r_clk = False
-                self.window.set_focus(None)
-                self.PGL.emit('NotNeedSearch')
-    		if self.PGL.Search_Flag:
-                    self.PGL.App_VBox.show_all()
-    		    self.PGL.Search_Flag = False
-
-                if self.UnBlockSearchOpt & self.BlockNotSearchFlag:
-                    self.PGL.handler_unblock(self.notsearch_env_id)
-                    self.UnBlockSearchOpt &= ~self.BlockNotSearchFlag
-
-                if self.UnBlockSearchOpt & self.BlockSearchFlag:
-                    self.PGL.handler_unblock(self.search_env_id)
-                    self.UnBlockSearchOpt &= ~self.BlockSearchFlag
 
 		if Globals.MenuHasSearch:
-			if Globals.searchitem != '':
-                                Globals.searchitem = ''
-                                self.window.set_focus(None)
-                                self.PGL.Restart('previous')
+                    self.SearchBar.entry.set_text('')
+                    self.SearchBar.entry_prompt.show()
+                    self.window.set_focus(None)
+                    self.PGL.emit('NotNeedSearch')
+                    if self.PGL.Search_Flag:
+                        self.PGL.App_VBox.show_all()
+                        self.PGL.Search_Flag = False
+
+                    if self.UnBlockSearchOpt & self.BlockNotSearchFlag:
+                        self.PGL.handler_unblock(self.notsearch_env_id)
+                        self.UnBlockSearchOpt &= ~self.BlockNotSearchFlag
+
+                    if self.UnBlockSearchOpt & self.BlockSearchFlag:
+                        self.PGL.handler_unblock(self.search_env_id)
+                        self.UnBlockSearchOpt &= ~self.BlockSearchFlag
+                    if Globals.searchitem != '':
+                            Globals.searchitem = ''
+                            self.window.set_focus(None)
+                            self.PGL.Restart('previous')
 		self.PlaySound(1)
 		
 	def key_down (self, widget, event):
@@ -400,7 +398,8 @@ class Main_Menu(gobject.GObject):
                 print "key = %s" % key
 		if key == 9:	#Escape Key, hides window
 			self.hide_method()
-		elif key == 98 or key == 104 or key == 102 or key == 100 or key == 36 or key == 116 or key ==111 or key == 113 or key == 114 or key == 23:
+		elif key == 98 or key == 104 or key == 102 or key == 100 or key == 36 or key == 116 or \
+                     key ==111 or key == 113 or key == 114 or key == 23 or key == 22 or key == 119:
 			# Menu naviagation keys give focus to program list
 			if Globals.MenuHasSearch:
                                 if self.SearchBar.entry.is_focus() is True:
@@ -410,6 +409,8 @@ class Main_Menu(gobject.GObject):
                                                 self.hide_method()
                                         self.PGL.BanFocusSteal = False
                                         self.PGL.SetInputFocus()
+                                if (key == 22 or key == 119) and self.SearchBar.entry.get_text() == '':# del & backspace
+                                        self.SearchBar.entry_prompt.show()
                                
 			if key == 23 :
 				for i in range(0,Globals.MenuTabCount):
@@ -439,17 +440,11 @@ class Main_Menu(gobject.GObject):
 				self.PlaySound(3)
 
 			if key == 36 or key == 104:
-
 				self.PlaySound(2)
-
-                elif key == 22 or key == 119:# del & backspace
-                    if self.SearchBar.r_clk:
-                        if self.SearchBar.entry.get_text() == '':
-                            self.SearchBar.r_clk = False
 
                 else:	#Any other key passes through to search bar
 			if Globals.MenuHasSearch:
-                                if self.SearchBar.entry.is_focus() == False:
+                                if not self.SearchBar.entry.is_focus():
                                         self.SearchBar.entry.grab_focus()
 				self.SearchBarActivate()
 
@@ -612,7 +607,7 @@ class Main_Menu(gobject.GObject):
 #=================================================================
 #SEARCH BAR
 #=================================================================
-	def SearchBarActivate(self,widget=None,event=None):
+	def SearchBarActivate(self,widget=None, event=None):
 		Globals.searchitem = self.SearchBar.entry.get_text()
 		if self.prevsearchitem != Globals.searchitem:
 			self.PGL.BanFocusSteal = True
@@ -630,7 +625,21 @@ class Main_Menu(gobject.GObject):
             Globals.searchitem = Globals.searchitem.replace('\r', '')
             Globals.searchitem = Globals.searchitem.replace('\n', '')
             self.PGL.CallSpecialMenu(5, Globals.searchitem)
-            
+
+        def check_SearchBar_content(self, widget):
+            if not widget.key_state:
+                return
+            self.SearchBar_delay_id = gobject.timeout_add(500, self.read_SearchBar_content, widget)
+
+        def read_SearchBar_content(self, widget):
+            widget.key_state = 0
+            if self.SearchBar_delay_id:
+                gobject.source_remove(self.SearchBar_delay_id)
+            if widget.entry.get_text() != '':
+                widget.entry.grab_focus()
+                self.searchbar_paste(widget)
+        def searchbar_search_signal_handler(self, widget):
+            self.PGL.CallSpecialMenu(6, Globals.searchitem)
 
 # Code to launch menu standalone of base classes
 
