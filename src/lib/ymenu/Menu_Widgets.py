@@ -1332,7 +1332,7 @@ class ProgramClass(gobject.GObject):
 		elif item["name"] == _("Software Center"):
 	             item["button"].connect("button-release-event", self.ExecCommand, item) 
 		else: 
-                    item["button"].connect("button-release-event", self.Filter, item["filter"])
+                    item["button"].connect("button-release-event", self.Filter, item["filter"], True)
 
                 item["button"].show_all()
                 
