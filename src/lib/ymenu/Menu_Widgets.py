@@ -1516,10 +1516,13 @@ class ProgramClass(gobject.GObject):
             add_image_menuitem(mTree, gtk.STOCK_HOME, _("Create Desktop Shortcut"), self.add_to_desktop, widget)
                     
         else:    
-            if (os.path.basename(widget.desktopFile)) in os.listdir(Globals.PanelLauncher):
-                add_image_menuitem(mTree, gtk.STOCK_REMOVE, _("Remove from Panel"), self.del_to_panel, widget)
-            else:
-                add_image_menuitem(mTree, gtk.STOCK_ADD, _("Add to Panel"), self.add_to_panel, widget)
+	    if os.path.isdir(Globals.PanelLauncher):
+		if (os.path.basename(widget.desktopFile)) in os.listdir(Globals.PanelLauncher):
+		    add_image_menuitem(mTree, gtk.STOCK_REMOVE, _("Remove from Panel"), self.del_to_panel, widget)
+		else:
+		    add_image_menuitem(mTree, gtk.STOCK_ADD, _("Add to Panel"), self.add_to_panel, widget)
+	    else:
+		print "Dir: %s is not exist, Ignore PanelLauncher operating\n" % Globals.PanelLauncher
             
             add_image_menuitem(mTree, gtk.STOCK_HOME, _("Create Desktop Shortcut"), self.add_to_desktop, widget)
             add_menuitem(mTree, "-")    
