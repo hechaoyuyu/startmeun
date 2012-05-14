@@ -1,0 +1,59 @@
+style "scrollbar"
+{
+  /* FIXME: I have to set the other engine than "pixmap" first, 
+   * OR all settings of this file will override by System theme.
+   * If there is a bug within the engine "pixmap"?
+   */
+  engine "clearlooks"
+  {
+  }
+  GtkScrollbar::stepper-size = 0
+  GtkScrollbar::stepper-spacing = 0
+  GtkScrollbar::slider-width = 7
+  GtkScrollbar::trough-border = 0
+  engine "pixmap" 
+  {
+    image 
+    {
+      function			= BOX
+      recolorable		= TRUE
+      detail			= "trough"
+      file				= "trough.png"
+      stretch			= TRUE
+      orientation		= VERTICAL
+    }
+    image 
+    {
+      function				= SLIDER
+      recolorable			= TRUE
+      state           		= NORMAL
+      file					= "slider-normal.png" 
+      stretch				= TRUE
+      orientation			= VERTICAL
+
+    }
+   image 
+    {
+      function				= SLIDER
+      recolorable			= TRUE
+      state           		= ACTIVE
+      shadow				= IN
+      file					= "slider-active.png" 
+      stretch				= TRUE
+      orientation			= VERTICAL
+
+    }
+    image 
+    {
+      function				= SLIDER
+      recolorable			= TRUE
+      state           		= PRELIGHT
+      file					= "slider-active.png" 
+      stretch				= TRUE
+      orientation			= VERTICAL
+
+    }
+  }
+}
+
+class "GtkScrollbar" style "scrollbar"

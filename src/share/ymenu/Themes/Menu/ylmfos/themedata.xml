@@ -3,7 +3,7 @@
 	
 <ContentData Name="ylmfos" Author="hechao" Version="0.1" Copyright="GPL"/>
 
-<theme color="All" color_lang="All" colorvalue="#1B1C1C">
+<theme color="All" color_lang="All" colorvalue="#0C121B">
 	<WindowDimensions Width="414" Height="575"/>
 
 	<TabBackground Image="m_tab.png" TabIconX="6" TabIconY="4" TextX="12" TextY="7"/>
@@ -14,9 +14,9 @@
 
         <SearchPicSettings Image="search.png" X="198" Y="6" Width="22" Height="22"/>
 	
-	<ProgramTabSettings X="2" Y="15" Width="145" Height="548"  Foreground='#FFFFFF' Background='#000000'/>
+	<ProgramTabSettings X="5" Y="15" Width="145" Height="545"  Foreground='#FFFFFF' Background='#000000'/>
 	
-	<ProgramListSettings X="147" Y="15" Width="260" Height="475" Foreground='#FFFFFF' Background='#1B1C1C'/>
+	<ProgramListSettings X="151" Y="15" Width="260" Height="471" Foreground='#FFFFFF' Background='#0C121B'/>
 	
 	<Capabilities HasSearch="1" HasIcon="1" HasTab="1"/>
 	

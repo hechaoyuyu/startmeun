@@ -965,7 +965,7 @@ class ProgramClass(gobject.GObject):
         'NotNeedSearch':(gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, ())
         }
     
-    def __init__(self, Frame): #, usericon, usericonstate, LastUserPicName):
+    def __init__(self, Frame):
         gobject.GObject.__init__ (self)
        
 	self.Search_Flag = False
@@ -978,6 +978,7 @@ class ProgramClass(gobject.GObject):
 	self.MenuWin.put(self.Category_VBox, Globals.PG_tabframe[0], Globals.PG_tabframe[1])
 	
         # app list
+        gtk.rc_parse (Globals.ThemeDirectory + "gtk/scrollbar")
         self.App_Scr = gtk.ScrolledWindow()
         self.App_VBox = gtk.VBox(False)
         

@@ -202,17 +202,13 @@ class Main_Menu(gobject.GObject):
                 color = []
                 ctx.move_to(x + r, y) # 上  left width
                 ctx.line_to(x + lw, y)
-
                 ctx.line_to(x + lw, y + h) # right 
-
                 ctx.line_to(x + r, y + h) # bottom
-
-		ctx.line_to(x, y + h - r)
+		ctx.move_to(x, y + h - r)
                 ctx.line_to(x, y + r)  # left 
-
                 ctx.arc(x + r, y + r, r, pi, 3 * pi / 2) #左上
                 ctx.arc(x + r, y + h - r, r, pi / 2, pi)     # 90 - 0
-                color = Globals.color_translate(lcolor)
+		color = Globals.color_translate(lcolor)
                 ctx.set_source_rgb(color[0], color[1], color[2])
                 ctx.fill()
 
@@ -222,19 +218,15 @@ class Main_Menu(gobject.GObject):
 		
 		ctx.move_to(x, y) # 上  left width
                 ctx.line_to(x + rw - r, y)
-
 		ctx.move_to(x + rw, y + r) # 
                 ctx.line_to(x + rw, y + h - r) # right 
-
 		ctx.move_to(x + rw - r, y + h) # 
                 ctx.line_to(x, y + h) # bottom
-
                 ctx.line_to(x, y)  # left 
-
                 ctx.arc(x + rw - r, y + r, r, 3 * pi / 2, pi * 2) #右上
                 ctx.arc(x + rw - r, y + h - r, r, 0, pi / 2)     # 0 - 90
                 color = Globals.color_translate(rcolor)
-                ctx.set_source_rgb(color[2], color[1], color[0])
+                ctx.set_source_rgb(color[0], color[1], color[2])
                 ctx.fill()
                 del color
 
@@ -247,8 +239,8 @@ class Main_Menu(gobject.GObject):
                         self.ctx.set_source_rgba(0.0, 0.0, 0.0, 0.0)
                         self.ctx.paint()
 
-                self.special_rectangle(self.ctx, 2, 0, Globals.MenuWidth - 2, Globals.MenuHeight - 2, \
-                                                Globals.PG_tabframedimensions[0], 6.0, \
+                self.special_rectangle(self.ctx, 5, 0, Globals.MenuWidth - 5, Globals.MenuHeight - 5, \
+                                                Globals.PG_tabframedimensions[0], 0.0, \
                                                 Globals.PG_bgcolor, Globals.App_bgcolor)
                 
 	def setup(self):
@@ -352,7 +344,7 @@ class Main_Menu(gobject.GObject):
 				self.window.window.focus(int(time.time())/100)
 		self.window.set_urgency_hint(1)
 		self.window.activate_focus()             
-                self.window.set_opacity(0.85)
+                self.window.set_opacity(0.80)
 		self.PlaySound(0)
 
 

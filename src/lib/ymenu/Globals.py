@@ -48,7 +48,7 @@ gconf_app_key = '/apps/%s' % appdirname
 
 FirstUse = False
 
-DefaultSettings = {"Bind_Key":"Super_L" , "Sound_Theme":"None" , "Num_lock":"on", "flag":0, "Show_Tips":1 , "Distributor_Logo":0, "Menu_Name":"ylmfos" , "IconSize":24 , "ListSize":12 , "SuperL":1 , "Icon_Name":"ylmfos" , "Button_Name":"ylmfos-new", "TabHover":1 , "Control_Panel":"gnome-control-center"  ,"Y_Center":"ylmfos-software-center" , "Power":"gnome-session-save --shutdown-dialog" , "Logout":"gnome-session-save --logout-dialog" , "User":"gnome-about-me" , "AdminRun":"gksu", "MenuEditor":"gmenu-simple-editor", "MenuHeight":575}
+DefaultSettings = {"Bind_Key":"Super_L" , "Sound_Theme":"None" , "Num_lock":"on", "flag":0, "Show_Tips":1 , "Distributor_Logo":0, "Menu_Name":"ylmfos" , "IconSize":24 , "ListSize":12 , "SuperL":1 , "Icon_Name":"ylmfos" , "Button_Name":"blue-crystal", "TabHover":1 , "Control_Panel":"gnome-control-center"  ,"Y_Center":"ylmfos-software-center" , "Power":"gnome-session-save --shutdown-dialog" , "Logout":"gnome-session-save --logout-dialog" , "User":"gnome-about-me" , "AdminRun":"gksu", "MenuEditor":"gmenu-simple-editor", "MenuHeight":575}
 
 Settings = DefaultSettings.copy()
 
