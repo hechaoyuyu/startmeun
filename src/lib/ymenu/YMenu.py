@@ -100,7 +100,7 @@ class YMenu(gnomeapplet.Applet):
 		im = None
 		if Globals.flip == False and Globals.ButtonHasTop == 1:
 			pixmap = pixmap.flip(Globals.flip)
-                if Globals.ShowTop == 1 and Globals.Settings["Distributor_Logo"] == 0:
+                if Globals.Settings["Distributor_Logo"] == 0:
                         self.Image.set_from_pixbuf(pixmap)
                 else:
                         self.Image.set_from_file(Globals.StartButton[self.Button_state])
@@ -431,7 +431,7 @@ class YMenu(gnomeapplet.Applet):
 		if Globals.flip == False and Globals.ButtonHasTop == 1:
 			pixmap = pixmap.flip(Globals.flip)
 			
-		if Globals.ShowTop == 1 and Globals.Settings["Distributor_Logo"] == 0:
+		if Globals.Settings["Distributor_Logo"] == 0:
                         self.Image.set_from_pixbuf(pixmap)
                 else:
                         self.Image.set_from_file(Globals.StartButton[self.Button_state])
