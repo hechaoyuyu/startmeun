@@ -460,8 +460,8 @@ msgstr "程序列表类型"
 msgid "Use system icons instead of theme icons"
 msgstr "用系统图标替代主题图标"
 
-msgid "Ylmf OS advanced menu."
-msgstr "Ylmf OS 高级 gnome 菜单"
+msgid "advanced menu."
+msgstr "高级菜单"
 
 #: ymenu/src/lib/ymenu/YMenu-Settings.py:289
 msgid "Use distributor logo instead of button theme"

@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <content type="Menu">
 	
-<ContentData Name="ylmfos" Author="hechao" Version="0.1" Copyright="GPL"/>
+<ContentData Name="startos" Author="hechao" Version="0.1" Copyright="GPL"/>
 
 <theme color="All" color_lang="All" colorvalue="#0C121B">
 	<WindowDimensions Width="414" Height="575"/>

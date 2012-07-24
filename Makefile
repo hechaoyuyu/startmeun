@@ -1,4 +1,4 @@
-#(c) ylmf 2010/11 <hechao @115.com>
+#(c) StartOS 2010/11 <hechao@ivali.com>
 #
 # A simple makefile to allow installing/uninstalling 
 # Part of the YMenu

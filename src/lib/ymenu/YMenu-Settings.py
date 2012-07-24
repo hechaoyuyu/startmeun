@@ -238,7 +238,7 @@ class YMenuSettings:
 		self.Applogo = gtk.gdk.pixbuf_new_from_file_at_size(Globals.Applogo,142,95)
 		self.image_logo.set_from_pixbuf(self.Applogo)
 		self.label_app = gtk.Label("YMenu %s" % Globals.version)
-        	self.label_credits = gtk.Label(_("Ylmf OS advanced menu."))
+        	self.label_credits = gtk.Label(_("advanced menu."))
 		self.font_desc = pango.FontDescription('sans bold 14')
 		self.label_app.modify_font(self.font_desc)
 		self.label_credits.set_justify(gtk.JUSTIFY_CENTER)
@@ -314,7 +314,7 @@ class YMenuSettings:
 			os.system('xdg-open http://feedback.115.com/?ct--feedback--ac--ask--app--105 &')
 	
 		elif id == 'Homepage':
-			os.system('xdg-open http://www.ylmf.org &')
+			os.system('xdg-open http://www.startos.org &')
 
 
 	def reload_themes(self,id):
@@ -389,7 +389,7 @@ class YMenuSettings:
                         try:
 				Pixbuf = gtk.gdk.pixbuf_new_from_file_at_size("%sIcon/%s/sound_icon.png" % (Globals.ThemeDirectory, widget.get_active_text()),64,64)
 			except:
-                                Pixbuf = gtk.gdk.pixbuf_new_from_file_at_size("%sIcon/ylmfos/sound_icon.png" % (Globals.ThemeDirectory),64,64)
+                                Pixbuf = gtk.gdk.pixbuf_new_from_file_at_size("%sIcon/startos/sound_icon.png" % (Globals.ThemeDirectory),64,64)
 
 			if self.combo_sound.get_active_text() == 'None':
                                 self.image_sound.set_from_pixbuf(Pixbuf)         

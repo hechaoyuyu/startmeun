@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <content type="Button">
-<ContentData Name="ylmfos-gif" Author="hechao" Copyright="GPL"/>
+<ContentData Name="startos-gif" Author="hechao" Copyright="GPL"/>
 <theme Top="0" id="HasTop">
 	<Background Image="start-here-glow.png" ImagePressed="start-here.png" ImageHover="start-here-depressed.gif"/>
 </theme>

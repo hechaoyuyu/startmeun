@@ -484,7 +484,7 @@ class Main_Menu(gobject.GObject):
                 self.PGL.handler_unblock(self.notsearch_env_id)
                 self.UnBlockSearchOpt &= ~self.BlockNotSearchFlag
 
-            icondir = INSTALL_PREFIX + '/share/ymenu/Themes/Icon/ylmfos/'
+            icondir = INSTALL_PREFIX + '/share/ymenu/Themes/Icon/startos/'
             self.google_search = SearchLauncher(icondir + 'google.xpm', self.PGL.App_VBox, _("Search Google"))
             self.google_search.connect('button_release_event', self.search_go, 'google')
 
@@ -551,7 +551,7 @@ class Main_Menu(gobject.GObject):
                 elif searchEn == 'baidu':
                     url = "http://www.baidu.com/s?wd=%s&tn=ylmf_3_pg&ch=57" % text
                 else:
-                    url = "http://www.google.com.hk/search?q=YlmfOS"
+                    url = "http://www.google.com.hk/search?q=StartOS"
                 os.system("xdg-open \"%s\" &" % url)
                 self.hide_method()
 

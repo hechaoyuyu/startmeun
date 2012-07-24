@@ -5,9 +5,9 @@
 			<item value="IDL:Bonobo/Unknown:1.0"/>
 		</oaf_attribute>
 		<oaf_attribute name="name" type="string" value="YMenu Factory"/>
-		<oaf_attribute name="name-zh_CN" type="string" value="Ylmf OS高级菜单"/>
+		<oaf_attribute name="name-zh_CN" type="string" value="开始菜单"/>
 		<oaf_attribute name="description" type="string" value="Customizable Start Menu for the GNOME Desktop"/>
-		<oaf_attribute name="description-zh_CN" type="string" value="Ylmf OS 桌面开始菜单"/>
+		<oaf_attribute name="description-zh_CN" type="string" value="桌面开始菜单"/>
 	</oaf_server>
 
 	<oaf_server iid="OAFIID:GNOME_YMenu" type="factory" location="OAFIID:GNOME_YMenu_Factory">
@@ -17,9 +17,9 @@
 			<item value="IDL:Bonobo/Unknown:1.0"/>
 		</oaf_attribute>
 		<oaf_attribute name="name" type="string" value="YMenu"/>
-		<oaf_attribute name="name-zh_CN" type="string" value="YMenu高级菜单"/>
+		<oaf_attribute name="name-zh_CN" type="string" value="开始菜单"/>
 		<oaf_attribute name="description" type="string" value="Customizable Start Menu for the GNOME Desktop"/>
-		<oaf_attribute name="description-zh_CN" type="string" value="Ylmf OS 桌面开始菜单"/>
+		<oaf_attribute name="description-zh_CN" type="string" value="桌面开始菜单"/>
 		<oaf_attribute name="panel:category" type="string" value="Utilities"/>
 		<oaf_attribute name="panel:icon" type="string" value="/usr/lib/ymenu/graphics/logo.png"/>
 		<oaf_attribute name="bugzilla:bugzilla" type="string" value="GNOME"/>
