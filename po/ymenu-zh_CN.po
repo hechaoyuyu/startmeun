@@ -314,7 +314,7 @@ msgstr "最近使用的"
 
 #: ymenu/src/lib/ymenu/YMenu-Settings.py:61
 msgid "YMenu Settings"
-msgstr "YMenu 设置"
+msgstr ""
 
 #: ymenu/src/lib/ymenu/YMenu-Settings.py:83
 msgid "Ok"
@@ -461,7 +461,7 @@ msgid "Use system icons instead of theme icons"
 msgstr "用系统图标替代主题图标"
 
 msgid "advanced menu."
-msgstr "高级菜单"
+msgstr "开始菜单"
 
 #: ymenu/src/lib/ymenu/YMenu-Settings.py:289
 msgid "Use distributor logo instead of button theme"
@@ -675,7 +675,7 @@ msgstr "系统监视器"
 
 #: ymenu/src/lib/ymenu/Menu_Items.py:261
 msgid "YMenu settings utility"
-msgstr "YMenu 设置工具"
+msgstr "设置工具"
 
 #: ymenu/src/lib/ymenu/Menu_Items.py:281
 msgid ""

@@ -24,7 +24,7 @@ def _(s):
 
 global name,version,appdirname 
 name = _("Start")
-version = "4.0"
+version = "5.0"
 appdirname="ymenu"
 
 HomeDirectory = os.path.expanduser("~")
