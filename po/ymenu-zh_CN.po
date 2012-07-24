@@ -4,7 +4,7 @@ msgid "All Applications"
 msgstr "全部程序"
 
 msgid "Show all applications"
-msgstr "显示所有的应用程序"
+msgstr "显示所有应用程序"
 
 #: ymenu/src/lib/ymenu/Globals.py:565
 msgid "All Programs"
@@ -52,7 +52,7 @@ msgstr "收藏夹"
 
 #: ymenu/src/lib/ymenu/Globals.py:565
 msgid "Show all Favorites"
-msgstr "经常使用的程序"
+msgstr "收藏的程序"
 
 #: ymenu/src/lib/ymenu/Globals.py:565
 msgid "Games"
@@ -314,7 +314,7 @@ msgstr "最近使用的"
 
 #: ymenu/src/lib/ymenu/YMenu-Settings.py:61
 msgid "YMenu Settings"
-msgstr ""
+msgstr "设置"
 
 #: ymenu/src/lib/ymenu/YMenu-Settings.py:83
 msgid "Ok"
@@ -348,7 +348,7 @@ msgstr "命令"
 
 #: ymenu/src/lib/ymenu/YMenu-Settings.py:114
 msgid "Menu Selection"
-msgstr "菜单选择"
+msgstr "菜单"
 
 #: ymenu/src/lib/ymenu/YMenu-Settings.py:137
 #: ymenu/src/lib/ymenu/YMenu-Settings.py:165
@@ -367,19 +367,19 @@ msgstr "卸载"
 
 #: ymenu/src/lib/ymenu/YMenu-Settings.py:151
 msgid "Button Selection"
-msgstr "按钮选择"
+msgstr "按钮"
 
 #: ymenu/src/lib/ymenu/YMenu-Settings.py:181
 msgid "Icon Selection"
-msgstr "选择图标"
+msgstr "图标"
 
 #: ymenu/src/lib/ymenu/YMenu-Settings.py:213
 msgid "Sound theme"
-msgstr "声音主题"
+msgstr "声音"
 
 #: ymenu/src/lib/ymenu/YMenu-Settings.py:235
 msgid "Bind keyboad key"
-msgstr "以Win键启动菜单"
+msgstr "Win 键启动菜单"
 
 #: ymenu/src/lib/ymenu/YMenu-Settings.py:242
 msgid "Show Internet and Email Buttons"
@@ -387,11 +387,11 @@ msgstr "显示互联网和电子邮件按钮"
 
 #: ymenu/src/lib/ymenu/YMenu-Settings.py:244
 msgid "Use Gtk Theme Colors in Program List"
-msgstr "在程序列表中使用GTK主题颜色"
+msgstr "在程序列表中使用 GTK 主题颜色"
 
 #: ymenu/src/lib/ymenu/YMenu-Settings.py:246
 msgid "Tab Selection on Mouse Hover"
-msgstr "鼠标略过时自动选择"
+msgstr "鼠标略过时选中"
 
 #: ymenu/src/lib/ymenu/YMenu-Settings.py:253
 msgid "Icon Size in Program List"
@@ -399,7 +399,7 @@ msgstr "程序列表中的图标大小"
 
 #: ymenu/src/lib/ymenu/YMenu-Settings.py:255
 msgid "Number of Items in Recent Items List"
-msgstr "最近项目列表中项目的个数"
+msgstr "最近使用列表中的项目个数"
 
 msgid "Height of YMenu"
 msgstr "菜单高度"
@@ -639,7 +639,7 @@ msgstr "从收藏夹中删除"
 #: ymenu/src/lib/ymenu/Gnome_Me.py:138
 #: ymenu/src/lib/ymenu/Menu_Items.py:623
 msgid "Create Desktop Shortcut"
-msgstr "创建桌面快捷方式"
+msgstr "在桌面创建链接"
 
 #: ymenu/src/lib/ymenu/Gnome_Me.py:142
 #: ymenu/src/lib/ymenu/Menu_Items.py:626
