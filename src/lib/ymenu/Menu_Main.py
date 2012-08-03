@@ -549,7 +549,7 @@ class Main_Menu(gobject.GObject):
                 elif searchEn == '116':
                     url = "http://s.116.com/?q=%s" % text
                 elif searchEn == 'baidu':
-                    url = "http://www.baidu.com/s?wd=%s&tn=ylmf_3_pg&ch=57" % text
+                    url = "http://www.baidu.com/s?wd=%s" % text
                 else:
                     url = "http://www.google.com.hk/search?q=StartOS"
                 os.system("xdg-open \"%s\" &" % url)
