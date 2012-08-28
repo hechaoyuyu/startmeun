@@ -364,13 +364,14 @@ class Main_Menu(gobject.GObject):
 		self.window.hide()		
 
 		if Globals.MenuHasSearch:
-                    self.SearchBar.entry.set_text('')
-                    self.SearchBar.entry_prompt.show()
+                    self.SearchBar.entry.set_text(_(u"Search"))
                     self.window.set_focus(None)
                     self.PGL.emit('NotNeedSearch')
                     if self.PGL.Search_Flag:
                         self.PGL.App_VBox.show_all()
                         self.PGL.Search_Flag = False
+		    else:
+		    	self.PGL.ReFilter ()
 
                     if self.UnBlockSearchOpt & self.BlockNotSearchFlag:
                         self.PGL.handler_unblock(self.notsearch_env_id)
@@ -401,8 +402,6 @@ class Main_Menu(gobject.GObject):
                                                 self.hide_method()
                                         self.PGL.BanFocusSteal = False
                                         self.PGL.SetInputFocus()
-                                if (key == 22 or key == 119) and self.SearchBar.entry.get_text() == '':# del & backspace
-                                        self.SearchBar.entry_prompt.show()
                                
 			if key == 23 :
 				for i in range(0,Globals.MenuTabCount):

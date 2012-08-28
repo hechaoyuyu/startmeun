@@ -220,26 +220,14 @@ class GtkSearchBar(gtk.EventBox, gobject.GObject):
 
         self.win = win
         self.entry = gtk.Entry()
+        self.entry.set_text(_(u"Search"))
         self.entry.set_inner_border(None)
         self.back = gtk.Image()
         self.entry.set_size_request(W, H)
         self.search_pic = gtk.Image()
 
-        self.entry_prompt = gtk.Entry() # gtk2的fixed控件Z向构件的层次有问题,同时使用2个entry能对付着使用
-        self.entry_prompt.set_inner_border(None)
-        self.entry_prompt.set_size_request(W, H)
-        self.entry_prompt.set_editable(False)
-        self.entry_prompt.set_text(_('Search'))
-        self.entry_prompt.set_has_frame(False)
-        self.entry_prompt.set_inner_border(None)
-        self.entry_prompt.set_can_default(False)
-
-        self.entry_pixmap = gtk.gdk.Pixmap(None, W, H, 1)
-        self.entry_prompt.input_shape_combine_mask(self.entry_pixmap, W, H)
-
         self.search_button = gtk.EventBox()
         self.search_button.set_size_request(22, 22)
-        #self.search_button.connect("expose_event", self.search_button_expose)
         self.search_button.connect("button-release-event", self.searchbar_search_signal)
         self.search_button.set_visible_window(False)
         sel = gtk.gdk.pixbuf_new_from_file(Globals.ImageDirectory + Globals.SearchPic).scale_simple(Globals.SearchPicW, Globals.SearchPicH, gtk.gdk.INTERP_BILINEAR)
@@ -254,7 +242,6 @@ class GtkSearchBar(gtk.EventBox, gobject.GObject):
         color = []
         color = Globals.color_translate(Globals.App_bgcolor)
         self.entry.modify_base(gtk.STATE_NORMAL, gtk.gdk.Color(color[0], color[1], color[2]))
-        self.entry_prompt.modify_base(gtk.STATE_NORMAL, gtk.gdk.Color(color[0], color[1], color[2]))
         del color
 
         self.entry.set_has_frame(False)
@@ -266,18 +253,16 @@ class GtkSearchBar(gtk.EventBox, gobject.GObject):
         self.entry.connect("focus-out-event", self.leave)
 
         self.entry.modify_text(gtk.STATE_NORMAL, Globals.NegativeThemeColorCode)
-        self.entry_prompt.modify_text(gtk.STATE_NORMAL, Globals.NegativeThemeColorCode)
         if Globals.MFontSize == 'small': # or large to change the font size
             pfd = pango.FontDescription("8")
             self.entry.modify_font(pfd)
 
         self.Frame.put(self.back, 0, 0)
         self.Frame.put(self.entry, int(6 * Globals.width_ratio), int( 6 * Globals.height_ratio))
-        self.Frame.put(self.entry_prompt, int(6 * Globals.width_ratio), int( 6 * Globals.height_ratio))
         self.Frame.put(self.search_button, Globals.SearchPicX, Globals.SearchPicY)
 
     def enter(self, widget, event):
-        self.entry_prompt.hide()
+        self.entry.set_text(u"")
         if event.type == gtk.gdk.BUTTON_PRESS and (event.button == 2 or event.button == 3):
             self.key_state = event.button - 1
             if event.button == 2: # right button
@@ -286,14 +271,7 @@ class GtkSearchBar(gtk.EventBox, gobject.GObject):
     def leave(self, widget, event):
         if widget.get_text() == '' and not self.key_state:
             self.win.set_focus(None)
-            self.entry_prompt.show()
-
-    '''def search_button_expose(self, widget, event):
-        ctx = widget.window.cairo_create()
-        ctx.set_source_rgb(1.0, 0.0, 0.0)
-        ctx.set_operator(cairo.OPERATOR_SOURCE)
-        ctx.paint()
-        return True'''
+            self.entry.set_text(_(u"Search"))
 
     def searchbar_search_signal(self, widget, event):
         self.emit('searchbar-search')
@@ -1691,6 +1669,10 @@ class ProgramClass(gobject.GObject):
                 self.emit('NeedSearch')
             else:
                 self.emit('NotNeedSearch')
+    def ReFilter(self):
+	if (self.prev_selTab): 
+	    self.prev_selTab.emit('enter_notify_event', None)
+	    
 
     def StartFilter(self, widget, event, category, needfilter = True):
 
@@ -1698,7 +1680,6 @@ class ProgramClass(gobject.GObject):
             gobject.source_remove(self.filterTimer)
         self.filterTimer = gobject.timeout_add(80, self.Filter, widget, event, category, needfilter)
 	self.Search_Flag = False
-        self.emit('NotNeedSearch')
 
     def StopFilter(self, widget, event):
         if self.filterTimer:
@@ -1709,6 +1690,7 @@ class ProgramClass(gobject.GObject):
         
         #self.UpdateUserImage(widget, event, icon)
         
+        self.emit('NotNeedSearch')
         for item in self.categoryList:
             item["button"].setSelectedTab(False)
         if needfilter:
