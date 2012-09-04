@@ -20,6 +20,9 @@ import xdg.Menu
 from execute import *
 from user import home
 import re
+from datetime import datetime
+from time import sleep
+import threading
 
 
 try:
@@ -286,6 +289,7 @@ class IconManager(gobject.GObject):
         gobject.GObject.__init__(self)
         self.icons = {}
         self.count = 0
+	self.lock = threading.Lock()
 
         # Some apps don't put a default icon in the default theme folder, so we will search all themes
         def createTheme(d):
@@ -304,23 +308,24 @@ class IconManager(gobject.GObject):
 
         self.themes = [defaultTheme, defaultKdeTheme]
 
-        self.cache = {}
+        self.cache = {} # {iconName: {fileName: <filename>, Size: <size>, Pixbuf: <icon>}, ...}
 
         # Listen for changes in the themes
         for theme in self.themes:
             theme.connect("changed", self.themeChanged)
-
-
-    def getIcon(self, iconName, iconSize):
-        if not iconName:
+	
+    def getIcon(self, iconName, iconSize, iconThemeChanged = False):
+        if not iconName or iconSize <= 0:
             return None
         try:
             #[ iconWidth, iconHeight ] = self.getIconSize( iconSize )
-            if iconSize <= 0:
-                return None
-
-            if iconName in self.cache and iconSize in self.cache[iconName]:
-                iconFileName = self.cache[iconName][iconSize]
+	    
+	    if not iconThemeChanged \
+		    and iconName in self.cache \
+		    and iconSize == self.cache[iconName]["Size"]:
+		if self.cache[iconName]["Pixbuf"]: 
+		    return self.cache[iconName]["Pixbuf"]
+		iconFileName = self.cache[iconName]["fileName"]
             elif os.path.isabs(iconName):
                 iconFileName = iconName
             else:
@@ -340,25 +345,22 @@ class IconManager(gobject.GObject):
                 else:
                     iconFileName = ""
 
+
+	    if iconThemeChanged \
+		    and iconName in self.cache \
+		    and iconFileName == self.cache[iconName]["fileName"] \
+		    and iconSize == self.cache[iconName]["Size"] \
+		    and self.cache[iconName]["Pixbuf"]: # 主要是判断文件路径是否改变
+		return self.cache[iconName]["Pixbuf"] 
+
             if iconFileName and os.path.exists(iconFileName):
                 icon = gtk.gdk.pixbuf_new_from_file(iconFileName).scale_simple(iconSize, iconSize, gtk.gdk.INTERP_BILINEAR)
             else:
                 icon = None
 
-
-            # if the actual icon size is to far from the desired size resize it
-            if icon and ((icon.get_width() - iconSize) > 5 or (icon.get_height() - iconSize) > 5):
-                if icon.get_width() > icon.get_height():
-                    newIcon = icon.scale_simple(iconSize, icon.get_height() * iconSize / icon.get_width(), gtk.gdk.INTERP_BILINEAR)
-                else:
-                    newIcon = icon.scale_simple(icon.get_width() * iconSize / icon.get_height(), iconSize, gtk.gdk.INTERP_BILINEAR)
-                del icon
-                icon = newIcon
-
-            if iconName in self.cache:
-                self.cache[iconName][iconSize] = iconFileName
-            else:
-                self.cache[iconName] = {iconSize: iconFileName}
+	    self.lock.acquire() # threading.Lock()
+            self.cache[iconName] = {"fileName": iconFileName, "Size": iconSize, "Pixbuf": icon}
+	    self.lock.release()
 
             return icon
         except Exception, e:
@@ -366,7 +368,8 @@ class IconManager(gobject.GObject):
             return None
 
     def themeChanged(self, theme):
-        self.cache = {}
+	#del self.cache
+	#self.cache = {}
         self.emit("changed")
 
 gobject.type_register(IconManager)
@@ -469,13 +472,13 @@ class AppButton(gtk.EventBox):
         else:
             self.Image.set_from_pixbuf(None)
         
-    def getIcon (self, iconSize):
+    def getIcon (self, iconSize, iconThemeChanged = False):
         #if not self.iconName:
         #    return None
 
-        icon = iconManager.getIcon(self.iconName, iconSize)
+        icon = iconManager.getIcon(self.iconName, iconSize, iconThemeChanged)
         if not icon:
-            icon = iconManager.getIcon("application-default-icon", iconSize)
+            icon = iconManager.getIcon("application-default-icon", iconSize, iconThemeChanged)
        
         return icon
     
@@ -485,10 +488,10 @@ class AppButton(gtk.EventBox):
 
     # IconTheme changed, setup new button icons
     def themeChanged(self, theme):
-        self.iconChanged()
+        self.iconChanged(True)
 
-    def iconChanged(self):
-        icon = self.getIcon(self.iconSize)
+    def iconChanged(self, iconThemeChanged = False):
+        icon = self.getIcon(self.iconSize, iconThemeChanged)
         self.buttonImage.clear()
         if icon:
             self.buttonImage.set_from_pixbuf(icon)
@@ -678,10 +681,10 @@ class ApplicationLauncher(AppButton):
                 Execute(self, self.appExec)
 
     # IconTheme changed, setup new icons for button and drag 'n drop
-    def iconChanged(self):
-        AppButton.iconChanged(self)
+    def iconChanged(self, iconThemeChanged = False):
+        AppButton.iconChanged(self, iconThemeChanged)
 
-        icon = self.getIcon(gtk.ICON_SIZE_DND)
+        icon = self.getIcon(Globals.PG_iconsize, iconThemeChanged)
         if icon:
             self.drag_source_set_icon_pixbuf(icon)
             del icon
@@ -1384,47 +1387,57 @@ class ProgramClass(gobject.GObject):
             del self.applicationList[key] 
           
         if addedApplications:
-            sortedApplicationList = []
+            self.sortedApplicationList = []
             for item in self.applicationList:
                 self.App_VBox.remove(item["button"])
-                sortedApplicationList.append((item["button"].appName, item["button"]))
+                self.sortedApplicationList.append((item["button"].appName, item["button"]))
                 
+	    lock = threading.Lock()
+	    threadlist = []
             for item in addedApplications:
-                item["button"] = MenuApplicationLauncher(item["entry"].DesktopEntry.getFileName(), Globals.PG_iconsize, item["category"], True, highlight=(True and menu_has_changed))
-                
-                if item["button"].appExec:
-                    if Globals.Settings['Show_Tips']:
-                        item["button"].Frame.set_tooltip_text(item["button"].getTooltip())
+	        t = threading.Thread(target = self.CreateAppLauncher, args=(lock, item, menu_has_changed))
+		t.daemon = True
+		t.start()
+		threadlist.append(t)
 
-                    item["button"].connect("enter-notify-event", self.Button_enter, True)
-                    item["button"].connect("leave-notify-event", self.Button_leave, False)
-                    
-                    if menu_has_changed:
-                        item["button"].setSelectedTab(True)
-                        self.categoryid = item["category"]
-
-                    item["button"].connect("button-release-event", self.activateButton)
-                    item["button"].show_all()    
-                    sortedApplicationList.append((item["button"].appName.upper(), item["button"]))
-                    self.applicationList.append(item)
-                else:
-                    item["button"].destroy()
+	    for t in threadlist:
+	    	t.join()
             del addedApplications     
 	    
-            sortedApplicationList.sort() 
-            for item in sortedApplicationList:     
+            self.sortedApplicationList.sort()
+            for item in self.sortedApplicationList:     
                 self.App_VBox.pack_start(item[1], False)
-            del sortedApplicationList
+            del self.sortedApplicationList
             if menu_has_changed:
                 for id in self.categoryList:
                     if id["filter"] == self.categoryid: 
                         id["button"].setSelectedTab(True)
-                    else:id["button"].setSelectedTab(False)  
+                    else:id["button"].setSelectedTab(False)
                 self.Select_install(self.categoryid)
                      
         self.rebuildLock = False
         gc.collect()
-    
+
+    def CreateAppLauncher(self, lock, item, menu_has_changed):
+	item["button"] = MenuApplicationLauncher(item["entry"].DesktopEntry.getFileName(), Globals.PG_iconsize, item["category"], True, highlight=(True and menu_has_changed))
+	if item["button"].appExec:
+	    if Globals.Settings['Show_Tips']:
+		item["button"].Frame.set_tooltip_text(item["button"].getTooltip())
+	    item["button"].connect("enter-notify-event", self.Button_enter, True)
+	    item["button"].connect("leave-notify-event", self.Button_leave, False)
+	    if menu_has_changed:
+		item["button"].setSelectedTab(True)
+		self.categoryid = item["category"]
+	    item["button"].connect("button-release-event", self.activateButton)
+	    item["button"].show_all()
+
+	    lock.acquire()
+	    self.sortedApplicationList.append((item["button"].appName.upper(), item["button"]))
+	    self.applicationList.append(item)
+	    lock.release()
+	else:
+	    item["button"].destroy() 
+	    
     def activateButton(self, widget, event, date=True):
         if event.type == gtk.gdk.KEY_PRESS:event_button = 1
 	elif event.type == gtk.gdk.BUTTON_PRESS:event_button = event.button
@@ -1753,8 +1766,8 @@ class ProgramClass(gobject.GObject):
         del gnomecc_tree
 
         self.menu_dir = []
-        self.menu_dir.append({'dir' : self.gnomecc_dir, 'category' : 'gnomecc'})
-        self.menu_dir.append({'dir' : self.directory,   'category' : ''})
+        self.menu_dir.append({'dir' : self.gnomecc_dir, 'category' : u'gnomecc'})
+        self.menu_dir.append({'dir' : self.directory,   'category' : u''})
 
     def buildCategoryList(self):
         newCategoryList = [{"name": _("All Applications"), "tooltip": _("Show all applications"), "filter":"", "index": 0}]

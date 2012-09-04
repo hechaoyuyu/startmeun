@@ -246,13 +246,12 @@ class Main_Menu(gobject.GObject):
 	def setup(self):
 		self.menuframe = gtk.Fixed()
 		self.window.add (self.menuframe)
-		
 		w,h = self.window.get_size()
 		if w==0: w = 100
 		if h==0: h = 100
 		self.w = w
 		self.h = h
-		#self.window.set_opacity(0.99)
+		self.window.set_opacity(0.80)
 		
                 if Globals.MenuHasTab == 1:
                         # init
@@ -270,7 +269,7 @@ class Main_Menu(gobject.GObject):
                         self.monitor.connect("changed", self.directory_changed)
                          
                         if has_gst:
-                                self.StartEngine()                 
+                                self.StartEngine()
      
 		self.MenuButtons = []
 		for i in range(0,Globals.MenuButtonCount):
@@ -328,7 +327,7 @@ class Main_Menu(gobject.GObject):
 			self.supports_alpha = False
 		else:
 			self.supports_alpha = True
-		self.shape()
+		#self.shape()
 
 	def show_window(self):
 		#self.window.set_keep_above(1)
@@ -344,7 +343,7 @@ class Main_Menu(gobject.GObject):
 				self.window.window.focus(int(time.time())/100)
 		self.window.set_urgency_hint(1)
 		self.window.activate_focus()             
-                self.window.set_opacity(0.80)
+                #self.window.set_opacity(0.80)
 		self.PlaySound(0)
 
 
@@ -640,7 +639,7 @@ def destroy():
 	
 if __name__ == "__main__":
 	hwg = Main_Menu(destroy)
-	hwg.setup()
+	#hwg.setup()
 	hwg.show_window()
 	gtk.main()
 	
