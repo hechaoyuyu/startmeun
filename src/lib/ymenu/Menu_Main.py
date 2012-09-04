@@ -251,7 +251,6 @@ class Main_Menu(gobject.GObject):
 		if h==0: h = 100
 		self.w = w
 		self.h = h
-		self.window.set_opacity(0.80)
 		
                 if Globals.MenuHasTab == 1:
                         # init
@@ -343,7 +342,7 @@ class Main_Menu(gobject.GObject):
 				self.window.window.focus(int(time.time())/100)
 		self.window.set_urgency_hint(1)
 		self.window.activate_focus()             
-                #self.window.set_opacity(0.80)
+		self.window.set_opacity(0.80)
 		self.PlaySound(0)
 
 

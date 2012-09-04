@@ -20,7 +20,6 @@ import xdg.Menu
 from execute import *
 from user import home
 import re
-from datetime import datetime
 from time import sleep
 import threading
 
