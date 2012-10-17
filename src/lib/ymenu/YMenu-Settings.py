@@ -311,7 +311,7 @@ class YMenuSettings:
 	def button_clicked (self, widget, id):
 
 		if id == 'Bug':
-			os.system('xdg-open http://feedback.115.com/?ct--feedback--ac--ask--app--105 &')
+			os.system('xdg-open "http://bbs.startos.com/index.php?m=bbs&cateid=322" &')
 	
 		elif id == 'Homepage':
 			os.system('xdg-open http://www.startos.org &')

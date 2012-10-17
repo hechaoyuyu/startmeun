@@ -1,5 +1,5 @@
 #!/usr/bin/python
-'''hechao@115.com'''
+'''hechao@ivali.com'''
 import os
 try:
 	INSTALL_PREFIX = open("/etc/ymenu/prefix").read()[:-1] 
