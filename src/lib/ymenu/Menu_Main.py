@@ -488,9 +488,6 @@ class Main_Menu(gobject.GObject):
             self.baidu_search = SearchLauncher(icondir + 'baidu.xpm', self.PGL.App_VBox, _("Search Baidu"))
             self.baidu_search.connect('button_release_event', self.search_go, 'baidu')
 
-            self.ylmf116_search = SearchLauncher(icondir + '116.xpm', self.PGL.App_VBox, _("Search 116") )
-            self.ylmf116_search.connect('button_release_event', self.search_go, '116')
-
             self.wiki_search = SearchLauncher(icondir + 'wikipedia.xpm', self.PGL.App_VBox, _("Search Wikipedia"))
             self.wiki_search.connect('button_release_event', self.search_go, 'wikipedia')
 
@@ -504,7 +501,6 @@ class Main_Menu(gobject.GObject):
             try:
                 self.google_search.destroy()
                 self.wiki_search.destroy()
-                self.ylmf116_search.destroy()
                 self.baidu_search.destroy()
             except:
                 pass
@@ -543,10 +539,8 @@ class Main_Menu(gobject.GObject):
                     url = "http://www.google.com.hk/search?q=%s" % text
                 elif searchEn == 'wikipedia':
                     url = "http://zh.wikipedia.org/wiki/Special:Search?search=%s" % text
-                elif searchEn == '116':
-                    url = "http://s.116.com/?q=%s" % text
                 elif searchEn == 'baidu':
-                    url = "http://www.baidu.com/s?wd=%s" % text
+                    url = "http://www.baidu.com/s?wd=%s&tn=39042058_ie_dg" % text
                 else:
                     url = "http://www.google.com.hk/search?q=StartOS"
                 os.system("xdg-open \"%s\" &" % url)
