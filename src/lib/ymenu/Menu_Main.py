@@ -369,7 +369,7 @@ class Main_Menu(gobject.GObject):
                         self.PGL.App_VBox.show_all()
                         self.PGL.Search_Flag = False
 		    else:
-		    	self.PGL.ReFilter ()
+			self.PGL.ReFilter ()
 
                     if self.UnBlockSearchOpt & self.BlockNotSearchFlag:
                         self.PGL.handler_unblock(self.notsearch_env_id)

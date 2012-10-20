@@ -948,6 +948,7 @@ class ProgramClass(gobject.GObject):
     def __init__(self, Frame):
         gobject.GObject.__init__ (self)
        
+	self.CurcategoryValue = "" # Apps category value
 	self.Search_Flag = False
         self.MenuWin = Frame
 
@@ -1126,6 +1127,8 @@ class ProgramClass(gobject.GObject):
                     else:recButton.Frame.set_tooltip_text(Name)	
                 self.App_VBox.pack_start(recButton, False)
                 self.RecentList.append(recButton)
+		if self.CurcategoryValue == _("Recent"):
+		    recButton.show_all()
             loc = loc + 1
         return True 
     
@@ -1413,6 +1416,7 @@ class ProgramClass(gobject.GObject):
                         id["button"].setSelectedTab(True)
                     else:id["button"].setSelectedTab(False)
                 self.Select_install(self.categoryid)
+		self.prev_selTab = None
                      
         self.rebuildLock = False
         gc.collect()
@@ -1701,7 +1705,7 @@ class ProgramClass(gobject.GObject):
     def Filter(self, widget, event, category, needfilter):
         
         #self.UpdateUserImage(widget, event, icon)
-        
+        self.CurcategoryValue = category
         self.emit('NotNeedSearch')
         for item in self.categoryList:
             item["button"].setSelectedTab(False)
