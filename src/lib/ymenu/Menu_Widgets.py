@@ -954,9 +954,17 @@ class ProgramClass(gobject.GObject):
 
         # app category list
         self.Category_VBox = gtk.VBox(False)
+	self.Category_Scr = gtk.ScrolledWindow()
+	self.Category_Scr.set_size_request(Globals.PG_tabframedimensions[0], Globals.PG_tabframedimensions[1])
+	self.Category_Scr.set_shadow_type(gtk.SHADOW_NONE)
+	self.Category_Scr.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
+	
+	self.Category_Scr.add_with_viewport(self.Category_VBox)
+	self.Category_Scr.get_children()[0].set_shadow_type(gtk.SHADOW_NONE)
+	self.Category_Scr.get_children()[0].modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse(Globals.PG_bgcolor))
         
-        self.Category_VBox.set_size_request(Globals.PG_tabframedimensions[0], Globals.PG_tabframedimensions[1])
-	self.MenuWin.put(self.Category_VBox, Globals.PG_tabframe[0], Globals.PG_tabframe[1])
+        #self.Category_VBox.set_size_request(Globals.PG_tabframedimensions[0], Globals.PG_tabframedimensions[1])
+	self.MenuWin.put(self.Category_Scr, Globals.PG_tabframe[0], Globals.PG_tabframe[1])
 	
         # app list
         gtk.rc_parse (Globals.ThemeDirectory + "gtk/scrollbar")

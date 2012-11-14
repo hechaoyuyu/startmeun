@@ -475,7 +475,7 @@ def ReloadSettings():
             MenuWidth    = int(MenuHeight * orig_menu_width / orig_menu_height) # 保持选单宽高比例
             width_ratio  = MenuWidth * 1.0 / orig_menu_width # 换成浮点数
             # category_scr size and  position
-            PG_tabframe[0] = int(PG_tabframe[0] * width_ratio)
+            # PG_tabframe[0] = int(PG_tabframe[0] * width_ratio)
             PG_tabframedimensions[0] = int(PG_tabframedimensions[0] * width_ratio)
 	    TabBackIconX = int(TabBackIconX * width_ratio)
 	    TabBackIconY = int(TabBackIconY * height_ratio)
